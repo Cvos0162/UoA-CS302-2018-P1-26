@@ -4,11 +4,11 @@
 <?import javafx.scene.canvas.Canvas?>
 <?import javafx.scene.layout.BorderPane?>
 
-<BorderPane prefHeight="800.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
+<BorderPane prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8.0.131" xmlns:fx="http://javafx.com/fxml/1">
    <cursor>
       <Cursor fx:constant="DEFAULT" />
    </cursor>
    <center>
-      <Canvas height="800.0" width="1280.0" BorderPane.alignment="CENTER" />
+      <Canvas height="720.0" width="1280.0" BorderPane.alignment="CENTER" />
    </center>
 </BorderPane>

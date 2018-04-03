@@ -18,11 +18,33 @@ public class GameController {
 	private GameModelHandler model;
 	private State gState;
 	
-	public void takeMouseInput(int x, int y) {
+	public void takeMouseInput(double x, double y) {
 		switch(gState) {
 		case START:
+			if (model.start.selectMouse(x, y) == 1) {
+				gState = State.SINGLE_STAGE_SEL;
+				initState();
+			}
 			break;
 		case SINGLE_STAGE_SEL:
+			switch(model.singleStageSel.selectMouse(x, y)) {
+			case 1:
+				model.singleStageSel.setWorld(1);
+				break;
+			case 2:
+				model.singleStageSel.setWorld(2);
+				break;
+			case 3:
+				model.singleStageSel.setWorld(3);
+				break;
+			case 4:
+				model.singleStageSel.setWorld(4);
+				break;			
+			case 5:
+				gState = State.START;
+				initState();
+				break;
+			}
 			break;
 		case SINGLE_IN_GAME:
 			break;
@@ -47,9 +69,18 @@ public class GameController {
 					initState();
 				}
 				break;
+			default:
+				break;
 			}
 			break;
 		case SINGLE_STAGE_SEL:
+			switch(code) {
+			case ESCAPE:
+				gState = State.START;
+				initState();
+			default:
+				break;
+			}
 			break;
 		case SINGLE_IN_GAME:
 			break;

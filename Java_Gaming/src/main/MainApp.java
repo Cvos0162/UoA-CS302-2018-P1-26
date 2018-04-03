@@ -32,6 +32,7 @@ public class MainApp extends Application {
 			
 			Scene scene = new Scene(rootLayout);
 			primaryStage.setScene(scene);
+			primaryStage.setResizable(false);
 			primaryStage.show();
 		} catch(IOException e) {
 			e.printStackTrace();
@@ -43,7 +44,7 @@ public class MainApp extends Application {
 		    public void handle(MouseEvent event) {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tMouse Position x: "+ event.getX() + "y: " + event.getY());
-		        control.takeMouseInput((int) event.getX(),(int) event.getX());
+		        control.takeMouseInput(event.getX(),event.getY());
 		        event.consume();
 		    }
 		    });
@@ -63,7 +64,7 @@ public class MainApp extends Application {
 		
 		init(primaryStage);
 
-		Canvas canvas = new Canvas(1280, 800);
+		Canvas canvas = new Canvas(1280, 720);
 		GraphicsContext graphic = canvas.getGraphicsContext2D();
 		GameController control = new GameController(graphic);
 		rootLayout.getChildren().add(canvas);
