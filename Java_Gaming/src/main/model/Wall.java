@@ -6,7 +6,6 @@ public class Wall extends Object{
 
 	public Wall(Position cornor_1, Image im) {
 		super(cornor_1, im);
-		// TODO Auto-generated constructor stub
 	}
 	
 
