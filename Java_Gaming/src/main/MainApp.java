@@ -1,42 +1,42 @@
 package main;
 
-import java.io.IOException;
-
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
-import javafx.fxml.FXMLLoader;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.image.Image;
-import javafx.scene.input.InputEvent;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 
 public class MainApp extends Application {
 	
-	private BorderPane rootLayout;
+	private Group root;
+	private Canvas canvas;
 	private Stage primaryStage;
+	private GameController control;
+	private GraphicsContext graphic;
 	
 	public void init(Stage primaryStage) {
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Planet Escape (Java Gaming - InJae)");
 
-		try {
-			FXMLLoader loader = new FXMLLoader();
-			loader.setLocation(MainApp.class.getResource("view/RootLayout.fxml"));
-			rootLayout = (BorderPane) loader.load();
-			
-			Scene scene = new Scene(rootLayout);
-			primaryStage.setScene(scene);
-			primaryStage.setResizable(false);
-			primaryStage.show();
-		} catch(IOException e) {
-			e.printStackTrace();
-		}
+		root = new Group();
+		
+		canvas = new Canvas();
+		graphic = canvas.getGraphicsContext2D();
+		control = new GameController(graphic);
+		root.getChildren().add(canvas);
+		canvas.widthProperty().bind(primaryStage.widthProperty());
+		canvas.heightProperty().bind(primaryStage.heightProperty());
+		Scene scene = new Scene(root);
+		this.primaryStage.setScene(scene);
+		this.primaryStage.setWidth(1280);
+		this.primaryStage.setHeight(720);
+		this.primaryStage.setResizable(false);
+		this.primaryStage.show();
 	}
 	
 	public void initEvent(Canvas canvas, GameController control) {
@@ -63,11 +63,6 @@ public class MainApp extends Application {
 	public void start(Stage primaryStage) {
 		
 		init(primaryStage);
-
-		Canvas canvas = new Canvas(1280, 720);
-		GraphicsContext graphic = canvas.getGraphicsContext2D();
-		GameController control = new GameController(graphic);
-		rootLayout.getChildren().add(canvas);
 		
 		initEvent(canvas, control);
 		

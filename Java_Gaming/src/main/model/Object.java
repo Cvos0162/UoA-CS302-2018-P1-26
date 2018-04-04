@@ -39,6 +39,8 @@ public class Object {
 	public void setPosition(Position pos) {this.position = pos;}
 	public void setPosition(int x, int y) {this.position = new Position(x, y);}
 	public Image getCurrentImage() {return images.get(p);}
+	public void setIterator(int p) { this.p = p; }
+	public void incrementIterator() { p++; if (p >= images.size()) p = 0;}
 	public void addImage (Image im) {images.add(im);}
 	public void addImage (ArrayList<Image> im) {images.addAll(im);}
 	public void removeImage(int index) {images.remove(index);}

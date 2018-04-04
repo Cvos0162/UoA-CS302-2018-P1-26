@@ -3,6 +3,7 @@ package main;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import main.model.GameModelHandler;
+import main.view.Colour;
 import main.view.GameViewer;
 
 public class GameController {
@@ -27,23 +28,47 @@ public class GameController {
 			}
 			break;
 		case SINGLE_STAGE_SEL:
-			switch(model.singleStageSel.selectMouse(x, y)) {
-			case 1:
-				model.singleStageSel.setWorld(1);
-				break;
-			case 2:
-				model.singleStageSel.setWorld(2);
-				break;
-			case 3:
-				model.singleStageSel.setWorld(3);
-				break;
-			case 4:
-				model.singleStageSel.setWorld(4);
-				break;			
-			case 5:
-				gState = State.START;
-				initState();
-				break;
+			if (model.singleStageSel.getSel()) {
+				
+				switch(model.singleStageSel.selectMouse_stage(x, y)) {
+				case -2:
+					gState = State.START;
+					initState();
+					break;
+				case -3:
+					model.singleStageSel.hideStages();
+					break;
+				default:
+					model.singleStageSel.setStage(model.singleStageSel.selectMouse_stage(x, y));
+					model.singleStageSel.loadLevel();
+					break;
+				}
+			}
+			else {
+				switch(model.singleStageSel.selectMouse_world(x, y)) {
+				case 1:
+					model.singleStageSel.setWorld(0);
+					model.singleStageSel.showStages();
+					break;
+				case 2:
+					model.singleStageSel.setWorld(1);
+					model.singleStageSel.showStages();
+					break;
+				case 3:
+					model.singleStageSel.setWorld(2);
+					model.singleStageSel.showStages();
+					break;
+				case 4:
+					model.singleStageSel.setWorld(3);
+					model.singleStageSel.showStages();
+					break;			
+				case 5:
+					gState = State.START;
+					initState();
+					break;
+				default:	
+					break;
+				}
 			}
 			break;
 		case SINGLE_IN_GAME:
@@ -106,11 +131,14 @@ public class GameController {
 	
 	//if there is State change we initialise them
 	private void initState() {
+		model.deleteStates();
 		switch(gState) {
 		case START:
+			view.setColour(Colour.WHITE);
 			model.initStart();
 			break;
 		case SINGLE_STAGE_SEL:
+			view.setColour(Colour.WHITE);
 			model.initSingleStageSelect();
 			break;
 		case SINGLE_IN_GAME:
