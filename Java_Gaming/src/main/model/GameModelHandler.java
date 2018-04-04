@@ -2,18 +2,18 @@ package main.model;
 
 import java.util.ArrayList;
 
-import javafx.event.EventHandler;
 import javafx.scene.image.Image;
 
 public class GameModelHandler {
 	private ArrayList<Object> objects;
 	public Start start = null;
 	public SingleStageSelect singleStageSel = null;
-	
+	public SingleInGame singleInGame = null;
 	
 	public void deleteStates() {
 		start = null;
 		singleStageSel = null;
+		singleInGame = null;
 		System.gc();
 	}
 	public ArrayList<Object> getObjects() { return objects; }
@@ -25,7 +25,22 @@ public class GameModelHandler {
 	//init classes
 	public void initStart() { start = new Start(); }
 	public void initSingleStageSelect() { singleStageSel = new SingleStageSelect(); }
+	public void initSingleInGame(int world, int stage) {singleInGame = new SingleInGame(world, stage);}
 	
+	public class SingleInGame {
+		Object top;
+		Object side;
+		Level level;
+		public SingleInGame(int world, int stage) {
+			objects.clear();
+			top = new Object(new Position(0,0), new Image("/resource/test_InGameTop.png"));
+			addObject(top);
+			side = new Object(new Position(1150, 70), new Image("resource/test_InGameRightSide.png"));
+			addObject(side);
+			level = new Level(world, stage);
+			addObject(level.getObjectList());
+		}
+	}
 	
 	public class SingleStageSelect {
 		Object world_1;
@@ -42,6 +57,7 @@ public class GameModelHandler {
 		int world = 0;
 		int stage = 0;
 		
+		@SuppressWarnings("serial")
 		ArrayList<Integer> level = new ArrayList<Integer>() {
 			{
 				add(5);
@@ -50,6 +66,7 @@ public class GameModelHandler {
 				add(4);
 			}
 		};
+		@SuppressWarnings("serial")
 		ArrayList<Image> windowImages = new ArrayList<Image>() {
 			{
 				add(new Image("/resource/test_LevelSelectWindow_1.png"));
@@ -58,6 +75,7 @@ public class GameModelHandler {
 				add(new Image("/resource/test_LevelSelectWindow_4.png"));
 			}
 		};
+		@SuppressWarnings("serial")
 		ArrayList<Image> stageImages = new ArrayList<Image>() {
 			{
 				add(new Image("/resource/test_StageButton_1.png"));
@@ -70,15 +88,17 @@ public class GameModelHandler {
 		public boolean getSel() {
 			return sel;
 		}
+		public int getWorld() {
+			return world;
+		}
+		public int getStage() {
+			return stage;
+		}
 		public void setWorld(int n) {
 			world = n;
 		}
 		public void setStage(int n) {
 			stage = n;
-		}
-		
-		public void loadLevel() {
-			//TODO: this function has to load a level design according to its world and stage selected 
 		}
 		
 		

@@ -31,6 +31,8 @@ public class GameController {
 			if (model.singleStageSel.getSel()) {
 				
 				switch(model.singleStageSel.selectMouse_stage(x, y)) {
+				case -1:
+					break;
 				case -2:
 					gState = State.START;
 					initState();
@@ -40,7 +42,8 @@ public class GameController {
 					break;
 				default:
 					model.singleStageSel.setStage(model.singleStageSel.selectMouse_stage(x, y));
-					model.singleStageSel.loadLevel();
+					gState = State.SINGLE_IN_GAME;
+					initState();
 					break;
 				}
 			}
@@ -131,17 +134,23 @@ public class GameController {
 	
 	//if there is State change we initialise them
 	private void initState() {
-		model.deleteStates();
 		switch(gState) {
 		case START:
+			model.deleteStates();
 			view.setColour(Colour.WHITE);
 			model.initStart();
 			break;
 		case SINGLE_STAGE_SEL:
+			model.deleteStates();
 			view.setColour(Colour.WHITE);
 			model.initSingleStageSelect();
 			break;
 		case SINGLE_IN_GAME:
+			int world = model.singleStageSel.getWorld();
+			int stage = model.singleStageSel.getStage();
+			model.deleteStates();
+			view.setColour(Colour.WHITE);
+			model.initSingleInGame(world, stage);
 			break;
 		case EXIT:
 			break;

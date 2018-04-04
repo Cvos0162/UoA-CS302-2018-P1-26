@@ -1,7 +1,5 @@
 package main.model;
 
-import java.util.ArrayList;
-
 import javafx.scene.image.Image;
 
 public class Ghost extends Character{

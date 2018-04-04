@@ -1,7 +1,6 @@
 package main.model;
 
 import java.util.ArrayList;
-import java.util.Iterator;
 
 import javafx.scene.image.Image;
 
@@ -29,6 +28,13 @@ public class Object {
 		this.images = new ArrayList<Image>();
 		this.images.addAll(images);
 		this.size = new Position(images.get(0).getWidth(), images.get(0).getHeight());
+		p = 0;
+	}
+	public Object(Position cornor_1, Position size, Image im) {
+		this.position = cornor_1;
+		this.size = size;
+		images = new ArrayList<Image>();
+		images.add(im);
 		p = 0;
 	}
 	//basic getter and setter //adder and remover for arrays
