@@ -16,8 +16,7 @@ public class Level {
 	public ArrayList<Object> getObjectList() {
 		return objects;
 	}
-	public Level(int world, int stage) {
-		
+	public Level(int world, int stage) {	
 		//TODO: this function has to load a level design according to its world and stage selected 
 		System.out.println("world : " + world);
 		System.out.println("stage : " + stage);

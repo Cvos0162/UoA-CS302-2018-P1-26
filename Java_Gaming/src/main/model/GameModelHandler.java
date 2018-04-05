@@ -52,6 +52,8 @@ public class GameModelHandler {
 		Object window;
 		Object unselectButton;
 		ArrayList<Object> stages;
+
+		Object pointer;
 		
 		boolean sel = false;
 		int world = 0;
@@ -100,9 +102,51 @@ public class GameModelHandler {
 		public void setStage(int n) {
 			stage = n;
 		}
-		
+		public void showSelected() {
+			removeObject(pointer);
+			pointer = null;
+			Position pos;
+			Position size;
+			if (sel){
+				pos = new Position(stages.get(stage).getPosition().getX() - 20, stages.get(stage).getPosition().getY() + stages.get(stage).getSize().getY()/2);
+				size = new Position(stages.get(stage).getSize().getX() + 40, stages.get(stage).getSize().getY()/2 + 40
+						
+						);
+				pointer = new Object(pos, size, new Image("/resource/test_HighLightStage.png"));
+				objects.add(objects.indexOf(stages.get(0)), pointer);
+			}
+			else {
+				switch (world) {
+				case 0:
+					pos = new Position(world_1.getPosition().getX()-20, world_1.getPosition().getY()-20);
+					size = new Position(world_1.getSize().getX() + 40, world_1.getSize().getY() + 40);
+					break;
+				case 1:
+					pos = new Position(world_2.getPosition().getX()-20, world_2.getPosition().getY()-20);
+					size = new Position(world_2.getSize().getX() + 40, world_2.getSize().getY() + 40);
+					break;
+				case 2:
+					pos = new Position(world_3.getPosition().getX()-20, world_3.getPosition().getY()-20);
+					size = new Position(world_3.getSize().getX() + 40, world_3.getSize().getY() + 40);
+					break;
+				case 3:
+					pos = new Position(world_4.getPosition().getX()-20, world_4.getPosition().getY()-20);
+					size = new Position(world_4.getSize().getX() + 40, world_4.getSize().getY() + 40);
+					break;
+				default:
+					pos = new Position(0,0);
+					size = new Position(0,0);
+					break;				
+				}
+				pointer = new Object(pos, size, new Image("/resource/test_HighLightWorld.png"));
+				objects.add(objects.indexOf(world_1), pointer);
+			}
+			
+			
+		}
 		
 		public void showStages() {
+			stage = 0;
 			window = new Object(new Position(240, 180), windowImages);
 			window.setIterator(world);
 			addObject(window);
@@ -141,6 +185,31 @@ public class GameModelHandler {
 			else if (unselectButton.isInsideObject(x, y)) return -3;
 			else return -1;
 		}
+		public void selectUp() {
+			if (sel) {
+				if (stage >= level.get(world) - 1) stage = 0;
+				else stage++;
+			}
+			else {
+				if (world >= 3) world = 0;
+				else world++;
+			}
+		}
+		public void selectdown() {
+			if (sel) {
+				if (stage <= 0) stage = level.get(world) - 1;
+				else stage--;
+			}
+			else {
+				if (world <= 0) world = 3;
+				else world--;
+			}
+		}
+		
+		public void update() {
+			showSelected();
+		}
+		
 		public SingleStageSelect() {
 			objects.clear();
 			world_1 = new Object(new Position(245, 300), new Image("/resource/test_World1.png"));

@@ -102,12 +102,43 @@ public class GameController {
 			}
 			break;
 		case SINGLE_STAGE_SEL:
-			switch(code) {
-			case ESCAPE:
-				gState = State.START;
-				initState();
-			default:
-				break;
+			if (model.singleStageSel.getSel()) {
+				switch(code) {
+				case ESCAPE:
+					model.singleStageSel.hideStages();
+					break;
+				case UP:
+					model.singleStageSel.selectUp();
+					break;
+				case DOWN:
+					model.singleStageSel.selectdown();
+					break;
+				case ENTER:
+					gState = State.SINGLE_IN_GAME;
+					initState();
+					break;
+				default:
+					break;
+				}
+			}
+			else {
+				switch(code) {
+				case ESCAPE:
+					gState = State.START;
+					initState();
+					break;
+				case ENTER:
+					model.singleStageSel.showStages();
+					break;
+				case UP:
+					model.singleStageSel.selectUp();
+					break;
+				case DOWN:
+					model.singleStageSel.selectdown();
+					break;
+				default:
+					break;
+				}
 			}
 			break;
 		case SINGLE_IN_GAME:
@@ -123,6 +154,7 @@ public class GameController {
 			model.start.update();
 			break;
 		case SINGLE_STAGE_SEL:
+			model.singleStageSel.update();
 			break;
 		case SINGLE_IN_GAME:
 			break;
@@ -142,7 +174,7 @@ public class GameController {
 			break;
 		case SINGLE_STAGE_SEL:
 			model.deleteStates();
-			view.setColour(Colour.WHITE);
+			view.setColour(Colour.BLACK);
 			model.initSingleStageSelect();
 			break;
 		case SINGLE_IN_GAME:
