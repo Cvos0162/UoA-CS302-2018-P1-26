@@ -13,7 +13,10 @@ public class Protagonist extends Character{
 		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
 	}
-	
+	public Protagonist(Position cornor_1, Position size, Image im) {
+		super(cornor_1, size, im, Ability.DEFAULT);
+		storedAbility = Ability.DEFAULT;
+	}
 	private void setLife(int life) {
 		this.life = life;
 	}

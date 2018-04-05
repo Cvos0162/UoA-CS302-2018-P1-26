@@ -14,6 +14,11 @@ public class Character extends Object{
 		this.ability = ability;
 		alive = true;
 	}
+	public Character(Position cornor_1, Position size, Image im, Ability ability) {
+		super(cornor_1, size, im);
+		this.ability = ability;
+		alive = true;
+	}
 	
 	public void setAlive(boolean alive, ArrayList<Image> im) {
 		this.alive = alive;

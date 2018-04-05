@@ -53,7 +53,7 @@ public class Level {
 						walls.add(wall);
 					}
 					if (id == '0') {
-						pro = new Protagonist(pos, new Image("/resource/Untitled.png"));
+						pro = new Protagonist(pos, new Position(25,25), new Image("/resource/Untitled.png"));
 						objects.add(pro);
 					}
 					

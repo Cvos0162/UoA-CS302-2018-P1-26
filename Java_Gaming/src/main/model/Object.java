@@ -52,7 +52,7 @@ public class Object {
 	public void removeImage(int index) {images.remove(index);}
 	
 	public boolean isInsideObject(double x, double y) {
-		if (x >= position.getX() && y >= position.getY() && x <= position.getX() + size.getX() && y <= position.getY() + size.getY())
+		if (x >= position.getX() && y >= position.getY() && x <= (position.getX() + size.getX()) && y <= (position.getY() + size.getY()))
 			return true;
 		else return false;
 	}
