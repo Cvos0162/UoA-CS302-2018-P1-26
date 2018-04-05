@@ -43,16 +43,27 @@ public class GameModelHandler {
 		}
 		
 		public void moveUp() {
-
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getPro().isCollideObject(level.getWalls().get(i)))
+					return;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 3);
 		}
 		public void moveDown() {
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getPro().isCollideObject(level.getWalls().get(i)))
+					return;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 3);
 		}
 		public void moveRight() {
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getPro().isCollideObject(level.getWalls().get(i)))
+					return;
 			level.getPro().setPosition(level.getPro().getPosition().getX() + 3, level.getPro().getPosition().getY());
 		}
 		public void moveLeft() {
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getPro().isCollideObject(level.getWalls().get(i)))
+					return;
 			level.getPro().setPosition(level.getPro().getPosition().getX() - 3, level.getPro().getPosition().getY());
 		}
 		public void useAbility() {
