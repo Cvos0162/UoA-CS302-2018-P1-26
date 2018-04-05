@@ -111,6 +111,29 @@ public class GameController {
 			}
 			break;
 		case SINGLE_IN_GAME:
+			switch(code) {
+			case ESCAPE:
+				gState = State.SINGLE_STAGE_SEL;
+				initState();
+				break;
+			case UP:
+				model.singleInGame.moveUp();
+				break;
+			case DOWN:
+				model.singleInGame.moveDown();
+				break;
+			case RIGHT:
+				model.singleInGame.moveRight();
+				break;
+			case LEFT:
+				model.singleInGame.moveLeft();
+				break;
+			case ENTER:
+				model.singleInGame.useAbility();
+				break;
+			default:
+				break;
+			}
 			break;
 		case EXIT:
 			break;

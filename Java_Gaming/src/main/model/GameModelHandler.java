@@ -37,10 +37,36 @@ public class GameModelHandler {
 			addObject(top);
 			side = new Object(new Position(1150, 70), new Image("resource/test_InGameRightSide.png"));
 			addObject(side);
-			level = new Level(world, stage);
+			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
+			
 		}
+		
+		public void moveUp() {
+
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 3);
+		}
+		public void moveDown() {
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 3);
+		}
+		public void moveRight() {
+			level.getPro().setPosition(level.getPro().getPosition().getX() + 3, level.getPro().getPosition().getY());
+		}
+		public void moveLeft() {
+			level.getPro().setPosition(level.getPro().getPosition().getX() - 3, level.getPro().getPosition().getY());
+		}
+		public void useAbility() {
+			
+		}
+	
+		
+	
+	
+	
 	}
+	
+	
+	
 	
 	public class SingleStageSelect {
 		Object world_1;
