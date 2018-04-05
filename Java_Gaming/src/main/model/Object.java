@@ -43,7 +43,7 @@ public class Object {
 	public void setSize(int x, int y) {this.size = new Position(x, y);}
 	public Position getPosition() {return position;}
 	public void setPosition(Position pos) {this.position = pos;}
-	public void setPosition(int x, int y) {this.position = new Position(x, y);}
+	public void setPosition(double x, double y) {this.position = new Position(x, y);}
 	public Image getCurrentImage() {return images.get(p);}
 	public void setIterator(int p) { this.p = p; }
 	public void incrementIterator() { p++; if (p >= images.size()) p = 0;}
@@ -52,8 +52,18 @@ public class Object {
 	public void removeImage(int index) {images.remove(index);}
 	
 	public boolean isInsideObject(double x, double y) {
-		if (x > position.getX() && y > position.getY() && x <= position.getX() + size.getX() && y <= position.getY() + size.getY())
+		if (x >= position.getX() && y >= position.getY() && x <= position.getX() + size.getX() && y <= position.getY() + size.getY())
 			return true;
 		else return false;
+	}
+	
+	public boolean isCollideObject(Object object) {
+		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
+				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()) ||
+						isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY() + object.getSize().getY()) ||
+								isInsideObject(object.getPosition().getX(),object.getPosition().getY() + object.getSize().getY()))
+			return true;
+		else
+			return false;
 	}
 }

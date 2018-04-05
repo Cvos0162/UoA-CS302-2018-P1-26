@@ -6,12 +6,11 @@ public class Protagonist extends Character{
 
 	private int life;
 	private Ability storedAbility;
-	static Ability ability; //why static?
 	boolean alive;
 	
 	
-	public Protagonist(Position cornor_1, Image im, Ability ability) {
-		super(cornor_1, im, ability);
+	public Protagonist(Position cornor_1, Image im) {
+		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
 	}
 	

@@ -13,6 +13,14 @@ public class Level {
 	ArrayList<Object> objects;
 	int world;
 	int stage;
+	ArrayList<Wall> walls;
+	Protagonist pro;
+	public Protagonist getPro() {
+		return pro;
+	}
+	public ArrayList<Wall> getWalls() {
+		return walls;
+	}
 	public ArrayList<Object> getObjectList() {
 		return objects;
 	}
@@ -32,6 +40,7 @@ public class Level {
 			FileReader fileReader = new FileReader(file);
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			objects = new ArrayList<Object>();
+			walls = new ArrayList<Wall>();
 			int j = 0;
 			while ((line = bufferedReader.readLine()) != null) {
 				for (int i = 0; i < line.length(); i++) {
@@ -39,7 +48,13 @@ public class Level {
 					char id = line.charAt(i);
 					if (id >= 'a' && id <= 'p') {
 						String impath = "/resource/test_Wall_" + id + ".png";
-						objects.add(new Wall(pos, new Image(impath)));
+						Wall wall = new Wall(pos, new Image(impath));
+						objects.add(wall);
+						walls.add(wall);
+					}
+					if (id == '0') {
+						pro = new Protagonist(pos, new Image("/resource/Untitled.png"));
+						objects.add(pro);
 					}
 					
 				}
