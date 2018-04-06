@@ -43,29 +43,32 @@ public class GameModelHandler {
 		}
 		
 		public void moveUp() {
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 5);
 			for(int i = 0; i < level.getWalls().size(); i++ )
-				if(level.getPro().isCollideObject(level.getWalls().get(i)))
-					return;
-			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 3);
+				if(level.getWalls().get(i).isCollideTop(level.getPro()))
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 5);
+			
 		}
 		public void moveDown() {
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 5);
 			for(int i = 0; i < level.getWalls().size(); i++ )
-				if(level.getPro().isCollideObject(level.getWalls().get(i)))
-					return;
-			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 3);
+				if(level.getWalls().get(i).isCollideBottom(level.getPro()))
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 5);
 		}
 		public void moveRight() {
+			level.getPro().setPosition(level.getPro().getPosition().getX() + 5, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
-				if(level.getPro().isCollideObject(level.getWalls().get(i)))
-					return;
-			level.getPro().setPosition(level.getPro().getPosition().getX() + 3, level.getPro().getPosition().getY());
+				if(level.getWalls().get(i).isCollideRight(level.getPro()))
+					level.getPro().setPosition(level.getPro().getPosition().getX() - 5, level.getPro().getPosition().getY());
 		}
 		public void moveLeft() {
+			level.getPro().setPosition(level.getPro().getPosition().getX() - 5, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
-				if(level.getPro().isCollideObject(level.getWalls().get(i)))
-					return;
-			level.getPro().setPosition(level.getPro().getPosition().getX() - 3, level.getPro().getPosition().getY());
-		}
+				if(level.getWalls().get(i).isCollideLeft(level.getPro()))
+					level.getPro().setPosition(level.getPro().getPosition().getX() + 5, level.getPro().getPosition().getY());
+		
+			
+		}	
 		public void useAbility() {
 			
 		}

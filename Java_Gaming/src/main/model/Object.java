@@ -66,4 +66,39 @@ public class Object {
 		else
 			return false;
 	}
+	
+	public boolean isCollideTop(Object object) {
+		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
+				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isCollideBottom(Object object) {
+		if (isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY() + object.getSize().getY()) ||
+				isInsideObject(object.getPosition().getX(),object.getPosition().getY() + object.getSize().getY()))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isCollideLeft(Object object) {
+		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
+				isInsideObject(object.getPosition().getX(),object.getPosition().getY() + object.getSize().getY()))
+			return true;
+		else
+			return false;
+	}
+	
+	public boolean isCollideRight(Object object) {
+		if (isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()) ||
+				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY() + object.getSize().getY()))
+			return true;
+		else
+			return false;
+	}
+	
+
+	
 }
