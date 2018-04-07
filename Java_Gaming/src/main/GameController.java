@@ -19,7 +19,7 @@ public class GameController {
 	private GameModelHandler model;
 	private State gState;
 	
-	public void takeMouseInput(double x, double y) {
+	public void takeMouseClicked(double x, double y) {
 		switch(gState) {
 		case START:
 			if (model.start.selectMouse(x, y) == 1) {
@@ -73,6 +73,20 @@ public class GameController {
 					break;
 				}
 			}
+			break;
+		case SINGLE_IN_GAME:
+			break;
+		case EXIT:
+			break;
+		}
+	}
+	public void takeMouseMoved(double x, double y) {
+		switch(gState) {
+		case START:
+			model.start.moveMouse(x,y);
+			break;
+		case SINGLE_STAGE_SEL:
+			model.singleStageSel.moveMouse(x, y);
 			break;
 		case SINGLE_IN_GAME:
 			break;
@@ -185,6 +199,7 @@ public class GameController {
 			break;
 		}
 		view.draw(model.getObjects());
+		view.write(model.getTexts());
 	}
 	
 	//if there is State change we initialise them

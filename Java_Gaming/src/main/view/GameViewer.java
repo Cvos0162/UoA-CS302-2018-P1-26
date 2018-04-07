@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.paint.Color;
 import main.model.Object;
+import main.model.Text;
 
 public class GameViewer {
 	GraphicsContext graphic;
@@ -28,10 +29,21 @@ public class GameViewer {
 		}
 		for (int i = 0; i < objects.size(); i++) {
 			graphic.drawImage(objects.get(i).getCurrentImage(),
-					objects.get(i).getPosition().getX(),
-					objects.get(i).getPosition().getY(),
-					objects.get(i).getSize().getX(),
-					objects.get(i).getSize().getY()
+				objects.get(i).getPosition().getX(),
+				objects.get(i).getPosition().getY(),
+				objects.get(i).getSize().getX(),
+				objects.get(i).getSize().getY()
+				);
+		}
+	}
+	public void write(ArrayList<Text> texts) {
+		for (int i = 0; i < texts.size(); i++) {
+			graphic.setFont(texts.get(i).getFont());
+			graphic.setFill(texts.get(i).getColor());
+			graphic.fillText(texts.get(i).getString(),
+					texts.get(i).getPosition().getX(),
+					texts.get(i).getPosition().getY(),
+					texts.get(i).getMaxWidth()
 					);
 		}
 	}

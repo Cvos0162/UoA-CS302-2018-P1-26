@@ -44,7 +44,13 @@ public class MainApp extends Application {
 		    public void handle(MouseEvent event) {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tMouse Position x: "+ event.getX() + "y: " + event.getY());
-		        control.takeMouseInput(event.getX(),event.getY());
+		        control.takeMouseClicked(event.getX(),event.getY());
+		        event.consume();
+		    }
+		    });
+		canvas.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
+		    public void handle(MouseEvent event) {
+		        control.takeMouseMoved(event.getX(),event.getY());
 		        event.consume();
 		    }
 		    });
@@ -57,6 +63,7 @@ public class MainApp extends Application {
 		        event.consume();
 		    }
 		    });
+		
 	}
 	
 	@Override
