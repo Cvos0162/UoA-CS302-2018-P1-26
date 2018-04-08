@@ -1,5 +1,7 @@
 package main;
 
+import java.util.Optional;
+
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
@@ -7,9 +9,15 @@ import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Alert.AlertType;
+import javafx.scene.control.ButtonBar.ButtonData;
+import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 
 public class MainApp extends Application {
 	
@@ -27,16 +35,37 @@ public class MainApp extends Application {
 		
 		canvas = new Canvas();
 		graphic = canvas.getGraphicsContext2D();
-		control = new GameController(graphic);
+		control = new GameController(graphic, this.primaryStage);
 		root.getChildren().add(canvas);
-		canvas.widthProperty().bind(primaryStage.widthProperty());
-		canvas.heightProperty().bind(primaryStage.heightProperty());
+		canvas.widthProperty().bind(this.primaryStage.widthProperty());
+		canvas.heightProperty().bind(this.primaryStage.heightProperty());
 		Scene scene = new Scene(root);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.setWidth(1280);
 		this.primaryStage.setHeight(720);
 		this.primaryStage.setResizable(false);
 		this.primaryStage.show();
+		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+		    public void handle(WindowEvent event) {
+				Alert alert = new Alert(AlertType.CONFIRMATION);
+				alert.setTitle("Quit Confirmation");
+				alert.setHeaderText("You are about to quit");
+				alert.setContentText("Do you really want to quit?");
+				alert.initModality(Modality.APPLICATION_MODAL);
+				alert.initOwner(primaryStage);
+				
+				ButtonType yes = new ButtonType("Yes", ButtonData.YES);
+				ButtonType no = new ButtonType("No", ButtonData.NO);
+
+				alert.getButtonTypes().setAll(yes, no);
+				
+				Optional<ButtonType> result = alert.showAndWait();
+					if (result.get() == no) {
+						event.consume();
+					}
+		        }
+			});
 	}
 	
 	public void initEvent(Canvas canvas, GameController control) {
