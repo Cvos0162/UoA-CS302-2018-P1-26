@@ -1,7 +1,11 @@
 package main;
 
+import javafx.event.Event;
+import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import main.model.GameModelHandler;
 import main.view.Colour;
 import main.view.GameViewer;
@@ -14,6 +18,8 @@ public class GameController {
 		SINGLE_IN_GAME,
 		EXIT
 	};
+	
+	private Stage stage;
 	
 	private GameViewer view;
 	private GameModelHandler model;
@@ -98,6 +104,14 @@ public class GameController {
 		switch(gState) {
 		case START:
 			switch (code) {
+			case ESCAPE:
+				stage.fireEvent(
+                        new WindowEvent(
+                                stage,
+                                WindowEvent.WINDOW_CLOSE_REQUEST
+                        )
+                );
+				break;
 			case UP:
 				model.start.selectUp();
 				break;
@@ -158,7 +172,7 @@ public class GameController {
 		case SINGLE_IN_GAME:
 			switch(code) {
 			case ESCAPE:
-				gState = State.SINGLE_STAGE_SEL;
+				gState = State.START;
 				initState();
 				break;
 			case UP:
@@ -228,7 +242,8 @@ public class GameController {
 		}
 	}
 	
-	GameController(GraphicsContext graphic) {
+	GameController(GraphicsContext graphic, Stage stage) {
+		this.stage = stage;
 		view = new GameViewer(graphic);
 		model = new GameModelHandler();
 		gState = State.START;

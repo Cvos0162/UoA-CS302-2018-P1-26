@@ -301,7 +301,7 @@ public class GameModelHandler {
 			addObject(world_3);
 			world_4 = new Object(new Position(420, 390), new Image("/resource/World_4.png"));
 			addObject(world_4);
-			backButton = new Object(new Position(20,20), new Image("/resource/test_BackButton.png"));
+			backButton = new Object(new Position(20,20), new Image("/resource/BackButton.png"));
 			addObject(backButton);
 			stageSel = new Text(
 					new Position(125,60),
