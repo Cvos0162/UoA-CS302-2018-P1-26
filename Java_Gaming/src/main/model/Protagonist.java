@@ -7,25 +7,29 @@ public class Protagonist extends Character{
 	private int life;
 	private Ability storedAbility;
 	boolean alive;
+	boolean item;
+	private int score;
 	
 	
 	public Protagonist(Position cornor_1, Image im) {
 		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		item = false;
 	}
 	public Protagonist(Position cornor_1, Position size, Image im) {
 		super(cornor_1, size, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		item = false;
 	}
 	private void setLife(int life) {
 		this.life = life;
 	}
 
-	private void increaseLife() {
+	public void increaseLife() {
 		life++;
 	}
 	
-	private void decreaseLife() {
+	public void decreaseLife() {
 		life--;
 	}
 	
@@ -33,11 +37,19 @@ public class Protagonist extends Character{
 		return life;
 	}
 	
+	public int getScore() {
+		return score;
+	}
+	
+	public void addScore(int score) {
+		this.score = this.score + score;
+	}
+	
 	private void useAbility(Ability ability) {
 		this.ability = ability;
 	}
 	
-	private void setStoredAbility(Ability ability) {
+	public void setStoredAbility(Ability ability) {
 		this.storedAbility = ability;
 	}
 	

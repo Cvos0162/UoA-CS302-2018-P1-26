@@ -15,14 +15,26 @@ public class Level {
 	int stage;
 	ArrayList<Wall> walls;
 	Protagonist pro;
+	Item item;
+	ArrayList<Pellet> pellets;
+	ArrayList<Ghost> ghosts;
 	public Protagonist getPro() {
 		return pro;
+	}
+	public Item getItem() {
+		return item;
 	}
 	public ArrayList<Wall> getWalls() {
 		return walls;
 	}
 	public ArrayList<Object> getObjectList() {
 		return objects;
+	}
+	public ArrayList<Pellet> getPellets() {
+		return pellets;
+	}
+	public ArrayList<Ghost> getGhosts() {
+		return ghosts;
 	}
 	public Level(int world, int stage) {	
 		System.out.println("world : " + world);
@@ -40,6 +52,8 @@ public class Level {
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			objects = new ArrayList<Object>();
 			walls = new ArrayList<Wall>();
+			pellets = new ArrayList<Pellet>();
+			ghosts = new ArrayList<Ghost>();
 			int j = 0;
 			while ((line = bufferedReader.readLine()) != null) {
 				for (int i = 0; i < line.length(); i++) {
@@ -57,6 +71,51 @@ public class Level {
 						objects.add(pro);
 					}
 					
+					if (id == '1') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.RAINBOW_STAR);
+						objects.add(ghost);
+						ghosts.add(ghost);
+					}
+					if (id == '2') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.NURSE);
+						objects.add(ghost);
+						ghosts.add(ghost);
+					}
+					if (id == '3') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.WIZARD);
+						objects.add(ghost);
+						ghosts.add(ghost);
+					}
+					if (id == '4') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.ICE);
+						objects.add(ghost);
+						ghosts.add(ghost);
+					}
+					if (id == '5') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.NINJA);
+						objects.add(ghost);
+						ghosts.add(ghost);
+					}
+					
+					
+					if (id == '*') {
+						pos = new Position(25*i + 12.5, 25*j+82.5);
+						Pellet pallet = new Pellet(pos, new Position(5,5), new Image("/resource/pellet.png"));
+						objects.add(pallet);
+						pellets.add(pallet);
+						
+					}
+					
+					if (id == '#') {
+						pos = new Position(25*i + 2.5, 25*j+72.5);
+						item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
+						objects.add(item);
+					}
 				}
 				j++;
 				System.out.println(line);
