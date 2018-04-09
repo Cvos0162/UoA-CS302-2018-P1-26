@@ -45,27 +45,7 @@ public class MainApp extends Application {
 		this.primaryStage.setHeight(720);
 		this.primaryStage.setResizable(false);
 		this.primaryStage.show();
-		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
-			@Override
-		    public void handle(WindowEvent event) {
-				Alert alert = new Alert(AlertType.CONFIRMATION);
-				alert.setTitle("Quit Confirmation");
-				alert.setHeaderText("You are about to quit");
-				alert.setContentText("Do you really want to quit?");
-				alert.initModality(Modality.APPLICATION_MODAL);
-				alert.initOwner(primaryStage);
-				
-				ButtonType yes = new ButtonType("Yes", ButtonData.YES);
-				ButtonType no = new ButtonType("No", ButtonData.NO);
-
-				alert.getButtonTypes().setAll(yes, no);
-				
-				Optional<ButtonType> result = alert.showAndWait();
-					if (result.get() == no) {
-						event.consume();
-					}
-		        }
-			});
+		
 	}
 	
 	public void initEvent(Canvas canvas, GameController control) {
