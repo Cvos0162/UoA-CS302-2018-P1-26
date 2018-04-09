@@ -25,7 +25,6 @@ public class Level {
 		return objects;
 	}
 	public Level(int world, int stage) {	
-		//TODO: this function has to load a level design according to its world and stage selected 
 		System.out.println("world : " + world);
 		System.out.println("stage : " + stage);
 		System.out.println("initialising level");
