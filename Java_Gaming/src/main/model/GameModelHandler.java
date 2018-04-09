@@ -1,6 +1,8 @@
 package main.model;
 
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
@@ -22,13 +24,13 @@ public class GameModelHandler {
 	public ArrayList<Object> getObjects() { return objects; }
 	private void addObject(Object obj) { objects.add(obj); }
 	private void addObject(ArrayList<Object> obj) { objects.addAll(obj); }
-	private void removeObject(Object obj) { objects.remove(obj); }
-	private void removeObject(ArrayList<Object> obj) {objects.removeAll(obj);}
+	private void removeObject(Object obj) {{objects.remove(obj); obj = null;}}
+	private void removeObject(ArrayList<Object> obj) {objects.removeAll(obj); obj.clear();}
 	public ArrayList<Text> getTexts() { return texts; }
 	private void addText(Text text) { texts.add(text); }
 	private void addText(ArrayList<Text> text) { texts.addAll(text); }
-	private void removeText(Text text) { texts.remove(text); }
-	private void removeText(ArrayList<Text> text) {texts.removeAll(text);}
+	private void removeText(Text text) { texts.remove(text); text = null;}
+	private void removeText(ArrayList<Text> text) {texts.removeAll(text); text.clear();}
 	
 	//init classes
 	public void initStart() { start = new Start(); }
@@ -40,59 +42,15 @@ public class GameModelHandler {
 		Object side;
 		Level level;
 		
+		boolean inCountdown;
+		boolean inPause;
+		Text count = null;
+		Text pause = null;
+		
 		MovePressed movePressed = new MovePressed();
 		
-		public class MovePressed {
-			boolean up = false;
-			boolean down = false;
-			boolean left = false;
-			boolean right = false;
-			
-			public boolean getMovePressed(Direction d) {
-				switch(d) {
-				case UP:
-					return up;
-				case DOWN:
-					return down;
-				case LEFT:
-					return left;
-				case RIGHT:
-					return right;
-				default:
-					return false;
-				}
-			}
-			
-			public void setMovePressed(Direction d, boolean b) {
-				switch(d) {
-				case UP: 
-					up = b;
-					break;
-				case DOWN: 
-					down = b;
-					break;
-				case LEFT:
-					left = b;
-					break;
-				case RIGHT:
-					right = b;
-					break;
-				}
-			}
-		}
+				
 		
-		public SingleInGame(int world, int stage) {
-			objects.clear();
-			texts.clear();
-
-			top = new Object(new Position(0,0), new Image("/resource/test_InGameTop.png"));
-			addObject(top);
-			side = new Object(new Position(1150, 70), new Image("resource/test_InGameRightSide.png"));
-			addObject(side);
-			level = new Level(world + 1, stage + 1);
-			addObject(level.getObjectList());
-			
-		}
 		public void update() {
 				protagonistMove();
 		}
@@ -290,6 +248,105 @@ public class GameModelHandler {
 		public void useAbility() {
 			
 		}
+		
+		public class MovePressed {
+			boolean up = false;
+			boolean down = false;
+			boolean left = false;
+			boolean right = false;
+			
+			public boolean getMovePressed(Direction d) {
+				switch(d) {
+				case UP:
+					return up;
+				case DOWN:
+					return down;
+				case LEFT:
+					return left;
+				case RIGHT:
+					return right;
+				default:
+					return false;
+				}
+			}
+			
+			public void setMovePressed(Direction d, boolean b) {
+				switch(d) {
+				case UP: 
+					up = b;
+					break;
+				case DOWN: 
+					down = b;
+					break;
+				case LEFT:
+					left = b;
+					break;
+				case RIGHT:
+					right = b;
+					break;
+				}
+			}
+		}
+		public boolean getCountdownFlag() {
+			return inCountdown;
+		}
+		public boolean getPauseFlag() {
+			return inPause;
+		}
+		public void setPause(boolean b) {
+			if (b) {
+				if (count != null) removeText(count);
+				pause = new Text(new Position(575, 325), 200, "Paused", 24, Color.BLACK);
+				addText(pause);
+				inPause = b;
+			} else {
+				if (count != null) addText(count);
+				removeText(pause);
+				inPause = b;
+			}
+		}
+		
+		public SingleInGame(int world, int stage) {
+			objects.clear();
+			texts.clear();
+
+			top = new Object(new Position(0,0), new Image("/resource/test_InGameTop.png"));
+			addObject(top);
+			side = new Object(new Position(1150, 70), new Image("resource/test_InGameRightSide.png"));
+			addObject(side);
+			level = new Level(world + 1, stage + 1);
+			addObject(level.getObjectList());
+			
+			count = new Text(new Position(575, 325), 99, 3, 24, Color.BLACK);
+			addText(count);
+			inCountdown = true;
+			inPause = false;
+			Timer timer = new Timer();
+			TimerTask counter = new TimerTask() {
+				@Override
+				public void run() {
+					System.out.println(count.getString());
+					if (count.getString().equals("1")) {
+						System.out.println("timertask canceled!");
+						count.setString("Start!");
+						inCountdown = false;
+						timer.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								removeText(count);
+								count = null;
+							}
+							
+						}, 1000l);
+						this.cancel();
+					} else {
+						if (inPause == false)
+						count.setString(Integer.valueOf(count.getString()) - 1);
+					}
+				}
+			};
+			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
+		}
 	}
 	
 	
@@ -309,7 +366,7 @@ public class GameModelHandler {
 		ArrayList<Object> stage_buttons;
 		ArrayList<Text> stage_texts;
 
-		Object pointer;
+		Object pointer = null;
 		
 		boolean sel = false;
 		int world = 0;
@@ -360,7 +417,6 @@ public class GameModelHandler {
 		}
 		public void showSelected() {
 			removeObject(pointer);
-			pointer = null;
 			Position pos;
 			Position size;
 			if (sel){

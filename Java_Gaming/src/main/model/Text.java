@@ -25,6 +25,12 @@ public class Text {
 		this.font = new Font("Calibri", size);
 	}
 	
+	public void setString(String string) {
+		this.string = string;
+	}
+	public void setString(int string) {
+		this.string = "" + string;
+	}
 	public Font getFont() {
 		return font;
 	}

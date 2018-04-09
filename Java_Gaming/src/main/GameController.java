@@ -2,9 +2,12 @@ package main;
 
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import main.model.GameModelHandler;
+import main.model.Position;
+import main.model.Text;
 import main.view.Colour;
 import main.view.GameViewer;
 
@@ -177,10 +180,15 @@ public class GameController {
 			case DOWN:
 			case RIGHT:
 			case LEFT:
-				model.singleInGame.pressMove(code);
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.pressMove(code);
 				break;
 			case ENTER:
-				model.singleInGame.useAbility();
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.useAbility();
+				break;
+			case P:
+				model.singleInGame.setPause(!model.singleInGame.getPauseFlag());
 				break;
 			default:
 				break;
@@ -199,7 +207,8 @@ public class GameController {
 			case DOWN:
 			case RIGHT:
 			case LEFT:
-				model.singleInGame.releaseMove(code);
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.releaseMove(code);
 				break;
 			default:
 				break;
@@ -219,7 +228,8 @@ public class GameController {
 			model.singleStageSel.update();
 			break;
 		case SINGLE_IN_GAME:
-			model.singleInGame.update();
+			if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+				model.singleInGame.update();
 			break;
 		case EXIT:
 			break;
