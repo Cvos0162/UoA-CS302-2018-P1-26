@@ -15,14 +15,22 @@ public class Level {
 	int stage;
 	ArrayList<Wall> walls;
 	Protagonist pro;
+	Item item;
+	ArrayList<Pellet> pellets;
 	public Protagonist getPro() {
 		return pro;
+	}
+	public Item getItem() {
+		return item;
 	}
 	public ArrayList<Wall> getWalls() {
 		return walls;
 	}
 	public ArrayList<Object> getObjectList() {
 		return objects;
+	}
+	public ArrayList<Pellet> getPellets() {
+		return pellets;
 	}
 	public Level(int world, int stage) {	
 		//TODO: this function has to load a level design according to its world and stage selected 
@@ -41,6 +49,7 @@ public class Level {
 			BufferedReader bufferedReader = new BufferedReader(fileReader);
 			objects = new ArrayList<Object>();
 			walls = new ArrayList<Wall>();
+			pellets = new ArrayList<Pellet>();
 			int j = 0;
 			while ((line = bufferedReader.readLine()) != null) {
 				for (int i = 0; i < line.length(); i++) {
@@ -58,6 +67,19 @@ public class Level {
 						objects.add(pro);
 					}
 					
+					if (id == '*') {
+						pos = new Position(25*i + 12.5, 25*j+82.5);
+						Pellet pallet = new Pellet(pos, new Position(5,5), new Image("/resource/circle.png"));
+						objects.add(pallet);
+						pellets.add(pallet);
+						
+					}
+					
+					if (id == '#') {
+						pos = new Position(25*i + 2.5, 25*j+72.5);
+						item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
+						objects.add(item);
+					}
 				}
 				j++;
 				System.out.println(line);

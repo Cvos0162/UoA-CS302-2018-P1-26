@@ -7,15 +7,18 @@ public class Protagonist extends Character{
 	private int life;
 	private Ability storedAbility;
 	boolean alive;
+	boolean item;
 	
 	
 	public Protagonist(Position cornor_1, Image im) {
 		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		item = false;
 	}
 	public Protagonist(Position cornor_1, Position size, Image im) {
 		super(cornor_1, size, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		item = false;
 	}
 	private void setLife(int life) {
 		this.life = life;

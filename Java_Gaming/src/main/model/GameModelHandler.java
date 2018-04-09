@@ -56,19 +56,53 @@ public class GameModelHandler {
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideTop(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 5);
+			for(int i = 0; i < level.getPellets().size(); i++ ) {
+				if(level.getPro().isCollideTop(level.getPellets().get(i))) {
+					removeObject(level.getPellets().get(i));	
+				}
+			}	
 			
+			if(level.getPro().isCollideTop(level.getItem())) {
+				removeObject(level.getItem());	
+				level.getPro().item = true;
+				
+			}
 		}
 		public void moveDown() {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + 5);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideBottom(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - 5);
+			for(int i = 0; i < level.getPellets().size(); i++ ) {
+				if(level.getPro().isCollideBottom(level.getPellets().get(i))) {
+					removeObject(level.getPellets().get(i));
+					
+				}
+			}	
+			
+			if(level.getPro().isCollideBottom(level.getItem())) {
+				removeObject(level.getItem());
+				
+				
+				
+			}
 		}
 		public void moveRight() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() + 5, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideRight(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX() - 5, level.getPro().getPosition().getY());
+		
+			for(int i = 0; i < level.getPellets().size(); i++ ) {
+				if(level.getPro().isCollideRight(level.getPellets().get(i))) {
+					removeObject(level.getPellets().get(i));
+					
+				}
+			}
+			
+			if(level.getPro().isCollideRight(level.getItem())) 
+				removeObject(level.getItem());
+		
 		}
 		public void moveLeft() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() - 5, level.getPro().getPosition().getY());
@@ -76,16 +110,19 @@ public class GameModelHandler {
 				if(level.getWalls().get(i).isCollideLeft(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX() + 5, level.getPro().getPosition().getY());
 		
+			for(int i = 0; i < level.getPellets().size(); i++ ) {
+				if(level.getPro().isCollideLeft(level.getPellets().get(i))) {
+					removeObject(level.getPellets().get(i));
+					
+				}
+			}
 			
+			if(level.getPro().isCollideLeft(level.getItem())) 
+				removeObject(level.getItem());
 		}	
 		public void useAbility() {
 			
 		}
-	
-		
-	
-	
-	
 	}
 	
 	

@@ -4,17 +4,17 @@ import java.util.ArrayList;
 
 import javafx.scene.image.Image;
 
-public class Pallet extends Object{
+public class Pellet extends Object{
 
 	private int score;
 	boolean consumed;
 
-	public Pallet(Position cornor_1, Image im) {
-		super(cornor_1, im);
+	public Pellet(Position cornor_1,Position size, Image im) {
+		super(cornor_1, size, im);
 		
 	}
 	
-	private void setPalletScore(int score){
+	private void setPelletScore(int score){
 		this.score = score;
 	}
 	

@@ -2,10 +2,10 @@ package main.model;
 
 import javafx.scene.image.Image;
 
-public class Item extends Pallet{
+public class Item extends Pellet{
 
-	public Item(Position cornor_1, Image im) {
-		super(cornor_1, im);
+	public Item(Position cornor_1,Position size, Image im) {
+		super(cornor_1, size, im);
 		
 	}
 	
