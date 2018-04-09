@@ -73,13 +73,11 @@ public class MainApp extends Application {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tMouse Position x: "+ event.getX() + "y: " + event.getY());
 		        control.takeMouseClicked(event.getX(),event.getY());
-		        event.consume();
 		    }
 		    });
 		canvas.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
 		        control.takeMouseMoved(event.getX(),event.getY());
-		        event.consume();
 		    }
 		    });
 		canvas.setFocusTraversable(true);
@@ -87,10 +85,16 @@ public class MainApp extends Application {
 		    public void handle(KeyEvent event) {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tKey: " + event.getText());
-		        control.takeKeyInput(event.getCode());
-		        event.consume();
+		        control.takeKeyPressed(event.getCode());
 		    }
 		    });
+		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent event) {
+				System.out.println("Handling event " + event.getEventType()
+        		+ "\tKey: " + event.getText());
+				control.takeKeyReleased(event.getCode());
+			}
+		});
 		
 	}
 	

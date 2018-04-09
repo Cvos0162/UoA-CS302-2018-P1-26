@@ -98,7 +98,7 @@ public class GameController {
 			break;
 		}
 	}
-	public void takeKeyInput(KeyCode code) {
+	public void takeKeyPressed(KeyCode code) {
 		switch(gState) {
 		case START:
 			switch (code) {
@@ -174,16 +174,10 @@ public class GameController {
 				initState();
 				break;
 			case UP:
-				model.singleInGame.moveUp();
-				break;
 			case DOWN:
-				model.singleInGame.moveDown();
-				break;
 			case RIGHT:
-				model.singleInGame.moveRight();
-				break;
 			case LEFT:
-				model.singleInGame.moveLeft();
+				model.singleInGame.pressMove(code);
 				break;
 			case ENTER:
 				model.singleInGame.useAbility();
@@ -197,6 +191,25 @@ public class GameController {
 		}
 	}
 	
+	public void takeKeyReleased(KeyCode code) {
+		switch(gState) {
+		case SINGLE_IN_GAME:
+			switch(code) {
+			case UP:
+			case DOWN:
+			case RIGHT:
+			case LEFT:
+				model.singleInGame.releaseMove(code);
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
+			break;
+		}
+	}
+	
 	public void gameUpdate() {
 		switch(gState) {
 		case START:
@@ -206,6 +219,7 @@ public class GameController {
 			model.singleStageSel.update();
 			break;
 		case SINGLE_IN_GAME:
+			model.singleInGame.update();
 			break;
 		case EXIT:
 			break;

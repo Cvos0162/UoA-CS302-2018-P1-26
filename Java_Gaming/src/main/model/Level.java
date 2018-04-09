@@ -62,43 +62,36 @@ public class Level {
 					if (id >= 'a' && id <= 'p') {
 						String impath = "/resource/test_Wall_" + id + ".png";
 						Wall wall = new Wall(pos, new Image(impath));
-						objects.add(wall);
 						walls.add(wall);
 					}
 					if (id == '0') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						pro = new Protagonist(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"));
-						objects.add(pro);
 					}
 					
 					if (id == '1') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.RAINBOW_STAR);
-						objects.add(ghost);
 						ghosts.add(ghost);
 					}
 					if (id == '2') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.NURSE);
-						objects.add(ghost);
 						ghosts.add(ghost);
 					}
 					if (id == '3') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.WIZARD);
-						objects.add(ghost);
 						ghosts.add(ghost);
 					}
 					if (id == '4') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.ICE);
-						objects.add(ghost);
 						ghosts.add(ghost);
 					}
 					if (id == '5') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
 						Ghost ghost = new Ghost(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"), Ability.NINJA);
-						objects.add(ghost);
 						ghosts.add(ghost);
 					}
 					
@@ -106,7 +99,6 @@ public class Level {
 					if (id == '*') {
 						pos = new Position(25*i + 12.5, 25*j+82.5);
 						Pellet pallet = new Pellet(pos, new Position(5,5), new Image("/resource/pellet.png"));
-						objects.add(pallet);
 						pellets.add(pallet);
 						
 					}
@@ -114,13 +106,17 @@ public class Level {
 					if (id == '#') {
 						pos = new Position(25*i + 2.5, 25*j+72.5);
 						item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
-						objects.add(item);
 					}
 				}
 				j++;
 				System.out.println(line);
 			}
 			bufferedReader.close();
+			objects.addAll(walls);
+			objects.addAll(pellets);
+			objects.add(getItem());
+			objects.add(pro);
+			objects.addAll(ghosts);
 		} catch(FileNotFoundException ex) {
 			System.out.println("Unable to open file '" + path + "'");                
 		} catch(IOException ex) {
