@@ -61,6 +61,7 @@ public class GameModelHandler {
 		double speed = 2.5;
 		
 		Text count = null;
+		Text gameCount = null;
 		Text pause = null;
 		Text gameFinishText = null;
 		
@@ -106,8 +107,8 @@ public class GameModelHandler {
 					}
 				}
 				else {
-						ghostMove(i,rand.nextInt(2)+1, speed);
-						ghostMove(i,rand.nextInt(4)+3, speed);
+					ghostMove(i,rand.nextInt(2)+1, speed);
+					ghostMove(i,rand.nextInt(4)+3, speed);
 				}
 					
 				
@@ -145,42 +146,53 @@ public class GameModelHandler {
 		
 		public void gameFinish() {
 			if(!gameFinish) {
-				ArrayList<Object> buttons;
-				buttons = new ArrayList<Object>();
 				if(!level.getPro().alive) {
-					System.out.println("Game Lost");
-					gameFinishText = new Text(new Position(450, 200), 250, "Game Lost", 50, Color.BLACK);
-					addText(gameFinishText);
-				
-					background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-					menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-					retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
-				
-					buttons.add(background);
-					buttons.add(menu_button);
-					buttons.add(retry_button);
-				
-					addObject(buttons);
 					gameWin = false;
 					gameFinish = true;
 				}
 				else if(level.getPellets().isEmpty() && level.getItem().isEmpty()) {
-					System.out.println("Game Won");
-					gameFinishText = new Text(new Position(450, 200), 250, "Game Won", 50, Color.BLACK);
-					addText(gameFinishText);
-					
-					background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-					menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-					next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_Arrow.png"));
-
-					buttons.add(background);
-					buttons.add(menu_button);
-					buttons.add(next_round_button);
-				
-					addObject(buttons);
 					gameWin = true;
 					gameFinish = true;
+				} else if (gameCount.getString() == "0:00") {
+					gameWin = false;
+					gameFinish = true;
 				}
+			} else {
+				showFinish(gameWin);
+			}
+		}
+		
+		public void showFinish(boolean win) {
+
+			ArrayList<Object> buttons = new ArrayList<Object>();
+			if (win) {
+				System.out.println("Game Won");
+				gameFinishText = new Text(new Position(450, 200), 250, "Game Won", 50, Color.BLACK);
+				addText(gameFinishText);
+				
+				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
+				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_Arrow.png"));
+
+				buttons.add(background);
+				buttons.add(menu_button);
+				buttons.add(next_round_button);
+			
+				addObject(buttons);				
+			} else {
+				System.out.println("Game Lost");
+				gameFinishText = new Text(new Position(450, 200), 250, "Game Lost", 50, Color.BLACK);
+				addText(gameFinishText);
+				
+				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
+				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
+		
+				buttons.add(background);
+				buttons.add(menu_button);
+				buttons.add(retry_button);
+		
+				addObject(buttons);
 			}
 		}
 		
@@ -455,6 +467,9 @@ public class GameModelHandler {
 		public boolean getPauseFlag() {
 			return inPause;
 		}
+		public void setTimerTo_0() {
+			gameCount.setString("0:00");
+		}
 		public void setPause(boolean b) {
 			if (b) {
 				if (count != null) removeText(count);
@@ -481,7 +496,7 @@ public class GameModelHandler {
 			
 			count = new Text(new Position(575, 325), 99, 3, 24, Color.BLACK);
 			addText(count);
-			Text gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);
+			gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);
 			addText(gameCount);
 			inCountdown = true;
 			inPause = false;
@@ -494,8 +509,7 @@ public class GameModelHandler {
 					int sec = Integer.valueOf(timerString[1]);
 					if (!inPause) {
 						if (min == 0 && sec == 0) {
-							//TODO: gameLost
-							removeText(gameCount);
+							gameFinish();
 							this.cancel();
 						} else if (sec == 0 && min != 0) {
 								min--;
@@ -536,8 +550,6 @@ public class GameModelHandler {
 				}
 			};
 			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
-			
-			
 		}
 	}
 	

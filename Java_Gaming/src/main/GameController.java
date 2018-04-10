@@ -233,6 +233,9 @@ public class GameController {
 				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
 					model.singleInGame.releaseMove(code);
 				break;
+			case PAGE_DOWN:
+				model.singleInGame.setTimerTo_0();
+				break;
 			default:
 				break;
 			}
