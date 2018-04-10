@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
@@ -24,6 +25,7 @@ public class MainApp extends Application {
 	private Stage primaryStage;
 	private GameController control;
 	private GraphicsContext graphic;
+	private AnimationTimer gameLoop;
 	
 	public void init(Stage primaryStage) {
 		this.primaryStage = primaryStage;
@@ -56,8 +58,14 @@ public class MainApp extends Application {
 					controller.setStage(newWindow);
 					newWindow.setTitle("Quit Confirmation");
 					newWindow.setResizable(false);
-					newWindow.initModality(Modality.APPLICATION_MODAL);
+					newWindow.initModality(Modality.WINDOW_MODAL);
 					newWindow.initOwner(primaryStage);
+					newWindow.setOnCloseRequest(new EventHandler<WindowEvent>() {
+						@Override
+						public void handle(WindowEvent e) {
+							event.consume();
+						}
+					});
 			        newWindow.showAndWait();
 				} catch (IOException e) {
 					e.printStackTrace();
@@ -100,12 +108,11 @@ public class MainApp extends Application {
 	
 	@Override
 	public void start(Stage primaryStage) {
-		
 		init(primaryStage);
 		
 		initEvent(canvas, control);
 		
-		AnimationTimer gameLoop = new AnimationTimer() {
+		gameLoop = new AnimationTimer() {
 			
 			@Override
 			public void handle(long now) {	
