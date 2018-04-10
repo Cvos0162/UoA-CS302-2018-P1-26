@@ -36,8 +36,14 @@ public class Level {
 	public void removePellets(Pellet p) {
 		pellets.remove(p);
 	}
+	public void removePro() {
+		pro = null;
+	}
 	public void removeItems(Item i) {
 		items.remove(i);
+	}
+	public void removeGhosts(Ghost g) {
+		ghosts.remove(g);
 	}
 	public ArrayList<Ghost> getGhosts() {
 		return ghosts;
@@ -82,7 +88,7 @@ public class Level {
 					}
 					if (id == '0') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
-						pro = new Protagonist(pos, new Position(24.4,24.4), new Image("/resource/Untitled.png"));
+						pro = new Protagonist(pos, new Position(24.4,24.4), new Image("/resource/pro.png"));
 					}
 					
 					if (id == '1') {
