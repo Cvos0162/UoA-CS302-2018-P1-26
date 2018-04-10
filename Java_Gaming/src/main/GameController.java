@@ -6,6 +6,7 @@ import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import main.model.GameModelHandler;
+import main.model.Level;
 import main.model.Position;
 import main.model.Text;
 import main.view.Colour;
@@ -25,6 +26,7 @@ public class GameController {
 	private GameViewer view;
 	private GameModelHandler model;
 	private State gState;
+	private Level level;
 	
 	public void takeMouseClicked(double x, double y) {
 		switch(gState) {
@@ -35,6 +37,8 @@ public class GameController {
 			}
 			break;
 		case SINGLE_STAGE_SEL:
+					
+			
 			if (model.singleStageSel.getSel()) {
 				
 				switch(model.singleStageSel.selectMouse_stage(x, y)) {
@@ -82,6 +86,24 @@ public class GameController {
 			}
 			break;
 		case SINGLE_IN_GAME:
+			if(model.singleInGame.getGameFinish()) {
+				switch(model.singleInGame.nextRound(x, y)) {
+				case 0:
+					break;
+				case 1:
+					gState = State.SINGLE_STAGE_SEL;
+					initState();
+					break;
+				case 2:
+					model.singleInGame.initLevel();
+					break;
+				case 3:
+					model.singleInGame.initNextLevel();
+					break;
+					
+
+				}
+			}
 			break;
 		case EXIT:
 			break;
@@ -180,7 +202,7 @@ public class GameController {
 			case DOWN:
 			case RIGHT:
 			case LEFT:
-				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.pressMove(code);
 				break;
 			case ENTER:

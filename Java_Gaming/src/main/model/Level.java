@@ -15,14 +15,14 @@ public class Level {
 	int stage;
 	ArrayList<Wall> walls;
 	Protagonist pro;
-	Item item;
 	ArrayList<Pellet> pellets;
 	ArrayList<Ghost> ghosts;
+	ArrayList<Item> items;
 	public Protagonist getPro() {
 		return pro;
 	}
-	public Item getItem() {
-		return item;
+	public ArrayList<Item> getItem() {
+		return items;
 	}
 	public ArrayList<Wall> getWalls() {
 		return walls;
@@ -33,10 +33,25 @@ public class Level {
 	public ArrayList<Pellet> getPellets() {
 		return pellets;
 	}
+	public void removePellets(Pellet p) {
+		pellets.remove(p);
+	}
+	public void removeItems(Item i) {
+		items.remove(i);
+	}
 	public ArrayList<Ghost> getGhosts() {
 		return ghosts;
 	}
+	public int getWorld() {
+		return world;
+	}
+	public int getStage() {
+		return stage;
+	}
+	
 	public Level(int world, int stage) {	
+		this.world = world - 1;
+		this.stage = stage - 1;
 		System.out.println("world : " + world);
 		System.out.println("stage : " + stage);
 		System.out.println("initialising level");
@@ -54,6 +69,7 @@ public class Level {
 			walls = new ArrayList<Wall>();
 			pellets = new ArrayList<Pellet>();
 			ghosts = new ArrayList<Ghost>();
+			items = new ArrayList<Item>();
 			int j = 0;
 			while ((line = bufferedReader.readLine()) != null) {
 				for (int i = 0; i < line.length(); i++) {
@@ -105,7 +121,8 @@ public class Level {
 					
 					if (id == '#') {
 						pos = new Position(25*i + 2.5, 25*j+72.5);
-						item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
+						Item item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
+						items.add(item);
 					}
 				}
 				j++;
@@ -114,7 +131,7 @@ public class Level {
 			bufferedReader.close();
 			objects.addAll(walls);
 			objects.addAll(pellets);
-			objects.add(getItem());
+			objects.addAll(items);
 			objects.add(pro);
 			objects.addAll(ghosts);
 		} catch(FileNotFoundException ex) {
