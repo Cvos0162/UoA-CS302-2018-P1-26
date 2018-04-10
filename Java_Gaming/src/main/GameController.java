@@ -211,6 +211,7 @@ public class GameController {
 				break;
 			case P:
 				model.singleInGame.setPause(!model.singleInGame.getPauseFlag());
+				model.singleInGame.releaseMove(code);
 				break;
 			default:
 				break;

@@ -283,6 +283,9 @@ public class GameModelHandler {
 			case RIGHT:
 				movePressed.setMovePressed(Direction.RIGHT, false);
 				break;
+			case P:
+				movePressed.setMovePressed(Direction.ALL, false);
+				break;
 			}
 		}
 
@@ -437,6 +440,12 @@ public class GameModelHandler {
 				case RIGHT:
 					right = b;
 					break;
+				case ALL:
+					up = b;
+					down = b;
+					left = b;
+					right = b;
+					break;
 				}
 			}
 		}
@@ -472,9 +481,38 @@ public class GameModelHandler {
 			
 			count = new Text(new Position(575, 325), 99, 3, 24, Color.BLACK);
 			addText(count);
+			Text gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);
+			addText(gameCount);
 			inCountdown = true;
 			inPause = false;
 			Timer timer = new Timer();
+			TimerTask gameTimerTask = new TimerTask() {
+				@Override
+				public void run() {
+					String timerString[] = gameCount.getString().split(":");
+					int min = Integer.valueOf(timerString[0]);
+					int sec = Integer.valueOf(timerString[1]);
+					if (!inPause) {
+						if (min == 0 && sec == 0) {
+							//TODO: gameLost
+							removeText(gameCount);
+							this.cancel();
+						} else if (sec == 0 && min != 0) {
+								min--;
+								sec = 59;
+						} else {
+							sec--;
+						}
+						String minStr = String.valueOf(min);
+						String secStr = String.valueOf(sec);
+						if (secStr.length() == 1) {
+							secStr = 0 + secStr;
+						}
+						
+						gameCount.setString(minStr + ":" + secStr);
+					}
+				}
+			};
 			TimerTask counter = new TimerTask() {
 				@Override
 				public void run() {
@@ -487,14 +525,13 @@ public class GameModelHandler {
 							@Override
 							public void run() {
 								removeText(count);
-								count = null;
+								timer.scheduleAtFixedRate(gameTimerTask, 1000l, 1000l);
 							}
-							
 						}, 1000l);
 						this.cancel();
 					} else {
-						if (inPause == false)
-						count.setString(Integer.valueOf(count.getString()) - 1);
+						if (!inPause)
+							count.setString(Integer.valueOf(count.getString()) - 1);
 					}
 				}
 			};

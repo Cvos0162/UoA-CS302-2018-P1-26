@@ -8,6 +8,7 @@ import javafx.stage.WindowEvent;
 public class QuitController {
 	WindowEvent e;
 	Stage s;
+	Thread t;
 	@FXML
 	private Button yesButton;
 	@FXML
@@ -22,10 +23,14 @@ public class QuitController {
 	private void pressYes() {
 		s.close();
 	}
+	
 	public void setEvent(WindowEvent e) {
 		this.e = e;
 	}
 	public void setStage(Stage s) {
 		this.s = s;
+	}
+	public void setThread(Thread t) {
+		this.t = t;
 	}
 }
