@@ -1,12 +1,13 @@
 package main;
 
-import javafx.event.Event;
-import javafx.event.EventHandler;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 import main.model.GameModelHandler;
+import main.model.Position;
+import main.model.Text;
 import main.view.Colour;
 import main.view.GameViewer;
 
@@ -100,7 +101,7 @@ public class GameController {
 			break;
 		}
 	}
-	public void takeKeyInput(KeyCode code) {
+	public void takeKeyPressed(KeyCode code) {
 		switch(gState) {
 		case START:
 			switch (code) {
@@ -176,25 +177,44 @@ public class GameController {
 				initState();
 				break;
 			case UP:
-				model.singleInGame.moveUp();
-				break;
 			case DOWN:
-				model.singleInGame.moveDown();
-				break;
 			case RIGHT:
-				model.singleInGame.moveRight();
-				break;
 			case LEFT:
-				model.singleInGame.moveLeft();
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.pressMove(code);
 				break;
 			case ENTER:
-				model.singleInGame.useAbility();
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.useAbility();
+				break;
+			case P:
+				model.singleInGame.setPause(!model.singleInGame.getPauseFlag());
 				break;
 			default:
 				break;
 			}
 			break;
 		case EXIT:
+			break;
+		}
+	}
+	
+	public void takeKeyReleased(KeyCode code) {
+		switch(gState) {
+		case SINGLE_IN_GAME:
+			switch(code) {
+			case UP:
+			case DOWN:
+			case RIGHT:
+			case LEFT:
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+					model.singleInGame.releaseMove(code);
+				break;
+			default:
+				break;
+			}
+			break;
+		default:
 			break;
 		}
 	}
@@ -208,6 +228,8 @@ public class GameController {
 			model.singleStageSel.update();
 			break;
 		case SINGLE_IN_GAME:
+			if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+				model.singleInGame.update();
 			break;
 		case EXIT:
 			break;

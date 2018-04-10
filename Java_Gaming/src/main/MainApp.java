@@ -1,20 +1,18 @@
 package main;
 
-import java.util.Optional;
+import java.io.IOException;
 
 import javafx.animation.AnimationTimer;
 import javafx.application.Application;
 import javafx.event.EventHandler;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.canvas.Canvas;
 import javafx.scene.canvas.GraphicsContext;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Alert.AlertType;
-import javafx.scene.control.ButtonBar.ButtonData;
-import javafx.scene.control.ButtonType;
 import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -45,6 +43,27 @@ public class MainApp extends Application {
 		this.primaryStage.setHeight(720);
 		this.primaryStage.setResizable(false);
 		this.primaryStage.show();
+		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
+			@Override
+			public void handle(WindowEvent event) {
+				try {
+					FXMLLoader loader = new FXMLLoader();
+					loader.setLocation(MainApp.class.getResource("view/quitConfirmationWIndow.fxml"));
+					Stage newWindow = new Stage();
+					newWindow.setScene(new Scene((BorderPane)loader.load()));
+					QuitController controller = loader.getController();
+					controller.setEvent(event);
+					controller.setStage(newWindow);
+					newWindow.setTitle("Quit Confirmation");
+					newWindow.setResizable(false);
+					newWindow.initModality(Modality.APPLICATION_MODAL);
+					newWindow.initOwner(primaryStage);
+			        newWindow.showAndWait();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		});
 		
 	}
 	
@@ -54,13 +73,11 @@ public class MainApp extends Application {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tMouse Position x: "+ event.getX() + "y: " + event.getY());
 		        control.takeMouseClicked(event.getX(),event.getY());
-		        event.consume();
 		    }
 		    });
 		canvas.addEventHandler(MouseEvent.MOUSE_MOVED, new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
 		        control.takeMouseMoved(event.getX(),event.getY());
-		        event.consume();
 		    }
 		    });
 		canvas.setFocusTraversable(true);
@@ -68,10 +85,16 @@ public class MainApp extends Application {
 		    public void handle(KeyEvent event) {
 		        System.out.println("Handling event " + event.getEventType()
 		        		+ "\tKey: " + event.getText());
-		        control.takeKeyInput(event.getCode());
-		        event.consume();
+		        control.takeKeyPressed(event.getCode());
 		    }
 		    });
+		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
+			public void handle(KeyEvent event) {
+				System.out.println("Handling event " + event.getEventType()
+        		+ "\tKey: " + event.getText());
+				control.takeKeyReleased(event.getCode());
+			}
+		});
 		
 	}
 	
