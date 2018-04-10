@@ -117,21 +117,13 @@ public class GameModelHandler {
 						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 					}
 				}
-<<<<<<< HEAD
+
 				else
 					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-			
-			}		
-=======
-				else {
-					ghostMove(i,rand.nextInt(2)+1, speed);
-					ghostMove(i,rand.nextInt(4)+3, speed);
-				}
 					
 				
 			}
-		
->>>>>>> f20371e2329c9cf4b0cac3f698c80249db86ee83
+
 		}
 		
 		public void ghostMove(int i, Direction direction, double speed) {
