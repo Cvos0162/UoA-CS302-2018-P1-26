@@ -61,7 +61,8 @@ public class GameModelHandler {
 		double speed = 2.5;
 		Random rand = new Random();
 
-		
+		PlayerInfo info;
+		Text playerScore = null;
 		Text count = null;
 		Text gameCount = null;
 		Text pause = null;
@@ -78,7 +79,9 @@ public class GameModelHandler {
 		
 		public void update() {
 			proAlive();
-			gameFinish();
+			if (!gameFinish) { 
+				gameFinish();
+			}
 			protagonistMove();
 			if(!gameFinish) {
 				ghostAi();
@@ -247,19 +250,21 @@ public class GameModelHandler {
 		}
 		
 		public void gameFinish() {
-			if(!gameFinish) {
-				if(!level.getPro().alive) {
-					gameWin = false;
-					gameFinish = true;
-				}
-				else if(level.getPellets().isEmpty() && level.getItem().isEmpty()) {
-					gameWin = true;
-					gameFinish = true;
-				} else if (gameCount.getString() == "0:00") {
-					gameWin = false;
-					gameFinish = true;
-				}
-			} else {
+			if(!level.getPro().alive) {
+				gameWin = false;
+				gameFinish = true;
+
+				showFinish(gameWin);
+			}
+			else if(level.getPellets().isEmpty() && level.getItem().isEmpty()) {
+				gameWin = true;
+				gameFinish = true;
+
+				showFinish(gameWin);
+			} else if (gameCount.getString() == "0:00") {
+				gameWin = false;
+				gameFinish = true;
+
 				showFinish(gameWin);
 			}
 		}
@@ -296,6 +301,7 @@ public class GameModelHandler {
 		
 				addObject(buttons);
 			}
+			
 		}
 		
 		public boolean getGameFinish() {
@@ -365,6 +371,7 @@ public class GameModelHandler {
 				level.getPro().setDirection(Direction.LEFT);
 				moveLeft();
 			}
+			checkPelletsAndItems();
 		}
 		
 		public void pressMove(KeyCode code) {
@@ -426,95 +433,51 @@ public class GameModelHandler {
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideTop(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
-			for(int i = 0; i < level.getPellets().size(); i++ ) {
-				if(level.getPro().isCollideTop(level.getPellets().get(i))) {
-					removeObject(level.getPellets().get(i));	
-					level.getPro().addScore(level.getPellets().get(i).getScore());
-					level.removePellets(level.getPellets().get(i));
-					
-				}
-			}			
-			for(int i = 0; i < level.getItem().size(); i++ ) {
-				if(level.getPro().isCollideTop(level.getItem().get(i))) {
-					removeObject(level.getItem().get(i));	
-					level.getPro().item = true;
-					level.getPro().addScore(level.getItem().get(i).getScore());
-					level.removeItems(level.getItem().get(i));
-					
-				}
-				
-			}
 		}
 		private void moveDown() {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideBottom(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
-			for(int i = 0; i < level.getPellets().size(); i++ ) {
-				if(level.getPro().isCollideBottom(level.getPellets().get(i))) {
-					removeObject(level.getPellets().get(i));
-					level.getPro().addScore(level.getPellets().get(i).getScore());
-					level.removePellets(level.getPellets().get(i));
-				}
-			}	
-			
-			for(int i = 0; i < level.getItem().size(); i++ ) {
-				if(level.getPro().isCollideBottom(level.getItem().get(i))) {
-					removeObject(level.getItem().get(i));	
-					level.getPro().item = true;
-					level.getPro().addScore(level.getItem().get(i).getScore());
-					level.removeItems(level.getItem().get(i));
-				}
-				
-			}
 		}
 		private void moveRight() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideRight(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
-		
-			for(int i = 0; i < level.getPellets().size(); i++ ) {
-				if(level.getPro().isCollideRight(level.getPellets().get(i))) {
-					removeObject(level.getPellets().get(i));
-					level.getPro().addScore(level.getPellets().get(i).getScore());
-					level.removePellets(level.getPellets().get(i));
-				}
-			}
-		
-			for(int i = 0; i < level.getItem().size(); i++ ) {
-				if(level.getPro().isCollideRight(level.getItem().get(i))) {
-					removeObject(level.getItem().get(i));	
-					level.getPro().item = true;
-					level.getPro().addScore(level.getItem().get(i).getScore());
-					level.removeItems(level.getItem().get(i));
-				}
-				
-			}
 		}
 		private void moveLeft() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideLeft(level.getPro()))
 					level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
-		
+		}
+		private void checkPelletsAndItems() {
 			for(int i = 0; i < level.getPellets().size(); i++ ) {
 				if(level.getPro().isCollideLeft(level.getPellets().get(i))) {
-					removeObject(level.getPellets().get(i));
-					level.getPro().addScore(level.getPellets().get(i).getScore());
-					level.removePellets(level.getPellets().get(i));
+					eatPellet(level.getPellets().get(i));
 				}
 			}
 
 			for(int i = 0; i < level.getItem().size(); i++ ) {
 				if(level.getPro().isCollideLeft(level.getItem().get(i))) {
-					removeObject(level.getItem().get(i));	
-					level.getPro().item = true;
-					level.getPro().addScore(level.getItem().get(i).getScore());
-					level.removeItems(level.getItem().get(i));
+					eatItem(level.getItem().get(i));
 				}
 			}
-		}	
+		}
+		private void eatItem(Item item) {
+			removeObject(item);	
+			level.getPro().item = true;
+			info.addScore(item);
+			playerScore.setString(info.getScore());
+			level.removeItems(item);
+		}
+		private void eatPellet(Pellet pellet) {
+			removeObject(pellet);
+			info.addScore(pellet);
+			playerScore.setString(info.getScore());
+			level.removePellets(pellet);
+		}
 		public void useAbility() {
 			
 		}
@@ -596,6 +559,9 @@ public class GameModelHandler {
 			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
 			
+			info = new PlayerInfo();
+			playerScore = new Text(new Position(1190, 425), 80, info.getScore(), 24, Color.BLACK);
+			addText(playerScore);
 			count = new Text(new Position(575, 325), 99, 3, 24, Color.BLACK);
 			addText(count);
 			gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);

@@ -9,13 +9,10 @@ public class Pellet extends Object{
 	private int score;
 	boolean consumed;
 
-	public Pellet(Position cornor_1,Position size, Image im) {
+	public Pellet(Position cornor_1,Position size, Image im, int score) {
 		super(cornor_1, size, im);
-		
-	}
-	
-	private void setPelletScore(int score){
 		this.score = score;
+		
 	}
 	
 	public int getScore() {

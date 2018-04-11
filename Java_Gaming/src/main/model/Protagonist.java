@@ -41,13 +41,6 @@ public class Protagonist extends Character{
 		return life;
 	}
 	
-	public int getScore() {
-		return score;
-	}
-	
-	public void addScore(int score) {
-		this.score = this.score + score;
-	}
 	
 	private void useAbility(Ability ability) {
 		this.ability = ability;
