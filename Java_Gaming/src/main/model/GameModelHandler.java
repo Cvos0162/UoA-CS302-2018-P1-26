@@ -526,7 +526,10 @@ public class GameModelHandler {
 					int min = Integer.valueOf(timerString[0]);
 					int sec = Integer.valueOf(timerString[1]);
 					if (!inPause) {
-						if (min == 0 && sec == 0) {
+						if (gameFinish) {
+							this.cancel();
+						}
+						else if (min == 0 && sec == 0) {
 							gameFinish();
 							this.cancel();
 						} else if (sec == 0 && min != 0) {
@@ -557,7 +560,7 @@ public class GameModelHandler {
 							@Override
 							public void run() {
 								removeText(count);
-								timer.scheduleAtFixedRate(gameTimerTask, 1000l, 1000l);
+								timer.scheduleAtFixedRate(gameTimerTask, 0l, 1000l);
 							}
 						}, 1000l);
 						this.cancel();
