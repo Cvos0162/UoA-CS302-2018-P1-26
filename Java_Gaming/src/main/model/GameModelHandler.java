@@ -475,6 +475,10 @@ public class GameModelHandler {
 			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
 			
+			Text score = new Text(new Position(1170, 400), 120, "Score :", 24, Color.BLACK);
+			Text time = new Text(new Position(1160, 300), 120, "Time Left :", 24, Color.BLACK);
+			addText(score);
+			addText(time);
 			info = new PlayerInfo();
 			playerScore = new Text(new Position(1190, 425), 80, info.getScore(), 24, Color.BLACK);
 			addText(playerScore);
