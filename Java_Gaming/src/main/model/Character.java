@@ -23,19 +23,8 @@ public class Character extends Object{
 		alive = true;
 	}
 	
-	public void changeDirection(int direction) {
-		if(direction == 1) {
-			this.direction = Direction.UP;
-		}
-		if(direction == 2) {
-			this.direction = Direction.DOWN;
-		}
-		if(direction == 3) {
-			this.direction = Direction.RIGHT;
-		}
-		if(direction == 4) {
-			this.direction = Direction.LEFT;
-		}
+	public void changeDirection(Direction direction) {
+		this.direction = direction;
 	}
 	
 	public void setAlive(boolean alive, ArrayList<Image> im) {

@@ -85,40 +85,124 @@ public class GameModelHandler {
 			protagonistMove();
 			if(!gameFinish) {
 				ghostAi();
+				anotherGhostAi();
 			}
 			isProCollideGhost();
 			
 		}
 		
-		public void ghostAi() {
+		public void anotherGhostAi() {
 			
+			double speed = 2 + level.getWorld()*0.25;
+			double xDiff;
+			double yDiff;
+			for(int i = 1; i < level.getGhosts().size(); i += 2) {
+				int count = 0;
+				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+				if(xDiff == 0 && yDiff < 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX(),level.getPro().getSize().getY() + level.getPro().getPosition().getY()), 
+							new Position (level.getPro().getSize().getX(),-yDiff - level.getPro().getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.UP);
+					}
+				}
+				else if(xDiff == 0 && yDiff > 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX(),level.getGhosts().get(i).getSize().getY() + level.getGhosts().get(i).getPosition().getY()), 
+							new Position (level.getGhosts().get(i).getSize().getX(),yDiff - level.getGhosts().get(i).getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.DOWN);
+					}
+				}
+				else if(yDiff == 0 && xDiff < 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX() + level.getPro().getSize().getX(),level.getPro().getPosition().getY()), 
+							new Position (-xDiff - level.getPro().getSize().getX(), level.getPro().getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.LEFT);
+					}
+				}
+				else if(yDiff == 0 && xDiff > 0) {
+					Object block = new Object(new Position(level.getGhosts().get(i).getPosition().getX() + level.getGhosts().get(i).getSize().getX(),level.getPro().getPosition().getY()), 
+							new Position (xDiff - level.getGhosts().get(i).getSize().getX(), level.getGhosts().get(i).getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+					}
+
+				}
+				ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+		
+				
+				
+			}
+
+		}
+		
+		public Direction getRandomDirection() {
+			int direction = rand.nextInt(4)+1;
+			if(direction == 1) {
+				return Direction.UP;
+			}
+			if(direction == 2) {
+				return Direction.DOWN;
+			}
+			if(direction == 3) {
+				return Direction.RIGHT;
+			}
+			else {
+				return Direction.LEFT;
+			}
+		}
+		
+		public void ghostAi() {
 			double range = 250 + level.getWorld()*50;
 			double speed = 1 + level.getWorld()*0.25;
 			double xDiff;
 			double yDiff;
-			for(int i = 0; i < level.getGhosts().size(); i++) {
+			for(int i = 0; i < level.getGhosts().size(); i += 2) {
 				
 				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
 				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
 				if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range) {
 					if(xDiff < 0 && xDiff > -range){
-						ghostMove(i, Direction.LEFT, speed);
+						level.getGhosts().get(i).changeDirection(Direction.LEFT);
 					}
 					else if(xDiff > 0 && xDiff < range){
-						ghostMove(i, Direction.RIGHT, speed);
+						level.getGhosts().get(i).changeDirection(Direction.RIGHT);
 					}
 					else {
-						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);						
+						level.getGhosts().get(i).changeDirection(getRandomDirection());					
 					}
+					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 					if(yDiff < 0 && yDiff > -range){
-						ghostMove(i, Direction.UP, speed);
+						level.getGhosts().get(i).changeDirection(Direction.UP);
 					}
 					else if(yDiff > 0 && yDiff < range){
-						ghostMove(i, Direction.DOWN, speed);
+						level.getGhosts().get(i).changeDirection(Direction.DOWN);
 					}
 					else {
-						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
 					}
+					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 				}
 
 				else
@@ -126,8 +210,8 @@ public class GameModelHandler {
 					
 				
 			}
-
 		}
+		
 		
 		public void ghostMove(int i, Direction direction, double speed) {
 			
@@ -136,7 +220,7 @@ public class GameModelHandler {
 				for(int j = 0; j < level.getWalls().size(); j++ )
 					if(level.getWalls().get(j).isCollideTop(level.getGhosts().get(i))) {
 						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getGhosts().get(i).getPosition().getY() + speed);
-						level.getGhosts().get(i).changeDirection(rand.nextInt(4)+1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
 					}
 			}
 			if(direction == Direction.DOWN) {
@@ -144,7 +228,7 @@ public class GameModelHandler {
 				for(int j = 0; j < level.getWalls().size(); j++ )
 					if(level.getWalls().get(j).isCollideBottom(level.getGhosts().get(i))) {
 						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getGhosts().get(i).getPosition().getY() - speed);
-						level.getGhosts().get(i).changeDirection(rand.nextInt(4)+1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
 					}
 			}
 			if(direction == Direction.RIGHT) {
@@ -152,7 +236,7 @@ public class GameModelHandler {
 				for(int j = 0; j < level.getWalls().size(); j++ )
 					if(level.getWalls().get(j).isCollideRight(level.getGhosts().get(i))) {
 						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX() - speed, level.getGhosts().get(i).getPosition().getY());
-						level.getGhosts().get(i).changeDirection(rand.nextInt(4)+1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
 					}
 			}
 			if(direction == Direction.LEFT) {
@@ -160,7 +244,7 @@ public class GameModelHandler {
 				for(int j = 0; j < level.getWalls().size(); j++ )
 					if(level.getWalls().get(j).isCollideLeft(level.getGhosts().get(i))) {
 						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX() + speed, level.getGhosts().get(i).getPosition().getY());
-						level.getGhosts().get(i).changeDirection(rand.nextInt(4)+1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
 					}
 			}
 		}
