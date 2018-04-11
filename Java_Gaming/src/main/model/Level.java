@@ -120,14 +120,14 @@ public class Level {
 					
 					if (id == '*') {
 						pos = new Position(25*i + 12.5, 25*j+82.5);
-						Pellet pallet = new Pellet(pos, new Position(5,5), new Image("/resource/pellet.png"));
+						Pellet pallet = new Pellet(pos, new Position(5,5), new Image("/resource/pellet.png"), 10);
 						pellets.add(pallet);
 						
 					}
 					
 					if (id == '#') {
 						pos = new Position(25*i + 2.5, 25*j+72.5);
-						Item item = new Item(pos, new Position(20,20), new Image("/resource/item.png"));
+						Item item = new Item(pos, new Position(20,20), new Image("/resource/item.png"), 100);
 						items.add(item);
 					}
 				}
