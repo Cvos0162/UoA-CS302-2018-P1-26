@@ -8,12 +8,14 @@ public class Protagonist extends Character{
 	private Ability storedAbility;
 	boolean alive;
 	boolean item;
+	boolean usableAbility;
 	private int score;
 	
 	
 	public Protagonist(Position cornor_1, Image im) {
 		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		usableAbility = false;
 		item = false;
 		life = 1;
 		alive = true;
@@ -21,6 +23,7 @@ public class Protagonist extends Character{
 	public Protagonist(Position cornor_1, Position size, Image im) {
 		super(cornor_1, size, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
+		usableAbility = false;
 		item = false;
 		life = 1;
 		alive = true;
