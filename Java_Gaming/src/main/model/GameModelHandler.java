@@ -414,9 +414,10 @@ public class GameModelHandler {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
 				if(level.getGhosts().get(i).isCollideObject(level.getPro())) {
 					if(level.getPro().item) {
+						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
 						removeObject(level.getGhosts().get(i));
 						level.removeGhosts(level.getGhosts().get(i));
-						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
+						level.getPro().usableAbility = true;
 						level.getPro().item = false;
 						System.out.println("item consumed");
 					}
@@ -426,6 +427,29 @@ public class GameModelHandler {
 					}
 				}
 			}
+		}
+		
+		public void useAbility() {
+			if(level.getPro().usableAbility) {
+				Ability ability = level.getPro().getStoredAbility();
+				if(ability == Ability.RAINBOW_STAR) {
+					speed = speed * 2;
+				}
+				else if(ability == Ability.NURSE) {
+					level.getPro().increaseLife();
+				}
+				else if(ability == Ability.WIZARD) {
+					speed = speed * 2;
+				}
+				else if(ability == Ability.ICE) {
+					speed = speed * 2;
+				}
+				else if(ability == Ability.NINJA) {
+					speed = speed * 2;
+				}
+				level.getPro().usableAbility = false;
+			}
+			
 		}
 		
 		private void moveUp() {
@@ -477,9 +501,6 @@ public class GameModelHandler {
 			info.addScore(pellet);
 			playerScore.setString(info.getScore());
 			level.removePellets(pellet);
-		}
-		public void useAbility() {
-			
 		}
 		
 		public class MovePressed {

@@ -20,14 +20,14 @@ public class Object {
 		this.position = cornor_1;
 		images = new ArrayList<Image>();
 		images.add(im);
-		this.size = new Position(im.getWidth(), im.getHeight());
+		this.size = new Position(im.getWidth()-1, im.getHeight()-1);
 		p = 0;
 	}
 	public Object(Position cornor_1, ArrayList<Image> images) {
 		this.position = cornor_1;
 		this.images = new ArrayList<Image>();
 		this.images.addAll(images);
-		this.size = new Position(images.get(0).getWidth(), images.get(0).getHeight());
+		this.size = new Position(images.get(0).getWidth()-1, images.get(0).getHeight()-1);
 		p = 0;
 	}
 	public Object(Position cornor_1, Position size, Image im) {

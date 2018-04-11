@@ -31,8 +31,8 @@ public class GameViewer {
 			graphic.drawImage(objects.get(i).getCurrentImage(),
 				objects.get(i).getPosition().getX(),
 				objects.get(i).getPosition().getY(),
-				objects.get(i).getSize().getX(),
-				objects.get(i).getSize().getY()
+				objects.get(i).getSize().getX() + 1,
+				objects.get(i).getSize().getY() + 1
 				);
 		}
 	}
