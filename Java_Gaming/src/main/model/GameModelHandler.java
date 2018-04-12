@@ -85,19 +85,20 @@ public class GameModelHandler {
 			protagonistMove();
 			if(!gameFinish) {
 				ghostAi();
-				anotherGhostAi();
 			}
 			isProCollideGhost();
 			
 		}
 		
-		public void anotherGhostAi() {
-			
-			double speed = 2 + level.getWorld()*0.25;
+		public void ghostAi() {
+			double range = 250 + level.getWorld()*50;
+			double speed;
 			double xDiff;
 			double yDiff;
-			for(int i = 1; i < level.getGhosts().size(); i += 2) {
+			for(int i = 0; i < level.getGhosts().size(); i ++) {
+				if(level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR || level.getGhosts().get(i).getAbility() == Ability.NINJA) {
 				int count = 0;
+				speed = 1 + level.getWorld()*0.5;
 				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
 				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
 				if(xDiff == 0 && yDiff < 0) {
@@ -150,9 +151,36 @@ public class GameModelHandler {
 
 				}
 				ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-		
+				}
+				if(level.getGhosts().get(i).getAbility() == Ability.WIZARD || level.getGhosts().get(i).getAbility() == Ability.NURSE || level.getGhosts().get(i).getAbility() == Ability.ICE) {
+					speed = 1 + level.getWorld()*0.25;
+					xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+				if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range) {
+					if(xDiff < 0 && xDiff > -range){
+						level.getGhosts().get(i).changeDirection(Direction.LEFT);
+						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
+					else if(xDiff > 0 && xDiff < range){
+						level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
 				
+					
+					if(yDiff < 0 && yDiff > -range){
+						level.getGhosts().get(i).changeDirection(Direction.UP);
+						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
+					else if(yDiff > 0 && yDiff < range){
+						level.getGhosts().get(i).changeDirection(Direction.DOWN);
+						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
+				}
+
+				else
+					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 				
+				}
 			}
 
 		}
@@ -173,44 +201,6 @@ public class GameModelHandler {
 			}
 		}
 		
-		public void ghostAi() {
-			double range = 250 + level.getWorld()*50;
-			double speed = 1 + level.getWorld()*0.25;
-			double xDiff;
-			double yDiff;
-			for(int i = 0; i < level.getGhosts().size(); i += 2) {
-				
-				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
-				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
-				if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range) {
-					if(xDiff < 0 && xDiff > -range){
-						level.getGhosts().get(i).changeDirection(Direction.LEFT);
-					}
-					else if(xDiff > 0 && xDiff < range){
-						level.getGhosts().get(i).changeDirection(Direction.RIGHT);
-					}
-					else {
-						level.getGhosts().get(i).changeDirection(getRandomDirection());					
-					}
-					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-					if(yDiff < 0 && yDiff > -range){
-						level.getGhosts().get(i).changeDirection(Direction.UP);
-					}
-					else if(yDiff > 0 && yDiff < range){
-						level.getGhosts().get(i).changeDirection(Direction.DOWN);
-					}
-					else {
-						level.getGhosts().get(i).changeDirection(getRandomDirection());
-					}
-					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-				}
-
-				else
-					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-					
-				
-			}
-		}
 		
 		
 		public void ghostMove(int i, Direction direction, double speed) {
@@ -412,7 +402,7 @@ public class GameModelHandler {
 
 		public void isProCollideGhost() {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
-				if(level.getGhosts().get(i).isCollideObject(level.getPro())) {
+				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable) {
 					if(level.getPro().item) {
 						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
 						removeObject(level.getGhosts().get(i));
@@ -430,24 +420,55 @@ public class GameModelHandler {
 		}
 		
 		public void useAbility() {
+			Object newPosition = new Object(new Position (0,0), new Position(20,20));
+			int count = 0;
 			if(level.getPro().usableAbility) {
 				Ability ability = level.getPro().getStoredAbility();
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
+					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.NURSE) {
 					level.getPro().increaseLife();
+					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.WIZARD) {
-					speed = speed * 2;
+					Direction direction = level.getPro().getDirection();
+					
+					if (direction == Direction.UP) {
+						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - level.getWalls().get(0).getSize().getY()*2);
+					}
+					else if (direction == Direction.DOWN) {
+						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + level.getWalls().get(0).getSize().getY()*2);
+					}
+					else if (direction == Direction.RIGHT) {
+						newPosition.setPosition(level.getPro().getPosition().getX() + level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
+					}
+					else if (direction == Direction.LEFT) {
+						newPosition.setPosition(level.getPro().getPosition().getX() - level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
+					}
+					for(int i = 0; i < level.getWalls().size(); i++ ) {
+						if(!level.getWalls().get(i).isCollideObject(newPosition)) {
+							count++;
+						}
+							
+					}
+					if (count == level.getWalls().size()) {
+						level.getPro().setPosition(newPosition.getPosition().getX(), newPosition.getPosition().getY());
+						level.getPro().usableAbility = false;
+					}
 				}
 				else if(ability == Ability.ICE) {
-					speed = speed * 2;
+					newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY());
+					Object ice = new Object(newPosition.getPosition(), new Position(20,20), new Image("/resource/ice.png"));
+					level.objects.add(ice);
+					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.NINJA) {
-					speed = speed * 2;
+					level.getPro().beUntouchable();
+					level.getPro().usableAbility = false;
 				}
-				level.getPro().usableAbility = false;
+				
 			}
 			
 		}
