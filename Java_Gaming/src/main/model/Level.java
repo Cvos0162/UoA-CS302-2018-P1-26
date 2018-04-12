@@ -87,28 +87,28 @@ public class Level {
 						walls.add(wall);
 					}
 					if (id == '0') {
-						pos = new Position(25*i + 2.5, 25*j+72.5);
-						pro = new Protagonist(pos, new Position(20,20), new Image("/resource/pro.png"));
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						pro = new Protagonist(pos, new Position(24,24), new Image("/resource/pro.png"));
 					}
 					
 					if (id == '1') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
-						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/Untitled.png"), Ability.RAINBOW_STAR);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/rainbow.png"), Ability.RAINBOW_STAR);
 						ghosts.add(ghost);
 					}
 					if (id == '2') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
-						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/Untitled.png"), Ability.NURSE);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/nurse.png"), Ability.NURSE);
 						ghosts.add(ghost);
 					}
 					if (id == '3') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
-						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/Untitled.png"), Ability.WIZARD);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/wizard.png"), Ability.WIZARD);
 						ghosts.add(ghost);
 					}
 					if (id == '4') {
 						pos = new Position(25*i + 0.5, 25*j+70.5);
-						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/Untitled.png"), Ability.ICE);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/iceman.png"), Ability.ICE);
 						ghosts.add(ghost);
 					}
 					if (id == '5') {
