@@ -9,6 +9,7 @@ public class Protagonist extends Character{
 	boolean alive;
 	boolean item;
 	boolean usableAbility;
+	boolean untouchable;
 	private int score;
 	
 	
@@ -16,6 +17,7 @@ public class Protagonist extends Character{
 		super(cornor_1, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
 		usableAbility = false;
+		untouchable = false;
 		item = false;
 		life = 1;
 		alive = true;
@@ -24,10 +26,16 @@ public class Protagonist extends Character{
 		super(cornor_1, size, im, Ability.DEFAULT);
 		storedAbility = Ability.DEFAULT;
 		usableAbility = false;
+		untouchable = false;
 		item = false;
 		life = 1;
 		alive = true;
 	}
+	
+	public void beUntouchable() {
+		untouchable = true;
+	}
+	
 	private void setLife(int life) {
 		this.life = life;
 	}

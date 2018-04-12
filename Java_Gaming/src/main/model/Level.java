@@ -87,8 +87,8 @@ public class Level {
 						walls.add(wall);
 					}
 					if (id == '0') {
-						pos = new Position(25*i + 0.5, 25*j+70.5);
-						pro = new Protagonist(pos, new Position(24,24), new Image("/resource/pro.png"));
+						pos = new Position(25*i + 2.5, 25*j+72.5);
+						pro = new Protagonist(pos, new Position(20,20), new Image("/resource/pro.png"));
 					}
 					
 					if (id == '1') {
