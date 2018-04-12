@@ -78,7 +78,6 @@ public class GameModelHandler {
 				
 		
 		public void update() {
-			proAlive();
 			if (!gameFinish) { 
 				gameFinish();
 			}
@@ -325,7 +324,12 @@ public class GameModelHandler {
 		public void initLevel() {
 			singleInGame = new SingleInGame(level.getWorld(), level.getStage());
 		}
-		
+		public void resetCharacter() {
+			objects.removeAll(level.getGhosts());
+			level.resetCharicter();
+			objects.addAll(level.getGhosts());
+		}
+
 		public void initNextLevel() {
 			if((level.getStage()+1) < maxLevel.get(level.getWorld()))
 				singleInGame = new SingleInGame(level.getWorld(), (level.getStage()+1));
@@ -340,7 +344,9 @@ public class GameModelHandler {
 		
 		public void proDied() {
 			if(!level.getPro().alive) {
-				level.removePro();
+				removeObject(level.getPro());
+			} else {
+				resetCharacter();
 			}
 		}
 		
@@ -413,7 +419,8 @@ public class GameModelHandler {
 					}
 					else {
 						level.getPro().decreaseLife();
-						removeObject(level.getPro());				
+						proAlive();
+						proDied();
 					}
 				}
 			}
