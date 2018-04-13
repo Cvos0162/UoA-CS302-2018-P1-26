@@ -64,6 +64,7 @@ public class GameModelHandler {
 		Random rand = new Random();
 
 		PlayerInfo info;
+		Text ability;
 		Text playerScore = null;
 		Text count = null;
 		Text gameCount = null;
@@ -422,7 +423,8 @@ public class GameModelHandler {
 					if(level.getPro().item) {
 						Object dieGhost = new Object(new Position(level.getGhosts().get(i).getPosition().getX(),level.getGhosts().get(i).getPosition().getY()), new Position(24,24), new Image("/resource/ghostDie.png"));
 						objects.add(dieGhost);
-						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
+						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility());
+						drawAbility();
 						removeObject(level.getGhosts().get(i));
 						level.getGhosts().get(i).alive = false;
 						int diedGhost = i;
@@ -475,6 +477,8 @@ public class GameModelHandler {
 						}
 					}, 3000l);
 					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
 				}
 				else if(ability == Ability.NURSE) {
 					level.getPro().increaseLife();
@@ -505,6 +509,8 @@ public class GameModelHandler {
 					if (count == level.getWalls().size()) {
 						level.getPro().setPosition(newPosition.getPosition().getX(), newPosition.getPosition().getY());
 						level.getPro().usableAbility = false;
+						level.getPro().setStoredAbility(Ability.DEFAULT);
+						drawAbility();
 					}
 				}
 				else if(ability == Ability.ICE) {
@@ -529,6 +535,8 @@ public class GameModelHandler {
 						}
 					}, 3000l);
 					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
 				}
 				else if(ability == Ability.NINJA) {
 					level.getPro().setUntouchable(true);
@@ -542,6 +550,8 @@ public class GameModelHandler {
 						}
 					}, 3000l);
 					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
 				}
 				
 			}
@@ -688,7 +698,7 @@ public class GameModelHandler {
 			removeObject(lifes);
 			objects.removeAll(lifes);
 			int posX = 1175;
-			int posY = 525;
+			int posY = 150;
 			for(int i = 0; i<level.getPro().getMaxLife(); i++) {
 
 				Position pos = new Position(posX + i*40, posY);
@@ -710,6 +720,30 @@ public class GameModelHandler {
 			objects.addAll(lifes);
 		}
 		
+		public void drawAbility() {
+			removeText(ability);
+			Position pos = new Position(1160, 600);
+			if(level.getPro().getStoredAbility() == Ability.DEFAULT) {
+				ability = new Text(pos, 120, "DEFAULT ", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.RAINBOW_STAR) {
+				ability = new Text(pos, 120, "RAINBOW", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.NURSE) {
+				ability = new Text(pos, 120, "NURSE", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.WIZARD) {
+				ability = new Text(pos, 120, "WIZARD", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.ICE) {
+				ability = new Text(pos, 120, "ICE", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.NINJA) {
+				ability = new Text(pos, 120, "NINJA", 24, Color.RED);
+			}
+			addText(ability);
+		}
+		
 		public SingleInGame(int world, int stage) {
 			objects.clear();
 			texts.clear();
@@ -724,19 +758,22 @@ public class GameModelHandler {
 			
 			String worldText = (level.getWorld()+1) + " - " + (level.getStage()+1);
 			Text stageText = new Text(new Position(600, 50), 120, worldText, 24, Color.BLACK);
-			Text score = new Text(new Position(1170, 400), 120, "Score :", 24, Color.BLACK);
-			Text time = new Text(new Position(1160, 300), 120, "Time Left :", 24, Color.BLACK);
-			Text life = new Text(new Position(1175, 500), 120, "Life : ", 24, Color.BLACK);
+			Text score = new Text(new Position(1170, 450), 120, "Score :", 24, Color.BLACK);
+			Text time = new Text(new Position(1160, 350), 120, "Time Left :", 24, Color.BLACK);
+			Text life = new Text(new Position(1175, 125), 120, "Life : ", 24, Color.BLACK);
+			Text abilityText = new Text(new Position(1170, 550), 120, "Ability : ", 24, Color.BLACK);
 			addText(stageText);
 			addText(score);
 			addText(time);
 			addText(life);
+			addText(abilityText);
+			drawAbility();
 			info = new PlayerInfo();
-			playerScore = new Text(new Position(1190, 425), 80, info.getScore(), 24, Color.BLACK);
+			playerScore = new Text(new Position(1190, 475), 80, info.getScore(), 24, Color.BLACK);
 			addText(playerScore);
-			count = new Text(new Position(575, 325), 99, 3, 24, Color.BLACK);
+			count = new Text(new Position(575, 375), 99, 3, 24, Color.BLACK);
 			addText(count);
-			gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);
+			gameCount = new Text(new Position(1190, 375), 80, "2:00", 24, Color.BLACK);
 			addText(gameCount);
 			drawLife();
 			inCountdown = true;
