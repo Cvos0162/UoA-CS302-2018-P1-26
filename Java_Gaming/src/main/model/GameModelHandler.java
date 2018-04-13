@@ -530,6 +530,7 @@ public class GameModelHandler {
 			playerScore.setString(info.getScore());
 			level.removeItems(item);
 		}
+		
 		private void eatPellet(Pellet pellet) {
 			removeObject(pellet);
 			info.addScore(pellet);
