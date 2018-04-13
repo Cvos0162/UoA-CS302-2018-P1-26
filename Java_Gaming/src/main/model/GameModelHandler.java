@@ -416,12 +416,26 @@ public class GameModelHandler {
 		}
 
 		public void isProCollideGhost() {
+
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
 				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze) {
 					if(level.getPro().item) {
+						Object dieGhost = new Object(new Position(level.getGhosts().get(i).getPosition().getX(),level.getGhosts().get(i).getPosition().getY()), new Position(24,24), new Image("/resource/ghostDie.png"));
+						objects.add(dieGhost);
 						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
 						removeObject(level.getGhosts().get(i));
-						level.removeGhosts(level.getGhosts().get(i));
+						level.getGhosts().get(i).alive = false;
+						int diedGhost = i;
+						Timer t = new Timer();
+						t.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								removeObject(dieGhost);
+								level.getGhosts().get(diedGhost).alive = true;
+								objects.add(level.getGhosts().get(diedGhost));
+								cancel();
+							}
+						}, 2000l);
 						level.getPro().usableAbility = true;
 						level.getPro().item = false;
 						System.out.println("item consumed");
