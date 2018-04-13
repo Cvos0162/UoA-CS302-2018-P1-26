@@ -465,6 +465,7 @@ public class GameModelHandler {
 				Ability ability = level.getPro().getStoredAbility();
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
+					abilityTimer();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -511,6 +512,7 @@ public class GameModelHandler {
 					ice = new Object(newPosition.getPosition(), new Position(50,50), new Image("/resource/ice.png"));
 					objects.add(ice);
 					iceAppear = true;
+					abilityTimer();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -530,6 +532,7 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.NINJA) {
 					level.getPro().setUntouchable(true);
+					abilityTimer();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -543,6 +546,24 @@ public class GameModelHandler {
 				
 			}
 			
+		}
+		
+		private void abilityTimer() {
+			Text abilityTime = new Text(new Position(1200,650), 80, 3, 24, Color.BLACK);
+			addText(abilityTime);
+			Timer textTimer = new Timer();
+			textTimer.scheduleAtFixedRate(new TimerTask() {
+				@Override
+				public void run() {
+					if (abilityTime.getString().equals("0")) {
+						removeText(abilityTime);
+						cancel();
+					}
+					else {
+						abilityTime.setString( Integer.valueOf(abilityTime.getString()) - 1);
+					}
+				}
+			}, 1000l, 1000l);
 		}
 		
 		private void moveUp() {
