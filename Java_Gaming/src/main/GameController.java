@@ -206,7 +206,7 @@ public class GameController {
 					model.singleInGame.pressMove(code);
 				break;
 			case ENTER:
-				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
+				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.useAbility();
 				break;
 			case P:

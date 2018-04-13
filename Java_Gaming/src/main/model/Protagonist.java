@@ -35,8 +35,8 @@ public class Protagonist extends Character{
 		alive = true;
 	}
 	
-	public void beUntouchable() {
-		untouchable = true;
+	public void setUntouchable(boolean b) {
+		untouchable = b;
 	}
 	
 	private void setLife(int life) {
