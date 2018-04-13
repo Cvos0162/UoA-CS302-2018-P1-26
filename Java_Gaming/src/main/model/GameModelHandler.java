@@ -484,25 +484,25 @@ public class GameModelHandler {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideTop(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
 		}
 		private void moveDown() {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideBottom(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getPro().getSize().getY() - 1);
 		}
 		private void moveRight() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideRight(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() - level.getPro().getSize().getX() - 1, level.getPro().getPosition().getY());
 		}
 		private void moveLeft() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideLeft(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getPro().getPosition().getY());
 		}
 		private void checkPelletsAndItems() {
 			for(int i = 0; i < level.getPellets().size(); i++ ) {
