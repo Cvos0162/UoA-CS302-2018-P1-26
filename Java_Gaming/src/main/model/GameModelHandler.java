@@ -52,8 +52,10 @@ public class GameModelHandler {
 	public class SingleInGame {
 		Object top;
 		Object side;
+		Object ice;
 		Level level;
 		
+		boolean iceAppear;
 		boolean inCountdown;
 		boolean inPause;
 		boolean gameWin;
@@ -81,9 +83,13 @@ public class GameModelHandler {
 			if (!gameFinish) { 
 				gameFinish();
 			}
+			proAlive();
 			protagonistMove();
 			if(!gameFinish) {
+				gameFinish();
 				ghostAi();
+				if(iceAppear)
+				isGhostCollideIce();
 			}
 			isProCollideGhost();
 			
@@ -95,6 +101,7 @@ public class GameModelHandler {
 			double xDiff;
 			double yDiff;
 			for(int i = 0; i < level.getGhosts().size(); i ++) {
+				if(level.getGhosts().get(i).alive) {
 				if(level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR || level.getGhosts().get(i).getAbility() == Ability.NINJA) {
 				int count = 0;
 				speed = 1 + level.getWorld()*0.5;
@@ -180,6 +187,7 @@ public class GameModelHandler {
 					ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 				
 				}
+			}
 			}
 
 		}
@@ -408,7 +416,7 @@ public class GameModelHandler {
 
 		public void isProCollideGhost() {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
-				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable) {
+				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive) {
 					if(level.getPro().item) {
 						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
 						removeObject(level.getGhosts().get(i));
@@ -422,6 +430,14 @@ public class GameModelHandler {
 						proAlive();
 						proDied();
 					}
+				}
+			}
+		}
+		
+		public void isGhostCollideIce() {
+			for(int i = 0; i < level.getGhosts().size(); i++ ) {
+				if(level.getGhosts().get(i).isCollideObject(ice)) {
+					level.getGhosts().get(i).alive = false;
 				}
 			}
 		}
@@ -446,10 +462,10 @@ public class GameModelHandler {
 						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - level.getWalls().get(0).getSize().getY()*2);
 					}
 					else if (direction == Direction.DOWN) {
-						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + level.getWalls().get(0).getSize().getY()*2);
+						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + (level.getWalls().get(0).getSize().getY()+1)*2);
 					}
 					else if (direction == Direction.RIGHT) {
-						newPosition.setPosition(level.getPro().getPosition().getX() + level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
+						newPosition.setPosition(level.getPro().getPosition().getX() + (level.getWalls().get(0).getSize().getY()+1)*2, level.getPro().getPosition().getY());
 					}
 					else if (direction == Direction.LEFT) {
 						newPosition.setPosition(level.getPro().getPosition().getX() - level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
@@ -467,8 +483,9 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.ICE) {
 					newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY());
-					Object ice = new Object(newPosition.getPosition(), new Position(20,20), new Image("/resource/ice.png"));
-					level.objects.add(ice);
+					ice = new Object(newPosition.getPosition(), new Position(20,20), new Image("/resource/ice.png"));
+					objects.add(ice);
+					iceAppear = true;
 					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.NINJA) {
