@@ -80,8 +80,8 @@ public class GameModelHandler {
 				
 		
 		public void update() {
-			if (!gameFinish) { 
-				gameFinish();
+			if (gameFinish) { 
+				movePressed.setMovePressed(Direction.ALL, false);
 			}
 			proAlive();
 			protagonistMove();
@@ -449,6 +449,14 @@ public class GameModelHandler {
 				Ability ability = level.getPro().getStoredAbility();
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							speed = 2.5;
+							cancel();
+						}
+					}, 3000l);
 					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.NURSE) {
@@ -486,10 +494,27 @@ public class GameModelHandler {
 					ice = new Object(newPosition.getPosition(), new Position(20,20), new Image("/resource/ice.png"));
 					objects.add(ice);
 					iceAppear = true;
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							iceAppear = false;
+							objects.remove(ice);
+							cancel();
+						}
+					}, 3000l);
 					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.NINJA) {
-					level.getPro().beUntouchable();
+					level.getPro().setUntouchable(true);
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							level.getPro().setUntouchable(false);
+							cancel();
+						}
+					}, 3000l);
 					level.getPro().usableAbility = false;
 				}
 				
