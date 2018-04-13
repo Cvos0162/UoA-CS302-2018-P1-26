@@ -19,7 +19,7 @@ public class Protagonist extends Character{
 		usableAbility = false;
 		untouchable = false;
 		item = false;
-		life = 1;
+		life = 3;
 		alive = true;
 	}
 	public Protagonist(Position cornor_1, Position size, Image im) {
@@ -28,7 +28,7 @@ public class Protagonist extends Character{
 		usableAbility = false;
 		untouchable = false;
 		item = false;
-		life = 1;
+		life = 3;
 		alive = true;
 	}
 	

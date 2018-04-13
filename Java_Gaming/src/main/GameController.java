@@ -175,7 +175,7 @@ public class GameController {
 			else {
 				switch(code) {
 				case ESCAPE:
-					gState = State.START;
+					gState = State.SINGLE_STAGE_SEL;
 					initState();
 					break;
 				case ENTER:

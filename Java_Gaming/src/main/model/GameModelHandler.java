@@ -80,6 +80,9 @@ public class GameModelHandler {
 				
 		
 		public void update() {
+			if (!gameFinish) { 
+				gameFinish();
+			}
 			proAlive();
 			protagonistMove();
 			if(!gameFinish) {
@@ -329,7 +332,12 @@ public class GameModelHandler {
 		public void initLevel() {
 			singleInGame = new SingleInGame(level.getWorld(), level.getStage());
 		}
-		
+		public void resetCharacter() {
+			objects.removeAll(level.getGhosts());
+			level.resetCharicter();
+			objects.addAll(level.getGhosts());
+		}
+
 		public void initNextLevel() {
 			if((level.getStage()+1) < maxLevel.get(level.getWorld()))
 				singleInGame = new SingleInGame(level.getWorld(), (level.getStage()+1));
@@ -344,7 +352,9 @@ public class GameModelHandler {
 		
 		public void proDied() {
 			if(!level.getPro().alive) {
-				level.removePro();
+				removeObject(level.getPro());
+			} else {
+				resetCharacter();
 			}
 		}
 		
@@ -417,7 +427,8 @@ public class GameModelHandler {
 					}
 					else {
 						level.getPro().decreaseLife();
-						removeObject(level.getPro());				
+						proAlive();
+						proDied();
 					}
 				}
 			}
@@ -490,25 +501,25 @@ public class GameModelHandler {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideTop(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
 		}
 		private void moveDown() {
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideBottom(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getPro().getSize().getY() - 1);
 		}
 		private void moveRight() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideRight(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() - level.getPro().getSize().getX() - 1, level.getPro().getPosition().getY());
 		}
 		private void moveLeft() {
 			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
 				if(level.getWalls().get(i).isCollideLeft(level.getPro()))
-					level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getPro().getPosition().getY());
 		}
 		private void checkPelletsAndItems() {
 			for(int i = 0; i < level.getPellets().size(); i++ ) {
@@ -615,6 +626,10 @@ public class GameModelHandler {
 			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
 			
+			Text score = new Text(new Position(1170, 400), 120, "Score :", 24, Color.BLACK);
+			Text time = new Text(new Position(1160, 300), 120, "Time Left :", 24, Color.BLACK);
+			addText(score);
+			addText(time);
 			info = new PlayerInfo();
 			playerScore = new Text(new Position(1190, 425), 80, info.getScore(), 24, Color.BLACK);
 			addText(playerScore);

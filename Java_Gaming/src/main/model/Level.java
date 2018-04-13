@@ -55,6 +55,73 @@ public class Level {
 		return stage;
 	}
 	
+	public void resetCharicter() {
+		System.out.println("resetting level");
+		
+		String path = "./src/level/" + (world + 1) + "-" + (stage + 1) + ".lvl";
+		String line = null;
+		
+		objects.removeAll(ghosts);
+		
+		ghosts = new ArrayList<Ghost>();
+		
+		try {
+			File file = new File(path);
+			if (!file.exists()) {
+				System.out.println("file does not exist");
+			}
+			FileReader fileReader = new FileReader(file);
+			BufferedReader bufferedReader = new BufferedReader(fileReader);
+			ghosts = new ArrayList<Ghost>();
+			int j = 0;
+			while ((line = bufferedReader.readLine()) != null) {
+				for (int i = 0; i < line.length(); i++) {
+					Position pos = new Position(25*i, 25*j+70);
+					char id = line.charAt(i);
+					if (id == '0') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						pro.setPosition(pos);
+					}
+					
+					else if (id == '1') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/rainbow.png"), Ability.RAINBOW_STAR);
+						ghosts.add(ghost);
+					}
+					else if (id == '2') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/nurse.png"), Ability.NURSE);
+						ghosts.add(ghost);
+					}
+					else if (id == '3') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/wizard.png"), Ability.WIZARD);
+						ghosts.add(ghost);
+					}
+					else if (id == '4') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/iceman.png"), Ability.ICE);
+						ghosts.add(ghost);
+					}
+					else if (id == '5') {
+						pos = new Position(25*i + 0.5, 25*j+70.5);
+						Ghost ghost = new Ghost(pos, new Position(24,24), new Image("/resource/Untitled.png"), Ability.NINJA);
+						ghosts.add(ghost);
+					}
+				}
+				j++;
+			}
+			bufferedReader.close();
+
+			objects.addAll(ghosts);
+		} catch(FileNotFoundException ex) {
+			System.out.println("Unable to open file '" + path + "'");                
+		} catch(IOException ex) {
+			ex.printStackTrace();
+		}
+	}
+	
+	
 	public Level(int world, int stage) {	
 		this.world = world - 1;
 		this.stage = stage - 1;
