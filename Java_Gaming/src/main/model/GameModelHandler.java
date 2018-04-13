@@ -69,6 +69,7 @@ public class GameModelHandler {
 		Text gameCount = null;
 		Text pause = null;
 		Text gameFinishText = null;
+		Text itemTime = new Text(new Position(1240,650), 80, 5, 24, Color.BLACK);
 		
 		ArrayList<Object> lifes;
 		Object background;
@@ -423,6 +424,7 @@ public class GameModelHandler {
 						removeObject(level.getGhosts().get(i));
 						level.removeGhosts(level.getGhosts().get(i));
 						level.getPro().usableAbility = true;
+						removeText(itemTime);
 						level.getPro().item = false;
 						System.out.println("item consumed");
 					}
@@ -533,7 +535,6 @@ public class GameModelHandler {
 			}
 			
 		}
-		
 		private void abilityTimer() {
 			Text abilityTime = new Text(new Position(1200,650), 80, 3, 24, Color.BLACK);
 			addText(abilityTime);
@@ -589,8 +590,28 @@ public class GameModelHandler {
 				}
 			}
 		}
+		
 		private void eatItem(Item item) {
-			removeObject(item);	
+			removeObject(item);
+			if (!level.getPro().item) {
+				itemTime.setString(5);
+				addText(itemTime);
+				Timer textTimer = new Timer();
+				textTimer.scheduleAtFixedRate(new TimerTask() {
+					@Override
+					public void run() {
+						if (itemTime.getString().equals("0")) {
+							removeText(itemTime);
+							cancel();
+						}
+						else {
+							itemTime.setString( Integer.valueOf(itemTime.getString()) - 1);
+						}
+					}
+				}, 1000l, 1000l);
+			} else {
+				itemTime.setString(5);
+			}
 			level.getPro().item = true;
 			info.addScore(item);
 			playerScore.setString(info.getScore());
