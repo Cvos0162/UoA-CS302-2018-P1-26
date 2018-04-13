@@ -55,7 +55,7 @@ public class Level {
 		return stage;
 	}
 	
-	public void resetCharicter() {
+	public void resetCharacter() {
 		System.out.println("resetting level");
 		
 		String path = "./src/level/" + (world + 1) + "-" + (stage + 1) + ".lvl";

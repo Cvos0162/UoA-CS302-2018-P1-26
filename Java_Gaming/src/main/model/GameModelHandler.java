@@ -70,6 +70,7 @@ public class GameModelHandler {
 		Text pause = null;
 		Text gameFinishText = null;
 		
+		ArrayList<Object> lifes;
 		Object background;
 		Object menu_button;
 		Object retry_button;
@@ -334,7 +335,7 @@ public class GameModelHandler {
 		}
 		public void resetCharacter() {
 			objects.removeAll(level.getGhosts());
-			level.resetCharicter();
+			level.resetCharacter();
 			objects.addAll(level.getGhosts());
 		}
 
@@ -429,6 +430,7 @@ public class GameModelHandler {
 						level.getPro().decreaseLife();
 						proAlive();
 						proDied();
+						drawLife();
 					}
 				}
 			}
@@ -453,6 +455,7 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.NURSE) {
 					level.getPro().increaseLife();
+					drawLife();
 					level.getPro().usableAbility = false;
 				}
 				else if(ability == Ability.WIZARD) {
@@ -615,9 +618,36 @@ public class GameModelHandler {
 			}
 		}
 		
+		public void drawLife() {
+			removeObject(lifes);
+			objects.removeAll(lifes);
+			int posX = 1175;
+			int posY = 525;
+			for(int i = 0; i<level.getPro().getMaxLife(); i++) {
+
+				Position pos = new Position(posX + i*40, posY);
+				if(pos.getX() > side.getPosition().getX() + side.getSize().getX() - 50) {
+					posX = 1175 - i*40;
+					posY = posY + 40;
+				}
+				pos = new Position(posX + i*40, posY);
+				if(i<level.getPro().getLife()) {
+					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/life.png") );
+					this.lifes.add(lifes);
+				}
+				else {
+					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/diedLife.png") );
+					this.lifes.add(lifes);
+				}
+				
+			}
+			objects.addAll(lifes);
+		}
+		
 		public SingleInGame(int world, int stage) {
 			objects.clear();
 			texts.clear();
+			lifes = new ArrayList<Object>();
 
 			top = new Object(new Position(0,0), new Image("/resource/test_InGameTop.png"));
 			addObject(top);
@@ -628,8 +658,10 @@ public class GameModelHandler {
 			
 			Text score = new Text(new Position(1170, 400), 120, "Score :", 24, Color.BLACK);
 			Text time = new Text(new Position(1160, 300), 120, "Time Left :", 24, Color.BLACK);
+			Text life = new Text(new Position(1175, 500), 120, "Life : ", 24, Color.BLACK);
 			addText(score);
 			addText(time);
+			addText(life);
 			info = new PlayerInfo();
 			playerScore = new Text(new Position(1190, 425), 80, info.getScore(), 24, Color.BLACK);
 			addText(playerScore);
@@ -637,6 +669,7 @@ public class GameModelHandler {
 			addText(count);
 			gameCount = new Text(new Position(1190, 325), 80, "2:00", 24, Color.BLACK);
 			addText(gameCount);
+			drawLife();
 			inCountdown = true;
 			inPause = false;
 			Timer timer = new Timer();

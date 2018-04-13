@@ -5,6 +5,7 @@ import javafx.scene.image.Image;
 public class Protagonist extends Character{
 
 	private int life;
+	private int maxLife;
 	private Ability storedAbility;
 	boolean alive;
 	boolean item;
@@ -20,6 +21,7 @@ public class Protagonist extends Character{
 		untouchable = false;
 		item = false;
 		life = 3;
+		maxLife = 5;
 		alive = true;
 	}
 	public Protagonist(Position cornor_1, Position size, Image im) {
@@ -29,6 +31,7 @@ public class Protagonist extends Character{
 		untouchable = false;
 		item = false;
 		life = 3;
+		maxLife = 5;
 		alive = true;
 	}
 	
@@ -50,6 +53,10 @@ public class Protagonist extends Character{
 	
 	public int getLife() {
 		return life;
+	}
+	
+	public int getMaxLife() {
+		return maxLife;
 	}
 	
 	
