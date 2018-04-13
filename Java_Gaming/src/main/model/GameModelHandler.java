@@ -102,7 +102,7 @@ public class GameModelHandler {
 			double xDiff;
 			double yDiff;
 			for(int i = 0; i < level.getGhosts().size(); i ++) {
-				if(level.getGhosts().get(i).alive) {
+				if(level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze) {
 				if(level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR || level.getGhosts().get(i).getAbility() == Ability.NINJA) {
 				int count = 0;
 				speed = 1 + level.getWorld()*0.5;
@@ -417,7 +417,7 @@ public class GameModelHandler {
 
 		public void isProCollideGhost() {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
-				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive) {
+				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze) {
 					if(level.getPro().item) {
 						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility()); 
 						removeObject(level.getGhosts().get(i));
@@ -438,8 +438,8 @@ public class GameModelHandler {
 		
 		public void isGhostCollideIce() {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
-				if(level.getGhosts().get(i).isCollideObject(ice)) {
-					level.getGhosts().get(i).alive = false;
+				if(ice.isCollideObject(level.getGhosts().get(i))) {
+					level.getGhosts().get(i).freeze = true;
 				}
 			}
 		}
@@ -494,8 +494,8 @@ public class GameModelHandler {
 					}
 				}
 				else if(ability == Ability.ICE) {
-					newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY());
-					ice = new Object(newPosition.getPosition(), new Position(20,20), new Image("/resource/ice.png"));
+					newPosition.setPosition(level.getPro().getPosition().getX()-level.getPro().getSize().getX()/2, level.getPro().getPosition().getY()-level.getPro().getSize().getY()/2);
+					ice = new Object(newPosition.getPosition(), new Position(50,50), new Image("/resource/ice.png"));
 					objects.add(ice);
 					iceAppear = true;
 					abilityTimer();
@@ -505,6 +505,12 @@ public class GameModelHandler {
 						public void run() {
 							iceAppear = false;
 							objects.remove(ice);
+							removeObject(ice);
+							for(int i = 0; i < level.getGhosts().size(); i++ ) {
+								if(level.getGhosts().get(i).freeze = true) {
+									level.getGhosts().get(i).freeze = false;;
+								}
+							}
 							cancel();
 						}
 					}, 3000l);
@@ -702,9 +708,12 @@ public class GameModelHandler {
 			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
 			
+			String worldText = (level.getWorld()+1) + " - " + (level.getStage()+1);
+			Text stageText = new Text(new Position(600, 50), 120, worldText, 24, Color.BLACK);
 			Text score = new Text(new Position(1170, 400), 120, "Score :", 24, Color.BLACK);
 			Text time = new Text(new Position(1160, 300), 120, "Time Left :", 24, Color.BLACK);
 			Text life = new Text(new Position(1175, 500), 120, "Life : ", 24, Color.BLACK);
+			addText(stageText);
 			addText(score);
 			addText(time);
 			addText(life);
