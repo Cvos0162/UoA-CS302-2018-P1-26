@@ -22,6 +22,12 @@ public class Character extends Object{
 		direction = Direction.DOWN;
 		alive = true;
 	}
+	public Character(Position cornor_1, Position size, ArrayList<Image> im, Ability ability) {
+		super(cornor_1, size, im);
+		this.ability = ability;
+		direction = Direction.DOWN;
+		alive = true;
+	}
 	
 	public void changeDirection(Direction direction) {
 		this.direction = direction;

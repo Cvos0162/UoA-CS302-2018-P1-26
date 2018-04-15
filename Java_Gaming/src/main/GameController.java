@@ -18,7 +18,8 @@ public class GameController {
 		START,
 		SINGLE_STAGE_SEL,
 		SINGLE_IN_GAME,
-		EXIT
+		MULTI_SEL,
+		MULTI_IN_GAME
 	};
 	
 	private Stage stage;
@@ -33,6 +34,9 @@ public class GameController {
 		case START:
 			if (model.start.selectMouse(x, y) == 1) {
 				gState = State.SINGLE_STAGE_SEL;
+				initState();
+			} else if (model.start.selectMouse(x, y) == 2) {
+				gState = State.MULTI_SEL;
 				initState();
 			}
 			break;
@@ -105,7 +109,9 @@ public class GameController {
 				}
 			}
 			break;
-		case EXIT:
+		case MULTI_SEL:
+			break;
+		case MULTI_IN_GAME:
 			break;
 		}
 	}
@@ -119,7 +125,9 @@ public class GameController {
 			break;
 		case SINGLE_IN_GAME:
 			break;
-		case EXIT:
+		case MULTI_SEL:
+			break;
+		case MULTI_IN_GAME:
 			break;
 		}
 	}
@@ -145,6 +153,9 @@ public class GameController {
 				int sel = model.start.getSelected();
 				if (sel == 1) {
 					gState = State.SINGLE_STAGE_SEL;
+					initState();
+				} else if (sel == 2) {
+					gState = State.MULTI_SEL;
 					initState();
 				}
 				break;
@@ -175,7 +186,7 @@ public class GameController {
 			else {
 				switch(code) {
 				case ESCAPE:
-					gState = State.SINGLE_STAGE_SEL;
+					gState = State.START;
 					initState();
 					break;
 				case ENTER:
@@ -195,7 +206,7 @@ public class GameController {
 		case SINGLE_IN_GAME:
 			switch(code) {
 			case ESCAPE:
-				gState = State.START;
+				gState = State.SINGLE_STAGE_SEL;
 				initState();
 				break;
 			case UP:
@@ -205,6 +216,7 @@ public class GameController {
 				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.pressMove(code);
 				break;
+			case SPACE:
 			case ENTER:
 				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.useAbility();
@@ -217,7 +229,21 @@ public class GameController {
 				break;
 			}
 			break;
-		case EXIT:
+		case MULTI_SEL:
+			switch(code) {
+			case ESCAPE:
+				gState = State.START;
+				initState();
+				break;
+			}
+			break;
+		case MULTI_IN_GAME:
+			switch(code) {
+			case ESCAPE:
+				gState = State.MULTI_SEL;
+				initState();
+				break;
+			}
 			break;
 		}
 	}
@@ -240,9 +266,12 @@ public class GameController {
 				break;
 			}
 			break;
+		case MULTI_IN_GAME:
+			break;
 		default:
 			break;
 		}
+		
 	}
 	
 	public void gameUpdate() {
@@ -257,7 +286,9 @@ public class GameController {
 			if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag())
 				model.singleInGame.update();
 			break;
-		case EXIT:
+		case MULTI_SEL:
+			break;
+		case MULTI_IN_GAME:
 			break;
 		}
 		view.draw(model.getObjects());
@@ -284,7 +315,16 @@ public class GameController {
 			view.setColour(Colour.WHITE);
 			model.initSingleInGame(world, stage);
 			break;
-		case EXIT:
+		case MULTI_SEL:
+			model.deleteStates();
+			view.setColour(Colour.BLACK);
+			model.initMultiSelect();
+
+			break;
+		case MULTI_IN_GAME:
+			model.deleteStates();
+			view.setColour(Colour.WHITE);
+
 			break;
 
 		}

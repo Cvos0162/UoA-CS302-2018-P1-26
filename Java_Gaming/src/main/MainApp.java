@@ -34,16 +34,18 @@ public class MainApp extends Application {
 		root = new Group();
 		
 		canvas = new Canvas();
+		canvas.setWidth(1280);
+		canvas.setHeight(720);
 		graphic = canvas.getGraphicsContext2D();
 		control = new GameController(graphic, this.primaryStage);
 		root.getChildren().add(canvas);
-		canvas.widthProperty().bind(this.primaryStage.widthProperty());
-		canvas.heightProperty().bind(this.primaryStage.heightProperty());
+		
 		Scene scene = new Scene(root);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.setWidth(1280);
 		this.primaryStage.setHeight(720);
 		this.primaryStage.setResizable(false);
+		
 		this.primaryStage.show();
 		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
@@ -78,8 +80,6 @@ public class MainApp extends Application {
 	public void initEvent(Canvas canvas, GameController control) {
 		canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
-		        System.out.println("Handling event " + event.getEventType()
-		        		+ "\tMouse Position x: "+ event.getX() + "y: " + event.getY());
 		        control.takeMouseClicked(event.getX(),event.getY());
 		    }
 		    });
@@ -91,15 +91,11 @@ public class MainApp extends Application {
 		canvas.setFocusTraversable(true);
 		canvas.addEventHandler(KeyEvent.KEY_PRESSED, new EventHandler<KeyEvent>() {
 		    public void handle(KeyEvent event) {
-		        System.out.println("Handling event " + event.getEventType()
-		        		+ "\tKey: " + event.getText());
 		        control.takeKeyPressed(event.getCode());
 		    }
 		    });
 		canvas.addEventHandler(KeyEvent.KEY_RELEASED, new EventHandler<KeyEvent>() {
 			public void handle(KeyEvent event) {
-				System.out.println("Handling event " + event.getEventType()
-        		+ "\tKey: " + event.getText());
 				control.takeKeyReleased(event.getCode());
 			}
 		});

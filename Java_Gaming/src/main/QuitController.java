@@ -1,5 +1,6 @@
 package main;
 
+import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
 import javafx.stage.Stage;
@@ -8,7 +9,6 @@ import javafx.stage.WindowEvent;
 public class QuitController {
 	WindowEvent e;
 	Stage s;
-	Thread t;
 	@FXML
 	private Button yesButton;
 	@FXML
@@ -21,6 +21,8 @@ public class QuitController {
 	}
 	@FXML
 	private void pressYes() {
+		System.exit(0);
+		Platform.exit();
 		s.close();
 	}
 	
@@ -29,8 +31,5 @@ public class QuitController {
 	}
 	public void setStage(Stage s) {
 		this.s = s;
-	}
-	public void setThread(Thread t) {
-		this.t = t;
 	}
 }

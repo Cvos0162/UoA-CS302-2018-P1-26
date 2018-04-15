@@ -30,6 +30,13 @@ public class Object {
 		this.size = new Position(images.get(0).getWidth()-1, images.get(0).getHeight()-1);
 		p = 0;
 	}
+	public Object(Position cornor_1, Position size, ArrayList<Image> images) {
+		this.position = cornor_1;
+		this.size = size;
+		this.images = new ArrayList<Image>();
+		this.images.addAll(images);
+		p = 0;
+	}
 	public Object(Position cornor_1, Position size, Image im) {
 		this.position = cornor_1;
 		this.size = size;
