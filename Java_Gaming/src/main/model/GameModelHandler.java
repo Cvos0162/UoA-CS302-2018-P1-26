@@ -52,32 +52,51 @@ public class GameModelHandler {
 	public void initSingleStageSelect() { singleStageSel = new SingleStageSelect(); }
 	public void initSingleInGame(int world, int stage) { singleInGame = new SingleInGame(world, stage); }
 	public void initMultiSelect() { multiSelect = new MultiSelect(); }
-	public void initMultiInGame() { multiInGame = new MultiInGame(); }
+	public void initMultiInGame(int world, int stage) { multiInGame = new MultiInGame(world, stage); }
 	
 	public class MultiInGame {
-		public MultiInGame() {
+		
+		public MultiInGame(int world, int stage) {
 			objects.clear();
 			texts.clear();
+
 		}
 	}
 		
+	
+	
 	public class MultiSelect {
 		Object backButton;
-		
+		ArrayList<Object> ghostTeams;
+		int ghostTeam;
 		
 		public MultiSelect() {
 			objects.clear();
 			texts.clear();
+
+			ghostTeams = new ArrayList<Object>();
 			backButton = new Object(new Position(20,20), new Image("/resource/BackButton.png"));
 			addObject(backButton);
-			Text select = new Text(
-					new Position(125,100),
-					500,
-					"Select Ghost :",
-					80,
-					Color.WHITE
-					);
+			Text select = new Text(new Position(125,100), 500, "Select Ghost :", 80, Color.WHITE);
 			addText(select);
+			Object ghostTeam1 = new Object(new Position(125, 150), new Position(500, 500), new Image("/resource/wizard_0.png"));
+			ghostTeams.add(ghostTeam1);
+			Object ghostTeam2 = new Object(new Position(650, 150), new Position(500, 500), new Image("/resource/ninja_0.png"));
+			ghostTeams.add(ghostTeam2);
+			objects.addAll(ghostTeams);	
+		}
+		
+		public int selectMouse_ghostTeam(double x, double y) {
+			for (int i = 0; i < ghostTeams.size(); i++)
+				if (ghostTeams.get(i).isInsideObject(x, y)) 
+					return i;
+			if (backButton.isInsideObject(x, y)) 
+				return -2;
+			else return -1;
+		}
+		
+		public void setGhostTeam(int n) {
+			ghostTeam = n;
 		}
 	}
 	

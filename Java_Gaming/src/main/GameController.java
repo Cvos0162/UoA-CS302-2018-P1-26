@@ -110,6 +110,20 @@ public class GameController {
 			}
 			break;
 		case MULTI_SEL:
+
+			switch(model.multiSelect.selectMouse_ghostTeam(x, y)) {
+				case -1:
+					break;
+				case -2:
+					gState = State.START;
+					initState();
+					break;
+				default:
+					model.multiSelect.setGhostTeam(model.multiSelect.selectMouse_ghostTeam(x, y));
+					gState = State.MULTI_IN_GAME;
+					initState();
+					break;	
+			}
 			break;
 		case MULTI_IN_GAME:
 			break;
