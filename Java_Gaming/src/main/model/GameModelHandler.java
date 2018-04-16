@@ -56,11 +56,1113 @@ public class GameModelHandler {
 	
 	public class MultiInGame {
 		
+		Level level;
+		
+		int playerGhost;
+		boolean iceAppear;
+		boolean inCountdown;
+		boolean inPause;
+		boolean dying = false;
+		boolean gameWin;
+		boolean gameFinish;
+		double speed = 2.5;
+		Random rand = new Random();
+
+		PlayerInfo info;
+		Text ability;
+		Text playerScore = null;
+		Text count = null;
+		Text gameCount = null;
+		Text pause = null;
+		Text gameFinishText = null;
+		Text itemTime = new Text(new Position(1240,650), 80, 5, 24, Color.BLACK);
+		Object highlight;
+		
+		ArrayList<Object> lifes;
+		Object background;
+		Object menu_button;
+		Object retry_button;
+		Object next_round_button;
+		
+		Object ice;
+		ArrayList<Object> icedGhost = new ArrayList<Object>();
+		
+		MovePressed movePressed = new MovePressed();
+		
+		public void update() {
+			if (!dying) {
+				if (gameFinish || dying) { 
+					movePressed.setMovePressed(Direction.ALL, false);
+				}
+				proAlive();
+				protagonistMove();
+				ghostMove();
+				if(!gameFinish) {
+					gameFinish();
+					ghostAi();
+					if(iceAppear)
+						isGhostCollideIce();
+				}
+				isProCollideGhost();
+				//rainbowFolow();
+			}
+		}
+		public int randomWorld() {
+			return (rand.nextInt(3)+0);
+		}
+		public int randomStage() {
+			return (rand.nextInt(4)+0);
+		}
+		public void rainbowFolow() {
+			for (int i = 0; i < level.getGhosts().size(); i++) {
+				if (level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR && level.getGhosts().get(i).getAlive()) {
+					Image rainbowImage;
+					if (level.getGhosts().get(i).getDirection() == Direction.UP || level.getGhosts().get(i).getDirection() == Direction.DOWN) {
+						rainbowImage =  new Image("/resource/rainbow_follower_0.png");
+					}
+					else {
+						rainbowImage = new Image("/resource/rainbow_follower_1.png");
+					}
+					Object rainbow = new Object(level.getGhosts().get(i).getPosition(), rainbowImage);
+					if (objects.indexOf(level.getPro()) != -1) {
+						objects.add(objects.indexOf(level.getPro()), rainbow);
+						Timer t = new Timer();
+						t.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								if (rainbow != null)
+									removeObject(rainbow);
+							}
+						}, 1000l);
+					}
+				}
+			}
+		}
+		
+		public void ghostAi() {
+			double range = 250 + level.getWorld()*50;
+			double speed;
+			double xDiff;
+			double yDiff;
+			for(int i = 0; i < level.getGhosts().size(); i ++) {
+				if(level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze && i != playerGhost) {
+				if(level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR || level.getGhosts().get(i).getAbility() == Ability.NINJA) {
+				int count = 0;
+				speed = 1.5 + level.getWorld()*0.5;
+				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+				if(xDiff == 0 && yDiff < 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX(),level.getPro().getSize().getY() + level.getPro().getPosition().getY()), 
+							new Position (level.getPro().getSize().getX(),-yDiff - level.getPro().getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.UP);
+					}
+				}
+				else if(xDiff == 0 && yDiff > 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX(),level.getGhosts().get(i).getSize().getY() + level.getGhosts().get(i).getPosition().getY()), 
+							new Position (level.getGhosts().get(i).getSize().getX(),yDiff - level.getGhosts().get(i).getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.DOWN);
+					}
+				}
+				else if(yDiff == 0 && xDiff < 0) {
+					Object block = new Object(new Position(level.getPro().getPosition().getX() + level.getPro().getSize().getX(),level.getPro().getPosition().getY()), 
+							new Position (-xDiff - level.getPro().getSize().getX(), level.getPro().getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.LEFT);
+					}
+				}
+				else if(yDiff == 0 && xDiff > 0) {
+					Object block = new Object(new Position(level.getGhosts().get(i).getPosition().getX() + level.getGhosts().get(i).getSize().getX(),level.getPro().getPosition().getY()), 
+							new Position (xDiff - level.getGhosts().get(i).getSize().getX(), level.getGhosts().get(i).getSize().getY())); 
+					for(int j = 0; j < level.getWalls().size(); j++ ) {
+						if(!block.isCollideObject(level.getWalls().get(j))) {
+							count++;
+						}
+					}
+					if(count == level.getWalls().size()) {
+						level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+					}
+
+				}
+				ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+				}
+				if (level.getGhosts().get(i).getAbility() == Ability.NURSE) {
+					speed = 1 + level.getWorld()*0.25;
+					xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+					yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+					if((xDiff > -100 && xDiff < 100 && yDiff > -100 && yDiff < 100) && (yDiff == 0 || xDiff == 0)) {
+						if(xDiff < 0 && xDiff > -100 && yDiff == 0){
+							level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+						}
+						else if(xDiff > 0 && xDiff < 100 && yDiff == 0){
+							level.getGhosts().get(i).changeDirection(Direction.LEFT);
+							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+						}	
+						if(yDiff < 0 && yDiff > -100 && xDiff == 0){
+							level.getGhosts().get(i).changeDirection(Direction.DOWN);
+							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+						}
+						else if(yDiff > 0 && yDiff < 100 && xDiff == 0){
+							level.getGhosts().get(i).changeDirection(Direction.UP);
+							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+						}
+					}
+					else if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range) {
+							if(xDiff < 0 && xDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.LEFT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(xDiff > 0 && xDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+					
+							
+							if(yDiff < 0 && yDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.UP);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(yDiff > 0 && yDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.DOWN);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+					}
+					else {
+						ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
+					}
+				if(level.getGhosts().get(i).getAbility() == Ability.WIZARD || level.getGhosts().get(i).getAbility() == Ability.ICE) {
+					speed = 1 + level.getWorld()*0.25;
+					boolean moved = false;
+					for (int j = 0; j < level.getGhosts().size(); j++) {
+						if (i != j && !moved) {
+							speed = 1 + level.getWorld()*0.25;
+							double ghrange = 50;
+							double ghxDiff = level.getGhosts().get(j).getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+							double ghyDiff = level.getGhosts().get(j).getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+							if(ghxDiff > -ghrange && ghxDiff < ghrange && ghyDiff > -ghrange && ghyDiff < ghrange) {
+								if(ghxDiff < 0 && ghxDiff > -ghrange){
+									level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+									moved = true;
+								}
+								else if(ghxDiff > 0 && ghxDiff < ghrange){
+									level.getGhosts().get(i).changeDirection(Direction.LEFT);
+									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+									moved = true;
+								}
+						
+								
+								if(ghyDiff < 0 && ghyDiff > -ghrange){
+									level.getGhosts().get(i).changeDirection(Direction.DOWN);
+									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+									moved = true;
+								}
+								else if(ghyDiff > 0 && ghyDiff < ghrange){
+									level.getGhosts().get(i).changeDirection(Direction.UP);
+									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+									moved = true;
+								}
+							}
+						}
+					}
+					if (!moved) {
+						xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
+						yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
+						if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range) {
+							if(xDiff < 0 && xDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.LEFT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(xDiff > 0 && xDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+				
+						
+							if(yDiff < 0 && yDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.UP);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(yDiff > 0 && yDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.DOWN);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+						}
+						else
+							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+					}
+				}
+			}
+			}
+
+		}
+		
+		public Direction getRandomDirection() {
+			int direction = rand.nextInt(4)+1;
+			if(direction == 1) {
+				return Direction.UP;
+			}
+			if(direction == 2) {
+				return Direction.DOWN;
+			}
+			if(direction == 3) {
+				return Direction.RIGHT;
+			}
+			else {
+				return Direction.LEFT;
+			}
+		}
+		
+		
+		
+		public void ghostMove(int i, Direction direction, double speed) {
+			if(direction == Direction.UP) {
+				level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getGhosts().get(i).getPosition().getY() - speed);
+				for(int j = 0; j < level.getWalls().size(); j++ )
+					if(level.getWalls().get(j).isCollideTop(level.getGhosts().get(i))) {
+						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getWalls().get(j).getPosition().getY() + level.getWalls().get(j).getSize().getY() + 1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
+					}
+			}
+			else if(direction == Direction.DOWN) {
+				level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getGhosts().get(i).getPosition().getY() + speed);
+				for(int j = 0; j < level.getWalls().size(); j++ )
+					if(level.getWalls().get(j).isCollideBottom(level.getGhosts().get(i))) {
+						level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX(), level.getWalls().get(j).getPosition().getY() - level.getGhosts().get(i).getSize().getY() - 1);
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
+					}
+			}
+			if(direction == Direction.RIGHT) {
+				level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX() + speed, level.getGhosts().get(i).getPosition().getY());
+				for(int j = 0; j < level.getWalls().size(); j++ )
+					if(level.getWalls().get(j).isCollideRight(level.getGhosts().get(i))) {
+						level.getGhosts().get(i).setPosition(level.getWalls().get(j).getPosition().getX() - level.getGhosts().get(i).getSize().getX() - 1, level.getGhosts().get(i).getPosition().getY());
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
+					}
+			}
+			else if(direction == Direction.LEFT) {
+				level.getGhosts().get(i).setPosition(level.getGhosts().get(i).getPosition().getX() - speed, level.getGhosts().get(i).getPosition().getY());
+				for(int j = 0; j < level.getWalls().size(); j++ )
+					if(level.getWalls().get(j).isCollideLeft(level.getGhosts().get(i))) {
+						level.getGhosts().get(i).setPosition(level.getWalls().get(j).getPosition().getX() +  level.getWalls().get(j).getSize().getX() + 1, level.getGhosts().get(i).getPosition().getY());
+						level.getGhosts().get(i).changeDirection(getRandomDirection());
+					}
+			}
+		}
+		
+		public void gameFinish() {
+			if(!level.getPro().alive) {
+				gameWin = false;
+				gameFinish = true;
+
+				showFinish(gameWin);
+			}
+			else if(level.getPellets().isEmpty() && level.getItem().isEmpty()) {
+				gameWin = true;
+				gameFinish = true;
+
+				showFinish(gameWin);
+			} else if (gameCount.getString() == "0:00") {
+				gameWin = false;
+				gameFinish = true;
+
+				showFinish(gameWin);
+			}
+		}
+		
+		public void showFinish(boolean win) {
+
+			ArrayList<Object> buttons = new ArrayList<Object>();
+			if (win) {
+				gameFinishText = new Text(new Position(450, 200), 250, "Game Won", 50, Color.BLACK);
+				addText(gameFinishText);
+				
+				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
+				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_Arrow.png"));
+
+				buttons.add(background);
+				buttons.add(menu_button);
+				buttons.add(next_round_button);
+			
+				addObject(buttons);				
+			} else {
+				gameFinishText = new Text(new Position(450, 200), 250, "Game Lost", 50, Color.BLACK);
+				addText(gameFinishText);
+				
+				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
+				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
+		
+				buttons.add(background);
+				buttons.add(menu_button);
+				buttons.add(retry_button);
+		
+				addObject(buttons);
+			}
+			
+		}
+		
+		public boolean getGameFinish() {
+			return gameFinish;
+		}
+		
+		public int nextRound(double x, double y) {
+			
+			if(menu_button.isInsideObject(x, y)) {
+				return 1;
+			}
+			else if(retry_button.isInsideObject(x, y)) {
+				return 2;
+			}
+			else return 0;
+		
+				
+		}
+		
+		public void initLevel() {
+			multiInGame = new MultiInGame(rand.nextInt(3), rand.nextInt(4));
+		}
+		public void resetCharacter() {
+			objects.removeAll(level.getGhosts());
+			level.resetCharacter();
+			objects.addAll(level.getGhosts());
+		}
+		
+		public void proAlive() {
+			if(level.getPro().getLife() <= 0)
+				level.getPro().alive = false;
+		}
+		
+		public void proDied() {
+			if(!level.getPro().alive) {
+				removeObject(level.getPro());
+			} else {
+				resetCharacter();
+			}
+		}
+		
+		public void protagonistMove() {
+			if (movePressed.getMovePressed(Direction.UP)) {
+				level.getPro().setDirection(Direction.UP);
+				moveUp();
+			}
+			if (movePressed.getMovePressed(Direction.DOWN)) {
+				level.getPro().setDirection(Direction.DOWN);
+				moveDown();
+			}
+			if (movePressed.getMovePressed(Direction.RIGHT)) {
+				level.getPro().setDirection(Direction.RIGHT);
+				moveRight();
+			}
+			if (movePressed.getMovePressed(Direction.LEFT)) {
+				level.getPro().setDirection(Direction.LEFT);
+				moveLeft();
+			}
+			checkPelletsAndItems();
+		}
+		
+		public void ghostMove() {
+			if (movePressed.getGhostMovePressed(Direction.UP)) {
+				level.getGhosts().get(playerGhost).setDirection(Direction.UP);
+				moveGhostUp();
+			}
+			if (movePressed.getGhostMovePressed(Direction.DOWN)) {
+				level.getGhosts().get(playerGhost).setDirection(Direction.DOWN);
+				moveGhostDown();
+			}
+			if (movePressed.getGhostMovePressed(Direction.RIGHT)) {
+				level.getGhosts().get(playerGhost).setDirection(Direction.RIGHT);
+				moveGhostRight();
+			}
+			if (movePressed.getGhostMovePressed(Direction.LEFT)) {
+				level.getGhosts().get(playerGhost).setDirection(Direction.LEFT);
+				moveGhostLeft();
+			}
+		}
+		
+		public void pressMove(KeyCode code) {
+			switch(code) {
+			case UP:
+				movePressed.setMovePressed(Direction.UP, true);
+				break;
+			case DOWN:
+				movePressed.setMovePressed(Direction.DOWN, true);
+				break;
+			case LEFT:
+				movePressed.setMovePressed(Direction.LEFT, true);
+				break;
+			case RIGHT:
+				movePressed.setMovePressed(Direction.RIGHT, true);
+				break;
+			}
+		}
+		public void pressGhostMove(KeyCode code) {
+		switch(code) {
+			case W:
+				movePressed.setGhostMovePressed(Direction.UP, true);
+				break;
+			case S:
+				movePressed.setGhostMovePressed(Direction.DOWN, true);
+				break;
+			case A:
+				movePressed.setGhostMovePressed(Direction.LEFT, true);
+				break;
+			case D:
+				movePressed.setGhostMovePressed(Direction.RIGHT, true);
+				break;
+			}
+		}
+		public void releaseMove(KeyCode code) {
+			switch(code) {
+			case UP:
+				movePressed.setMovePressed(Direction.UP, false);
+				break;
+			case DOWN:
+				movePressed.setMovePressed(Direction.DOWN, false);
+				break;
+			case LEFT:
+				movePressed.setMovePressed(Direction.LEFT, false);
+				break;
+			case RIGHT:
+				movePressed.setMovePressed(Direction.RIGHT, false);
+				break;
+			case P:
+				movePressed.setMovePressed(Direction.ALL, false);
+				break;
+			}
+		}
+		public void releaseGhostMove(KeyCode code) {
+			switch(code) {
+			case W:
+				movePressed.setGhostMovePressed(Direction.UP, false);
+				break;
+			case S:
+				movePressed.setGhostMovePressed(Direction.DOWN, false);
+				break;
+			case A:
+				movePressed.setGhostMovePressed(Direction.LEFT, false);
+				break;
+			case D:
+				movePressed.setGhostMovePressed(Direction.RIGHT, false);
+				break;
+			case P:
+				movePressed.setGhostMovePressed(Direction.ALL, false);
+				break;
+			}
+		}
+
+		public void isProCollideGhost() {
+
+			for(int i = 0; i < level.getGhosts().size(); i++ ) {
+				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze) {
+					if(level.getPro().item) {
+						level.getGhosts().get(i).setIterator(2);
+						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility());
+						drawAbility();
+						level.getGhosts().get(i).alive = false;
+						int diedGhost = i;
+						Timer t = new Timer();
+						t.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								level.getGhosts().get(diedGhost).alive = true;
+								level.getGhosts().get(diedGhost).setIterator(0);
+								cancel();
+							}
+						}, 2000l);
+						level.getPro().usableAbility = true;
+						removeText(itemTime);
+						level.getPro().item = false;
+					}
+					else {
+						Timer stop = new Timer();
+						dying = true;
+						level.getPro().setIterator(4);
+						stop.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								level.getPro().setIterator(5);
+							}
+						}, 1500l);
+						stop.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								if (singleInGame != null) {
+									level.getPro().decreaseLife();
+									proAlive();
+									proDied();
+									drawLife();
+								}
+							}
+						}, 3000l);
+						stop.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								dying = false;
+							}
+						}, 4500l);
+						
+						
+					}
+				}
+			}
+		}
+		
+		public void isGhostCollideIce() {
+			for(int i = 0; i < level.getGhosts().size(); i++ ) {
+				if(ice.isCollideObject(level.getGhosts().get(i))) {
+					Object ice = new Object(level.getGhosts().get(i).getPosition(), new Image("/resource/iced.png"));
+					icedGhost.add(ice);
+					addObject(ice);
+					level.getGhosts().get(i).freeze = true;
+				}
+			}
+		}
+		
+		public void useAbility() {
+			Object newPosition = new Object(new Position (0,0), new Position(20,20));
+			int count = 0;
+			if(level.getPro().usableAbility) {
+				Ability ability = level.getPro().getStoredAbility();
+				if(ability == Ability.RAINBOW_STAR) {
+					speed = speed * 2;
+					abilityTimer();
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							speed = 2.5;
+							cancel();
+						}
+					}, 3000l);
+					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
+				}
+				else if(ability == Ability.NURSE) {
+					level.getPro().increaseLife();
+					drawLife();
+					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
+				}
+				else if(ability == Ability.WIZARD) {
+					Direction direction = level.getPro().getDirection();
+					
+					if (direction == Direction.UP) {
+						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - level.getWalls().get(0).getSize().getY()*2);
+						if (level.getPro().untouchable) level.getPro().setIterator(7);
+						else level.getPro().setIterator(1);
+					}
+					else if (direction == Direction.DOWN) {
+						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + (level.getWalls().get(0).getSize().getY()+1)*2);
+						if (level.getPro().untouchable) level.getPro().setIterator(6);
+						else level.getPro().setIterator(0);
+					}
+					else if (direction == Direction.RIGHT) {
+						newPosition.setPosition(level.getPro().getPosition().getX() + (level.getWalls().get(0).getSize().getY()+1)*2, level.getPro().getPosition().getY());
+						if (level.getPro().untouchable) level.getPro().setIterator(8);
+						else level.getPro().setIterator(2);
+					}
+					else if (direction == Direction.LEFT) {
+						newPosition.setPosition(level.getPro().getPosition().getX() - level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
+						if (level.getPro().untouchable) level.getPro().setIterator(9);
+						else level.getPro().setIterator(3);
+					}
+					for(int i = 0; i < level.getWalls().size(); i++ ) {
+						if(!level.getWalls().get(i).isCollideObject(newPosition)) {
+							count++;
+						}
+							
+					}
+					if (count == level.getWalls().size()) {
+						level.getPro().setPosition(newPosition.getPosition().getX(), newPosition.getPosition().getY());
+						level.getPro().usableAbility = false;
+						level.getPro().setStoredAbility(Ability.DEFAULT);
+						drawAbility();
+					}
+				}
+				else if(ability == Ability.ICE) {
+					newPosition.setPosition(level.getPro().getPosition().getX()-level.getPro().getSize().getX()/2, level.getPro().getPosition().getY()-level.getPro().getSize().getY()/2);
+					ice = new Object(newPosition.getPosition(), new Position(50,50), new Image("/resource/ice.png"));
+					objects.add(ice);
+					iceAppear = true;
+					abilityTimer();
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							iceAppear = false;
+							removeObject(ice);
+							removeObject(icedGhost);
+							icedGhost.clear();
+							for(int i = 0; i < level.getGhosts().size(); i++ ) {
+								if(level.getGhosts().get(i).freeze = true) {
+									level.getGhosts().get(i).freeze = false;
+								}
+							}
+							cancel();
+						}
+					}, 3000l);
+					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
+				}
+				else if(ability == Ability.NINJA) {
+					level.getPro().setUntouchable(true);
+					abilityTimer();
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							level.getPro().setUntouchable(false);
+							cancel();
+						}
+					}, 3000l);
+					level.getPro().usableAbility = false;
+					level.getPro().setStoredAbility(Ability.DEFAULT);
+					drawAbility();
+				}
+				
+			}
+			
+		}
+		private void abilityTimer() {
+			Text abilityTime = new Text(new Position(1200,650), 80, 3, 24, Color.BLACK);
+			addText(abilityTime);
+			Timer textTimer = new Timer();
+			textTimer.scheduleAtFixedRate(new TimerTask() {
+				@Override
+				public void run() {
+					if (abilityTime.getString().equals("0")) {
+						removeText(abilityTime);
+						cancel();
+					}
+					else {
+						abilityTime.setString( Integer.valueOf(abilityTime.getString()) - 1);
+					}
+				}
+			}, 1000l, 1000l);
+		}
+		
+		public void findPlayerGhost() {
+			for(int i=0; i <level.getGhosts().size(); i++) {
+				if(level.getGhosts().get(i).getAbility() == multiSelect.ghostTeam) {
+					playerGhost = i;
+				}
+			}
+		}
+		
+		private void moveGhostUp() {
+			level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX(), level.getGhosts().get(playerGhost).getPosition().getY() - speed);
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideTop(level.getGhosts().get(playerGhost))) {
+					level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
+				}
+
+		}
+		private void moveGhostDown() {
+			level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX(), level.getGhosts().get(playerGhost).getPosition().getY() + speed);
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideBottom(level.getGhosts().get(playerGhost))) {
+					level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getGhosts().get(playerGhost).getSize().getY() - 1);
+				}
+
+		}
+		private void moveGhostRight() {
+			boolean moving = true;
+			level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX() + speed, level.getGhosts().get(playerGhost).getPosition().getY());
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideRight(level.getGhosts().get(playerGhost))) {
+					level.getGhosts().get(playerGhost).setPosition(level.getWalls().get(i).getPosition().getX() - level.getGhosts().get(playerGhost).getSize().getX() - 1, level.getGhosts().get(playerGhost).getPosition().getY());
+					moving = false;
+				}
+			if (moving) {
+				level.getGhosts().get(playerGhost).setIterator(0);
+			}
+		}
+		private void moveGhostLeft() {
+			boolean moving = true;
+			level.getGhosts().get(playerGhost).setPosition(level.getGhosts().get(playerGhost).getPosition().getX() - speed, level.getGhosts().get(playerGhost).getPosition().getY());
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideLeft(level.getGhosts().get(playerGhost))) {
+					level.getGhosts().get(playerGhost).setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getGhosts().get(playerGhost).getPosition().getY());
+					moving = false;
+				}
+			if (moving) {
+				level.getGhosts().get(playerGhost).setIterator(1);
+			}
+		}
+		
+		private void moveUp() {
+			boolean moving = true;
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideTop(level.getPro())) {
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
+					moving = false;
+				}
+			if (moving) {
+				if (level.getPro().untouchable) level.getPro().setIterator(7);
+				else level.getPro().setIterator(1);
+			}
+		}
+		private void moveDown() {
+			boolean moving = true;
+			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideBottom(level.getPro())) {
+					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getPro().getSize().getY() - 1);
+					moving = false;
+				}
+			if (moving) {
+				if (level.getPro().untouchable) level.getPro().setIterator(6);
+				else level.getPro().setIterator(0);
+			}
+		}
+		private void moveRight() {
+			boolean moving = true;
+			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideRight(level.getPro())) {
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() - level.getPro().getSize().getX() - 1, level.getPro().getPosition().getY());
+					moving = false;
+				}
+			if (moving) {
+				if (level.getPro().untouchable) level.getPro().setIterator(8);
+				else level.getPro().setIterator(2);
+			}
+		}
+		private void moveLeft() {
+			boolean moving = true;
+			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
+			for(int i = 0; i < level.getWalls().size(); i++ )
+				if(level.getWalls().get(i).isCollideLeft(level.getPro())) {
+					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getPro().getPosition().getY());
+					moving = false;
+				}
+			if (moving) {
+				if (level.getPro().untouchable) level.getPro().setIterator(9);
+				else level.getPro().setIterator(3);
+			}
+		}
+		private void checkPelletsAndItems() {
+			for(int i = 0; i < level.getPellets().size(); i++ ) {
+				if(level.getPro().isCollideLeft(level.getPellets().get(i))) {
+					eatPellet(level.getPellets().get(i));
+				}
+			}
+
+			for(int i = 0; i < level.getItem().size(); i++ ) {
+				if(level.getPro().isCollideLeft(level.getItem().get(i))) {
+					eatItem(level.getItem().get(i));
+				}
+			}
+		}
+		
+		private void eatItem(Item item) {
+			removeObject(item);
+			if (!level.getPro().item) {
+				itemTime.setString(5);
+				addText(itemTime);
+				Timer textTimer = new Timer();
+				textTimer.scheduleAtFixedRate(new TimerTask() {
+					@Override
+					public void run() {
+						if (itemTime.getString().equals("0")) {
+							level.getPro().item = false;
+							removeText(itemTime);
+							cancel();
+						}
+						else {
+							itemTime.setString( Integer.valueOf(itemTime.getString()) - 1);
+						}
+					}
+				}, 1000l, 1000l);
+			} else {
+				itemTime.setString(5);
+			}
+			level.getPro().item = true;
+			info.addScore(item);
+			playerScore.setString(info.getScore());
+			level.removeItems(item);
+		}
+		
+		private void eatPellet(Pellet pellet) {
+			removeObject(pellet);
+			info.addScore(pellet);
+			playerScore.setString(info.getScore());
+			level.removePellets(pellet);
+		}
+		
+		public class MovePressed {
+			boolean up = false;
+			boolean down = false;
+			boolean left = false;
+			boolean right = false;
+			boolean ghostUp = false;
+			boolean ghostDown = false;
+			boolean ghostLeft = false;
+			boolean ghostRight = false;
+			
+			public boolean getMovePressed(Direction d) {
+				switch(d) {
+				case UP:
+					return up;
+				case DOWN:
+					return down;
+				case LEFT:
+					return left;
+				case RIGHT:
+					return right;
+				default:
+					return false;
+				}
+			}
+			
+			public void setMovePressed(Direction d, boolean b) {
+				switch(d) {
+				case UP: 
+					up = b;
+					break;
+				case DOWN: 
+					down = b;
+					break;
+				case LEFT:
+					left = b;
+					break;
+				case RIGHT:
+					right = b;
+					break;
+				case ALL:
+					up = b;
+					down = b;
+					left = b;
+					right = b;
+					break;
+				}
+			}
+			public boolean getGhostMovePressed(Direction d) {
+				switch(d) {
+				case UP:
+					return ghostUp;
+				case DOWN:
+					return ghostDown;
+				case LEFT:
+					return ghostLeft;
+				case RIGHT:
+					return ghostRight;
+				default:
+					return false;
+				}
+			}
+			
+			public void setGhostMovePressed(Direction d, boolean b) {
+				switch(d) {
+				case UP: 
+					ghostUp = b;
+					break;
+				case DOWN: 
+					ghostDown = b;
+					break;
+				case LEFT:
+					ghostLeft = b;
+					break;
+				case RIGHT:
+					ghostRight = b;
+					break;
+				case ALL:
+					ghostUp = b;
+					ghostDown = b;
+					ghostLeft = b;
+					ghostRight = b;
+					break;
+				}
+			}
+		}
+		public boolean getCountdownFlag() {
+			return inCountdown;
+		}
+		public boolean getPauseFlag() {
+			return inPause;
+		}
+		public void setTimerTo_0() {
+			gameCount.setString("0:00");
+		}
+		public void setPause(boolean b) {
+			if (b) {
+				if (count != null) removeText(count);
+				pause = new Text(new Position(575, 325), 200, "Paused", 24, Color.BLACK);
+				addText(pause);
+				highlight = new Object(new Position(pause.getPosition().getX() - 12, pause.getPosition().getY() - 24), new Position(100,30), new Image("/resource/Text_Highlight.png"));
+				addObject(highlight);
+				inPause = b;
+			} else {
+				if (count != null) addText(count);
+				removeText(pause);
+				inPause = b;
+				removeObject(highlight);
+			}
+		}
+		
+		public void drawLife() {
+			removeObject(lifes);
+			objects.removeAll(lifes);
+			int posX = 1175;
+			int posY = 150;
+			for(int i = 0; i<level.getPro().getMaxLife(); i++) {
+
+				Position pos = new Position(posX + i*40, posY);
+				if(pos.getX() > level.getSide().getPosition().getX() + level.getSide().getSize().getX() - 50) {
+					posX = 1175 - i*40;
+					posY = posY + 40;
+				}
+				pos = new Position(posX + i*40, posY);
+				if(i<level.getPro().getLife()) {
+					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/life.png") );
+					this.lifes.add(lifes);
+				}
+				else {
+					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/diedLife.png") );
+					this.lifes.add(lifes);
+				}
+				
+			}
+			objects.addAll(lifes);
+		}
+		
+		public void drawAbility() {
+			removeText(ability);
+			Position pos = new Position(1160, 600);
+			if(level.getPro().getStoredAbility() == Ability.DEFAULT) {
+				ability = new Text(pos, 120, "DEFAULT ", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.RAINBOW_STAR) {
+				ability = new Text(pos, 120, "RAINBOW", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.NURSE) {
+				ability = new Text(pos, 120, "NURSE", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.WIZARD) {
+				ability = new Text(pos, 120, "WIZARD", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.ICE) {
+				ability = new Text(pos, 120, "ICE", 24, Color.RED);
+			}
+			else if(level.getPro().getStoredAbility() == Ability.NINJA) {
+				ability = new Text(pos, 120, "NINJA", 24, Color.RED);
+			}
+			addText(ability);
+		}
+		
 		public MultiInGame(int world, int stage) {
 			objects.clear();
 			texts.clear();
+			lifes = new ArrayList<Object>();
 
+			level = new Level(world + 1, stage + 1);
+			addObject(level.getObjectList());
+			
+			String worldText = (level.getWorld()+1) + " - " + (level.getStage()+1);
+			Text stageText = new Text(new Position(600, 50), 120, worldText, 24, Color.BLACK);
+			Text score = new Text(new Position(1170, 450), 120, "Score :", 24, Color.BLACK);
+			Text time = new Text(new Position(1160, 350), 120, "Time Left :", 24, Color.BLACK);
+			Text life = new Text(new Position(1175, 125), 120, "Life : ", 24, Color.BLACK);
+			Text abilityText = new Text(new Position(1170, 550), 120, "Ability : ", 24, Color.BLACK);
+			addText(stageText);
+			addText(score);
+			addText(time);
+			addText(life);
+			addText(abilityText);
+			drawAbility();
+			info = new PlayerInfo();
+			playerScore = new Text(new Position(1190, 475), 80, info.getScore(), 24, Color.BLACK);
+			addText(playerScore);
+			count = new Text(new Position(575, 375), 99, 3, 24, Color.BLACK);
+			addText(count);
+			gameCount = new Text(new Position(1190, 375), 80, "2:00", 24, Color.BLACK);
+			addText(gameCount);
+			highlight = new Object(new Position(count.getPosition().getX() - 12, count.getPosition().getY() - 24), new Position(40,30), new Image("/resource/Text_Highlight.png"));
+			addObject(highlight);
+			drawLife();
+			inCountdown = true;
+			inPause = false;
+			Timer timer = new Timer();
+			TimerTask gameTimerTask = new TimerTask() {
+				@Override
+				public void run() {
+					String timerString[] = gameCount.getString().split(":");
+					int min = Integer.valueOf(timerString[0]);
+					int sec = Integer.valueOf(timerString[1]);
+					if (!inPause) {
+						if (gameFinish) {
+							this.cancel();
+						}
+						else if (min == 0 && sec == 0) {
+							gameFinish();
+							this.cancel();
+						} else if (sec == 0 && min != 0) {
+								min--;
+								sec = 59;
+						} else {
+							sec--;
+						}
+						String minStr = String.valueOf(min);
+						String secStr = String.valueOf(sec);
+						if (secStr.length() == 1) {
+							secStr = 0 + secStr;
+						}
+						
+						gameCount.setString(minStr + ":" + secStr);
+					}
+				}
+			};
+			TimerTask counter = new TimerTask() {
+				@Override
+				public void run() {
+					if (count.getString().equals("1")) {
+						count.setString("Start!");
+						highlight.setSize(80, 30);
+						inCountdown = false;
+						
+						timer.schedule(new TimerTask() {
+							@Override
+							public void run() {
+								removeText(count);
+								removeObject(highlight);
+								count = null;
+								timer.scheduleAtFixedRate(gameTimerTask, 0l, 1000l);
+							}
+						}, 1000l);
+						this.cancel();
+					} else {
+						if (!inPause)
+							count.setString(Integer.valueOf(count.getString()) - 1);
+					}
+				}
+			};
+			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
 		}
+	
 	}
 		
 	
@@ -68,7 +1170,7 @@ public class GameModelHandler {
 	public class MultiSelect {
 		Object backButton;
 		ArrayList<Object> ghostTeams;
-		int ghostTeam;
+		Ability ghostTeam;
 		
 		public MultiSelect() {
 			objects.clear();
@@ -79,24 +1181,46 @@ public class GameModelHandler {
 			addObject(backButton);
 			Text select = new Text(new Position(125,100), 500, "Select Ghost :", 80, Color.WHITE);
 			addText(select);
-			Object ghostTeam1 = new Object(new Position(125, 150), new Position(500, 500), new Image("/resource/wizard_0.png"));
-			ghostTeams.add(ghostTeam1);
-			Object ghostTeam2 = new Object(new Position(650, 150), new Position(500, 500), new Image("/resource/ninja_0.png"));
-			ghostTeams.add(ghostTeam2);
+			Object ghost = new Object(new Position(300, 150), new Position(200, 200), new Image("/resource/rainbow_0.png"));
+			ghostTeams.add(ghost);
+			ghost = new Object(new Position(550, 150), new Position(200, 200), new Image("/resource/nurse_0.png"));
+			ghostTeams.add(ghost);
+			ghost = new Object(new Position(800, 150), new Position(200, 200), new Image("/resource/wizard_0.png"));
+			ghostTeams.add(ghost);
+			ghost = new Object(new Position(425, 400), new Position(200, 200), new Image("/resource/iceman_0.png"));
+			ghostTeams.add(ghost);
+			ghost = new Object(new Position(675, 400), new Position(200, 200), new Image("/resource/ninja_0.png"));
+			ghostTeams.add(ghost);
 			objects.addAll(ghostTeams);	
 		}
 		
 		public int selectMouse_ghostTeam(double x, double y) {
 			for (int i = 0; i < ghostTeams.size(); i++)
-				if (ghostTeams.get(i).isInsideObject(x, y)) 
+				if (ghostTeams.get(i).isInsideObject(x, y)) {
+					setGhostTeam(i);
 					return i;
+				}
 			if (backButton.isInsideObject(x, y)) 
 				return -2;
 			else return -1;
 		}
 		
 		public void setGhostTeam(int n) {
-			ghostTeam = n;
+			if(n==0) {
+				ghostTeam = Ability.RAINBOW_STAR;
+			}
+			else if(n==1) {
+				ghostTeam = Ability.NURSE;
+			}
+			else if(n==2) {
+				ghostTeam = Ability.WIZARD;
+			}
+			else if(n==3) {
+				ghostTeam = Ability.ICE;
+			}
+			else if(n==4) {
+				ghostTeam = Ability.NINJA;
+			}
 		}
 	}
 	
@@ -544,6 +1668,8 @@ public class GameModelHandler {
 			}
 			checkPelletsAndItems();
 		}
+		
+		
 		
 		public void pressMove(KeyCode code) {
 			switch(code) {
