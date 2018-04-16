@@ -110,12 +110,6 @@ public class GameModelHandler {
 				//rainbowFolow();
 			}
 		}
-		public int randomWorld() {
-			return (rand.nextInt(3)+0);
-		}
-		public int randomStage() {
-			return (rand.nextInt(4)+0);
-		}
 		public void rainbowFolow() {
 			for (int i = 0; i < level.getGhosts().size(); i++) {
 				if (level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR && level.getGhosts().get(i).getAlive()) {
@@ -394,33 +388,22 @@ public class GameModelHandler {
 		public void showFinish(boolean win) {
 
 			ArrayList<Object> buttons = new ArrayList<Object>();
-			if (win) {
-				gameFinishText = new Text(new Position(450, 200), 250, "Game Won", 50, Color.BLACK);
-				addText(gameFinishText);
+			if (win) 
+				gameFinishText = new Text(new Position(450, 200), 250, "Player Won", 50, Color.BLACK);	
+			else 
+				gameFinishText = new Text(new Position(450, 200), 250, "Ghost Won", 50, Color.BLACK);
 				
-				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_Arrow.png"));
-
-				buttons.add(background);
-				buttons.add(menu_button);
-				buttons.add(next_round_button);
+			addText(gameFinishText);
+				
+			background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
+			menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
+			retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
+			buttons.add(background);
+			buttons.add(menu_button);
+			buttons.add(retry_button);
+		
+			addObject(buttons);
 			
-				addObject(buttons);				
-			} else {
-				gameFinishText = new Text(new Position(450, 200), 250, "Game Lost", 50, Color.BLACK);
-				addText(gameFinishText);
-				
-				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
-		
-				buttons.add(background);
-				buttons.add(menu_button);
-				buttons.add(retry_button);
-		
-				addObject(buttons);
-			}
 			
 		}
 		

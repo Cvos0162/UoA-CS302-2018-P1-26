@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Random;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -394,10 +395,12 @@ public class GameController {
 
 			break;
 		case MULTI_IN_GAME:
-			//world = model.multiInGame.randomWorld();
-			//stage = model.multiInGame.randomStage();
-			world = 0;
-			stage = 1;
+			Random rand = new Random();
+			world = rand.nextInt(3);
+			stage = rand.nextInt(4);
+			System.out.println(world);
+			System.out.println(stage);
+
 			model.deleteStates();
 			view.setColour(Colour.WHITE);
 			model.initMultiInGame(world, stage);
