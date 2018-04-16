@@ -1,5 +1,6 @@
 package main;
 
+import java.util.Random;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
@@ -110,8 +111,33 @@ public class GameController {
 			}
 			break;
 		case MULTI_SEL:
+
+			switch(model.multiSelect.selectMouse_ghostTeam(x, y)) {
+				case -1:
+					break;
+				case -2:
+					gState = State.START;
+					initState();
+					break;
+				default:		
+					gState = State.MULTI_IN_GAME;
+					initState();
+					break;	
+			}
 			break;
 		case MULTI_IN_GAME:
+			
+			if(model.multiInGame.getGameFinish())
+				switch(model.multiInGame.nextRound(x, y)){
+				case 0:
+					break;
+				case 1:
+					gState = State.START;
+					initState();
+					break;
+				case 2:
+					model.multiInGame.initLevel();
+			}
 			break;
 		}
 	}
@@ -244,6 +270,31 @@ public class GameController {
 				gState = State.MULTI_SEL;
 				initState();
 				break;
+			case UP:
+			case DOWN:
+			case RIGHT:
+			case LEFT:
+				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
+					model.multiInGame.pressMove(code);
+				break;
+			case W:
+			case A:
+			case S:
+			case D:
+				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
+					model.multiInGame.pressGhostMove(code);
+				break;
+			case SPACE:
+			case ENTER:
+				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
+					model.multiInGame.useAbility();
+				break;
+			case P:
+				model.multiInGame.setPause(!model.multiInGame.getPauseFlag());
+				model.multiInGame.releaseMove(code);
+				break;
+			default:
+				break;
 			}
 			break;
 		}
@@ -268,6 +319,26 @@ public class GameController {
 			}
 			break;
 		case MULTI_IN_GAME:
+			switch(code) {
+			case UP:
+			case DOWN:
+			case RIGHT:
+			case LEFT:
+				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag())
+					model.multiInGame.releaseMove(code);
+			case W:
+			case A:
+			case S:
+			case D:
+				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag())
+					model.multiInGame.releaseGhostMove(code);
+				break;
+			case PAGE_DOWN:
+				model.multiInGame.setTimerTo_0();
+				break;
+			default:
+				break;
+			}
 			break;
 		default:
 			break;
@@ -290,6 +361,8 @@ public class GameController {
 		case MULTI_SEL:
 			break;
 		case MULTI_IN_GAME:
+			if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag())
+				model.multiInGame.update();
 			break;
 		}
 		view.draw(model.getObjects());
@@ -323,8 +396,15 @@ public class GameController {
 
 			break;
 		case MULTI_IN_GAME:
+			Random rand = new Random();
+			world = rand.nextInt(3);
+			stage = rand.nextInt(4);
+			System.out.println(world);
+			System.out.println(stage);
+
 			model.deleteStates();
 			view.setColour(Colour.WHITE);
+			model.initMultiInGame(world, stage);
 
 			break;
 
