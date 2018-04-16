@@ -10,6 +10,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.paint.Color;
 
 public class GameModelHandler {
+	Ability ghostTeam;
 	private ArrayList<Object> objects;
 	private ArrayList<Text> texts;
 	public Start start = null;
@@ -58,6 +59,7 @@ public class GameModelHandler {
 		
 		Level level;
 		
+		
 		int playerGhost;
 		boolean iceAppear;
 		boolean inCountdown;
@@ -94,6 +96,7 @@ public class GameModelHandler {
 				if (gameFinish || dying) { 
 					movePressed.setMovePressed(Direction.ALL, false);
 				}
+				findPlayerGhost();
 				proAlive();
 				protagonistMove();
 				ghostMove();
@@ -606,7 +609,7 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (singleInGame != null) {
+								if (multiInGame != null) {
 									level.getPro().decreaseLife();
 									proAlive();
 									proDied();
@@ -766,8 +769,9 @@ public class GameModelHandler {
 		
 		public void findPlayerGhost() {
 			for(int i=0; i <level.getGhosts().size(); i++) {
-				if(level.getGhosts().get(i).getAbility() == multiSelect.ghostTeam) {
+				if(level.getGhosts().get(i).getAbility() == ghostTeam) {
 					playerGhost = i;
+
 				}
 			}
 		}
@@ -1170,7 +1174,7 @@ public class GameModelHandler {
 	public class MultiSelect {
 		Object backButton;
 		ArrayList<Object> ghostTeams;
-		Ability ghostTeam;
+
 		
 		public MultiSelect() {
 			objects.clear();
@@ -1221,6 +1225,7 @@ public class GameModelHandler {
 			else if(n==4) {
 				ghostTeam = Ability.NINJA;
 			}
+
 		}
 	}
 	

@@ -118,14 +118,14 @@ public class GameController {
 					gState = State.START;
 					initState();
 					break;
-				default:
-					model.multiSelect.setGhostTeam(model.multiSelect.selectMouse_ghostTeam(x, y));
+				default:		
 					gState = State.MULTI_IN_GAME;
 					initState();
 					break;	
 			}
 			break;
 		case MULTI_IN_GAME:
+			
 			if(model.multiInGame.getGameFinish())
 				switch(model.multiInGame.nextRound(x, y)){
 				case 0:
