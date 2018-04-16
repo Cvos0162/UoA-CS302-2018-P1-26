@@ -152,6 +152,7 @@ public class GameController {
 		case SINGLE_IN_GAME:
 			break;
 		case MULTI_SEL:
+			model.multiSelect.moveMouse(x, y);
 			break;
 		case MULTI_IN_GAME:
 			break;
@@ -262,6 +263,19 @@ public class GameController {
 				gState = State.START;
 				initState();
 				break;
+			case UP:
+			case RIGHT:
+				model.multiSelect.selectUp();
+				break;
+			case DOWN:
+			case LEFT:
+				model.multiSelect.selectDown();
+				break;
+			case ENTER:
+				model.multiSelect.setGhostTeam();
+				gState = State.MULTI_IN_GAME;
+				initState();
+				break;
 			}
 			break;
 		case MULTI_IN_GAME:
@@ -359,6 +373,7 @@ public class GameController {
 				model.singleInGame.update();
 			break;
 		case MULTI_SEL:
+			model.multiSelect.showSelected();
 			break;
 		case MULTI_IN_GAME:
 			if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag())

@@ -1160,7 +1160,9 @@ public class GameModelHandler {
 	public class MultiSelect {
 		Object backButton;
 		ArrayList<Object> ghostTeams;
+		Object highlight;
 
+		int sel = 1;
 		
 		public MultiSelect() {
 			objects.clear();
@@ -1171,19 +1173,29 @@ public class GameModelHandler {
 			addObject(backButton);
 			Text select = new Text(new Position(125,100), 500, "Select Ghost :", 80, Color.WHITE);
 			addText(select);
-			Object ghost = new Object(new Position(300, 150), new Position(200, 200), new Image("/resource/rainbow_0.png"));
+			highlight = new Object(new Position(0,0), new Position(250, 250) , new Image("/resource/test_HighLightStage.png"));
+			objects.add(highlight);
+			Object ghost = new Object(new Position(300, 150), new Position(200, 200), new Image("/resource/rainbow_sel.png"));
 			ghostTeams.add(ghost);
-			ghost = new Object(new Position(550, 150), new Position(200, 200), new Image("/resource/nurse_0.png"));
+			ghost = new Object(new Position(550, 150), new Position(200, 200), new Image("/resource/nurse_sel.png"));
 			ghostTeams.add(ghost);
-			ghost = new Object(new Position(800, 150), new Position(200, 200), new Image("/resource/wizard_0.png"));
+			ghost = new Object(new Position(800, 150), new Position(200, 200), new Image("/resource/wizard_sel.png"));
 			ghostTeams.add(ghost);
-			ghost = new Object(new Position(425, 400), new Position(200, 200), new Image("/resource/iceman_0.png"));
+			ghost = new Object(new Position(425, 400), new Position(200, 200), new Image("/resource/iceman_sel.png"));
 			ghostTeams.add(ghost);
-			ghost = new Object(new Position(675, 400), new Position(200, 200), new Image("/resource/ninja_0.png"));
+			ghost = new Object(new Position(675, 400), new Position(200, 200), new Image("/resource/ninja_sel.png"));
 			ghostTeams.add(ghost);
 			objects.addAll(ghostTeams);	
+			
+			highlight.setPosition(ghostTeams.get(sel-1).getPosition().getX() - 50, ghostTeams.get(sel-1).getPosition().getY() - 50);
 		}
-		
+		public void moveMouse(double x, double y) {
+			for (int i = 0; i < ghostTeams.size(); i++) {
+				if (ghostTeams.get(i).isInsideObject(x, y)) {
+					sel = i+1;
+				}
+			}
+		}
 		public int selectMouse_ghostTeam(double x, double y) {
 			for (int i = 0; i < ghostTeams.size(); i++)
 				if (ghostTeams.get(i).isInsideObject(x, y)) {
@@ -1211,7 +1223,36 @@ public class GameModelHandler {
 			else if(n==4) {
 				ghostTeam = Ability.NINJA;
 			}
-
+		}
+		public void setGhostTeam() {
+			switch(sel) {
+			case 1:
+				ghostTeam = Ability.RAINBOW_STAR;
+				break;
+			case 2:
+				ghostTeam = Ability.NURSE;
+				break;
+			case 3:
+				ghostTeam = Ability.WIZARD;
+				break;
+			case 4:
+				ghostTeam = Ability.ICE;
+				break;
+			case 5:
+				ghostTeam = Ability.NINJA;
+				break;
+			}
+		}
+		public void selectUp() {
+			if (sel >= ghostTeams.size()) sel = 1;
+			else sel++;
+		}
+		public void selectDown() {
+			if (sel <= 1) sel = ghostTeams.size();
+			else sel--;
+		}
+		public void showSelected() {
+			highlight.setPosition(ghostTeams.get(sel-1).getPosition().getX() - 10, ghostTeams.get(sel-1).getPosition().getY() - 10);
 		}
 	}
 	
