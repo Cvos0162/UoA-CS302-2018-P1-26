@@ -28,11 +28,12 @@ public class GameViewer {
 			break;
 		}
 		for (int i = 0; i < objects.size(); i++) {
-			graphic.drawImage(objects.get(i).getCurrentImage(),
-				objects.get(i).getPosition().getX(),
-				objects.get(i).getPosition().getY(),
-				objects.get(i).getSize().getX() + 1,
-				objects.get(i).getSize().getY() + 1
+			if (objects.get(i) != null)
+				graphic.drawImage(objects.get(i).getCurrentImage(),
+						objects.get(i).getPosition().getX(),
+						objects.get(i).getPosition().getY(),
+						objects.get(i).getSize().getX() + 1,
+						objects.get(i).getSize().getY() + 1
 				);
 		}
 	}

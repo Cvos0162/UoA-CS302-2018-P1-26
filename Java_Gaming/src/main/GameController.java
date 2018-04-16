@@ -206,6 +206,7 @@ public class GameController {
 		case SINGLE_IN_GAME:
 			switch(code) {
 			case ESCAPE:
+				model.singleInGame.stopMedia();
 				gState = State.SINGLE_STAGE_SEL;
 				initState();
 				break;

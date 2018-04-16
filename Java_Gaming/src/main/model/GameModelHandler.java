@@ -1,5 +1,6 @@
 package main.model;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Timer;
@@ -7,6 +8,8 @@ import java.util.TimerTask;
 
 import javafx.scene.image.Image;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 
 public class GameModelHandler {
@@ -82,7 +85,11 @@ public class GameModelHandler {
 	}
 	
 	public class SingleInGame {
-
+		
+		MediaPlayer mediaPlayer;
+		Media background_sound;
+		MediaPlayer backPlayer;
+		
 		Level level;
 		
 		boolean iceAppear;
@@ -91,6 +98,7 @@ public class GameModelHandler {
 		boolean dying = false;
 		boolean gameWin;
 		boolean gameFinish;
+		boolean usingRainbow = false;
 		double speed = 2.5;
 		Random rand = new Random();
 
@@ -123,13 +131,23 @@ public class GameModelHandler {
 				proAlive();
 				protagonistMove();
 				if(!gameFinish) {
-					gameFinish();
-					ghostAi();
-					if(iceAppear)
-						isGhostCollideIce();
+					if (gameFinish()) return;
+					else {
+						isProCollideGhost();
+						ghostAi();
+						if(iceAppear)
+							isGhostCollideIce();
+					}
 				}
-				isProCollideGhost();
 				//rainbowFolow();
+			}
+		}
+		public void stopMedia() {
+			if (mediaPlayer != null) {
+				mediaPlayer.stop();
+			}
+			if (backPlayer != null) {
+				backPlayer.stop();
 			}
 		}
 		public void rainbowFolow() {
@@ -152,8 +170,29 @@ public class GameModelHandler {
 								if (rainbow != null)
 									removeObject(rainbow);
 							}
-						}, 1000l);
+						}, 200l);
 					}
+				}
+			}
+			if (usingRainbow) {
+				Image rainbowImage;
+				if (level.getPro().getDirection() == Direction.UP || level.getPro().getDirection() == Direction.DOWN) {
+					rainbowImage =  new Image("/resource/rainbow_follower_0.png");
+				}
+				else {
+					rainbowImage = new Image("/resource/rainbow_follower_1.png");
+				}
+				Object rainbow = new Object(level.getPro().getPosition(), rainbowImage);
+				if (objects.indexOf(level.getPro()) != -1) {
+					objects.add(objects.indexOf(level.getPro()), rainbow);
+					Timer t = new Timer();
+					t.schedule(new TimerTask() {
+						@Override
+						public void run() {
+							if (rainbow != null)
+								removeObject(rainbow);
+						}
+					}, 200l);
 				}
 			}
 		}
@@ -396,7 +435,7 @@ public class GameModelHandler {
 			}
 		}
 		
-		public void gameFinish() {
+		public boolean gameFinish() {
 			if(!level.getPro().alive) {
 				gameWin = false;
 				gameFinish = true;
@@ -414,37 +453,61 @@ public class GameModelHandler {
 
 				showFinish(gameWin);
 			}
+			return gameFinish;
 		}
 		
 		public void showFinish(boolean win) {
 
 			ArrayList<Object> buttons = new ArrayList<Object>();
 			if (win) {
-				gameFinishText = new Text(new Position(450, 200), 250, "Game Won", 50, Color.BLACK);
+				gameFinishText = new Text(new Position(490, 225), 250, "Game Won", 36, Color.BLACK);
 				addText(gameFinishText);
 				
-				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_Arrow.png"));
-
+				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
+				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/nextButton.png"));
 				buttons.add(background);
 				buttons.add(menu_button);
 				buttons.add(next_round_button);
-			
-				addObject(buttons);				
+				addObject(buttons);
+				
+				Object textHighlighter = new Object(new Position(
+						gameFinishText.getPosition().getX() - 10,
+						gameFinishText.getPosition().getY() - 34
+						),
+						new Position(190, 41),
+						new Image("resource/Text_Highlight.png"));
+				addObject(textHighlighter);
+				
+				stopMedia();
+				Media gameWinSound = new Media(new File("./src/resource/gameWin.wav").toURI().toString());
+				mediaPlayer = new MediaPlayer(gameWinSound);
+				mediaPlayer.play();
 			} else {
-				gameFinishText = new Text(new Position(450, 200), 250, "Game Lost", 50, Color.BLACK);
+				gameFinishText = new Text(new Position(490, 225), 250, "Game Lost", 36, Color.BLACK);
 				addText(gameFinishText);
 				
-				background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
-		
+				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
+				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
+				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/retryButton.png"));
 				buttons.add(background);
 				buttons.add(menu_button);
 				buttons.add(retry_button);
-		
 				addObject(buttons);
+				
+				Object textHighlighter = new Object(new Position(
+						gameFinishText.getPosition().getX() - 12,
+						gameFinishText.getPosition().getY() - 34
+						),
+						new Position(190, 41),
+						new Image("resource/Text_Highlight.png"));
+				addObject(textHighlighter);
+				
+				stopMedia();
+				Media gameOverSound = new Media(new File("./src/resource/gameOver.wav").toURI().toString());
+				mediaPlayer = new MediaPlayer(gameOverSound);
+				mediaPlayer.play();
+				
 			}
 			
 		}
@@ -476,6 +539,15 @@ public class GameModelHandler {
 			}
 				
 		}
+		public void getBackgroundMusic() {
+			switch(level.getWorld()) {
+			case 0:
+				//background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
+				//backPlayer = new MediaPlayer(background_sound);
+				//backPlayer.play();
+				break;
+			}
+		}
 		
 		public void initLevel() {
 			singleInGame = new SingleInGame(level.getWorld(), level.getStage());
@@ -502,6 +574,10 @@ public class GameModelHandler {
 			if(!level.getPro().alive) {
 				removeObject(level.getPro());
 			} else {
+				Media reviveSound = new Media(new File("./src/resource/revived_InGame.wav").toURI().toString());
+				mediaPlayer = new MediaPlayer(reviveSound);
+				mediaPlayer.play();
+				getBackgroundMusic();
 				resetCharacter();
 			}
 		}
@@ -581,28 +657,41 @@ public class GameModelHandler {
 								cancel();
 							}
 						}, 2000l);
+						Media startSound = new Media(new File("./src/resource/kill.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 						level.getPro().usableAbility = true;
 						removeText(itemTime);
 						level.getPro().item = false;
 					}
 					else {
+						stopMedia();
+						Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 						Timer stop = new Timer();
 						dying = true;
 						level.getPro().setIterator(4);
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								level.getPro().setIterator(5);
+								if (singleInGame != null) {
+									level.getPro().setIterator(5);
+									level.getPro().decreaseLife();
+									drawLife();
+									stopMedia();
+									Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
+									mediaPlayer = new MediaPlayer(startSound);
+									mediaPlayer.play();
+								}
 							}
 						}, 1500l);
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
 								if (singleInGame != null) {
-									level.getPro().decreaseLife();
 									proAlive();
 									proDied();
-									drawLife();
 								}
 							}
 						}, 3000l);
@@ -625,6 +714,11 @@ public class GameModelHandler {
 					Object ice = new Object(level.getGhosts().get(i).getPosition(), new Image("/resource/iced.png"));
 					icedGhost.add(ice);
 					addObject(ice);
+					if (level.getGhosts().get(i).freeze == false) {
+						Media startSound = new Media(new File("./src/resource/iced.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
+					}
 					level.getGhosts().get(i).freeze = true;
 				}
 			}
@@ -638,10 +732,12 @@ public class GameModelHandler {
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
 					abilityTimer();
+					usingRainbow = true;
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
+							usingRainbow = false;
 							speed = 2.5;
 							cancel();
 						}
@@ -649,6 +745,9 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/rainbow.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				else if(ability == Ability.NURSE) {
 					level.getPro().increaseLife();
@@ -656,6 +755,9 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/nurse.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				else if(ability == Ability.WIZARD) {
 					Direction direction = level.getPro().getDirection();
@@ -691,6 +793,9 @@ public class GameModelHandler {
 						level.getPro().usableAbility = false;
 						level.getPro().setStoredAbility(Ability.DEFAULT);
 						drawAbility();
+						Media startSound = new Media(new File("./src/resource/wizard.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 					}
 				}
 				else if(ability == Ability.ICE) {
@@ -699,6 +804,9 @@ public class GameModelHandler {
 					objects.add(ice);
 					iceAppear = true;
 					abilityTimer();
+					Media startSound = new Media(new File("./src/resource/iceAbility.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -733,6 +841,9 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/ninja.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				
 			}
@@ -848,6 +959,9 @@ public class GameModelHandler {
 			info.addScore(item);
 			playerScore.setString(info.getScore());
 			level.removeItems(item);
+			Media startSound = new Media(new File("./src/resource/item_ground.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 		
 		private void eatPellet(Pellet pellet) {
@@ -855,6 +969,9 @@ public class GameModelHandler {
 			info.addScore(pellet);
 			playerScore.setString(info.getScore());
 			level.removePellets(pellet);
+			Media startSound = new Media(new File("./src/resource/pellet.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 		
 		public class MovePressed {
@@ -927,29 +1044,15 @@ public class GameModelHandler {
 		}
 		
 		public void drawLife() {
-			removeObject(lifes);
-			objects.removeAll(lifes);
-			int posX = 1175;
-			int posY = 150;
-			for(int i = 0; i<level.getPro().getMaxLife(); i++) {
-
-				Position pos = new Position(posX + i*40, posY);
-				if(pos.getX() > level.getSide().getPosition().getX() + level.getSide().getSize().getX() - 50) {
-					posX = 1175 - i*40;
-					posY = posY + 40;
-				}
-				pos = new Position(posX + i*40, posY);
+			for(int i = 0; i < level.getPro().getMaxLife(); i++) {
 				if(i<level.getPro().getLife()) {
-					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/life.png") );
-					this.lifes.add(lifes);
+					lifes.get(i).setIterator(0);
 				}
 				else {
-					Object lifes = new Object(pos, new Position(25,25), new Image("/resource/diedLife.png") );
-					this.lifes.add(lifes);
+					lifes.get(i).setIterator(1);
 				}
 				
 			}
-			objects.addAll(lifes);
 		}
 		
 		public void drawAbility() {
@@ -983,6 +1086,24 @@ public class GameModelHandler {
 
 			level = new Level(world + 1, stage + 1);
 			addObject(level.getObjectList());
+			
+			int posX = 1175;
+			int posY = 150;
+			ArrayList<Image> im = new ArrayList<Image>();
+			im.add(new Image("/resource/life.png"));
+			im.add(new Image("/resource/diedLife.png"));
+			for(int i = 0; i < level.getPro().getMaxLife(); i++) {
+
+				Position pos = new Position(posX + i*40, posY);
+				if(pos.getX() > level.getSide().getPosition().getX() + level.getSide().getSize().getX() - 50) {
+					posX = 1175 - i*40;
+					posY = posY + 40;
+				}
+				pos = new Position(posX + i*40, posY);
+				Object lifes = new Object(pos, new Position(25,25), im );
+				this.lifes.add(lifes);			
+			}
+			objects.addAll(lifes);
 			
 			String worldText = (level.getWorld()+1) + " - " + (level.getStage()+1);
 			Text stageText = new Text(new Position(600, 50), 120, worldText, 24, Color.BLACK);
@@ -1053,6 +1174,7 @@ public class GameModelHandler {
 								removeObject(highlight);
 								count = null;
 								timer.scheduleAtFixedRate(gameTimerTask, 0l, 1000l);
+								getBackgroundMusic();
 							}
 						}, 1000l);
 						this.cancel();
@@ -1063,6 +1185,10 @@ public class GameModelHandler {
 				}
 			};
 			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
+
+			Media startSound = new Media(new File("./src/resource/start_InGame.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 	}
 	
@@ -1285,6 +1411,7 @@ public class GameModelHandler {
 		Object option_3;
 		Object arrow;
 		int sel;
+		MediaPlayer mediaPlayer;
 		
 		public int getSelected() {
 			return sel;
@@ -1305,6 +1432,10 @@ public class GameModelHandler {
 			arrow = new Object(new Position(425, 430), new Image("/resource/test_Arrow.png"));
 			addObject(arrow);
 			sel = 1;
+			
+		//	Media music = new Media(new File("./src/resource/start.wav").toURI().toString());
+		//	mediaPlayer = new MediaPlayer(music);
+		//	mediaPlayer.play();
 		}
 		public void selectDown() {
 			if (sel == 1) {
