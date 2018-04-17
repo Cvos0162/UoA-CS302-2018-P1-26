@@ -1,8 +1,11 @@
 package main;
 
+import java.io.File;
 import java.util.Random;
 import javafx.scene.canvas.GraphicsContext;
 import javafx.scene.input.KeyCode;
+import javafx.scene.media.Media;
+import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
@@ -19,6 +22,7 @@ public class GameController {
 		START,
 		SINGLE_STAGE_SEL,
 		SINGLE_IN_GAME,
+		STORY,
 		MULTI_SEL,
 		MULTI_IN_GAME
 	};
@@ -34,9 +38,12 @@ public class GameController {
 		switch(gState) {
 		case START:
 			if (model.start.selectMouse(x, y) == 1) {
-				gState = State.SINGLE_STAGE_SEL;
+				model.start.stopMedia();
+				gState = State.STORY;
+				
 				initState();
 			} else if (model.start.selectMouse(x, y) == 2) {
+				model.start.stopMedia();
 				gState = State.MULTI_SEL;
 				initState();
 			}
@@ -51,6 +58,7 @@ public class GameController {
 					break;
 				case -2:
 					gState = State.START;
+					model.singleStageSel.stopMedia();
 					initState();
 					break;
 				case -3:
@@ -58,6 +66,8 @@ public class GameController {
 					break;
 				default:
 					model.singleStageSel.setStage(model.singleStageSel.selectMouse_stage(x, y));
+					model.singleStageSel.playSelectSound();
+					model.singleStageSel.stopMedia();
 					gState = State.SINGLE_IN_GAME;
 					initState();
 					break;
@@ -82,6 +92,7 @@ public class GameController {
 					model.singleStageSel.showStages();
 					break;			
 				case 5:
+					model.singleStageSel.stopMedia();
 					gState = State.START;
 					initState();
 					break;
@@ -109,6 +120,13 @@ public class GameController {
 
 				}
 			}
+			break;
+		case STORY:
+			if (model.story.getSel() == 5) {
+				gState = State.SINGLE_STAGE_SEL;
+				initState();
+			} else 
+				model.story.showNextScene();
 			break;
 		case MULTI_SEL:
 
@@ -179,10 +197,12 @@ public class GameController {
 			case ENTER:
 				int sel = model.start.getSelected();
 				if (sel == 1) {
-					gState = State.SINGLE_STAGE_SEL;
+					gState = State.STORY;
+					model.start.stopMedia();
 					initState();
 				} else if (sel == 2) {
 					gState = State.MULTI_SEL;
+					model.start.stopMedia();
 					initState();
 				}
 				break;
@@ -203,6 +223,8 @@ public class GameController {
 					model.singleStageSel.selectdown();
 					break;
 				case ENTER:
+					model.singleStageSel.playSelectSound();
+					model.singleStageSel.stopMedia();
 					gState = State.SINGLE_IN_GAME;
 					initState();
 					break;
@@ -257,6 +279,20 @@ public class GameController {
 				break;
 			}
 			break;
+		case STORY:
+			switch(code) {
+			case ESCAPE:
+				gState = State.START;
+				initState();
+				break;
+			default:
+				if (model.story.getSel() == 5) {
+					gState = State.SINGLE_STAGE_SEL;
+					initState();
+				} else 
+					model.story.showNextScene();
+				break;
+			}
 		case MULTI_SEL:
 			switch(code) {
 			case ESCAPE:
@@ -404,6 +440,11 @@ public class GameController {
 			view.setColour(Colour.WHITE);
 			model.initSingleInGame(world, stage);
 			break;
+		case STORY:
+			model.deleteStates();
+			view.setColour(Colour.BLACK);
+			model.initStory();
+			break;
 		case MULTI_SEL:
 			model.deleteStates();
 			view.setColour(Colour.BLACK);
@@ -414,9 +455,6 @@ public class GameController {
 			Random rand = new Random();
 			world = rand.nextInt(4);
 			stage = 4;
-			System.out.println(world);
-			System.out.println(stage);
-
 			model.deleteStates();
 			view.setColour(Colour.WHITE);
 			model.initMultiInGame(world, stage);

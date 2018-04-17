@@ -11,6 +11,7 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.paint.Color;
+import javafx.util.Duration;
 
 public class GameModelHandler {
 	Ability ghostTeam;
@@ -21,6 +22,7 @@ public class GameModelHandler {
 	public SingleInGame singleInGame = null;
 	public MultiSelect multiSelect = null;
 	public MultiInGame multiInGame = null;
+	public Story story = null;
 	
 	@SuppressWarnings("serial")
 	ArrayList<Integer> maxLevel = new ArrayList<Integer>() {
@@ -36,6 +38,7 @@ public class GameModelHandler {
 		start = null;
 		singleStageSel = null;
 		singleInGame = null;
+		story = null;
 		multiSelect = null;
 		multiInGame = null;
 		System.gc();
@@ -57,6 +60,58 @@ public class GameModelHandler {
 	public void initSingleInGame(int world, int stage) { singleInGame = new SingleInGame(world, stage); }
 	public void initMultiSelect() { multiSelect = new MultiSelect(); }
 	public void initMultiInGame(int world, int stage) { multiInGame = new MultiInGame(world, stage); }
+	public void initStory() { story = new Story();}
+	
+	public class Story {
+		MediaPlayer player;
+		int sel;
+		public int getSel() {
+			return sel;
+		}
+		public void showNextScene() {
+			objects.clear();
+			texts.clear();
+			sel++;
+			addObject(new Object(new Position(0,0), new Image("/resource/storyScene_" + sel + ".png")));
+			Object textBox = new Object(new Position(0, 495), new Position(1280,225), new Image("/resource/storyTextBox.png"));
+			addObject(textBox);
+			Text key = new Text(new Position(950, 680), 330, "Press any key or mouse for next.", 24, Color.WHITE);
+			addText(key);
+			switch (sel) {
+			case 1:
+				addText(new Text(new Position(30,540), 1200, "Hero from Magic Planet", 28, Color.WHITE));
+				addText(new Text(new Position(30,580), 1200, "On a journey to find the super star", 28, Color.WHITE));
+				addText(new Text(new Position(30,620), 1200, "To save the world.", 28, Color.WHITE));
+				player = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
+				break;
+			case 2:
+				addText(new Text(new Position(30,580), 1200, "BOOM!!!", 56, Color.WHITE));
+				player = new MediaPlayer(new Media(new File("./src/resource/explosion.wav").toURI().toString()));
+				break;
+			case 3:
+				addText(new Text(new Position(30,540), 1200, "The Ghosts! The Space Pirates appeared!", 28, Color.WHITE));
+				player = new MediaPlayer(new Media(new File("./src/resource/chased.wav").toURI().toString()));
+				break;
+			case 4:
+				removeObject(textBox);
+				player.stop();
+				player = new MediaPlayer(new Media(new File("./src/resource/die.wav").toURI().toString()));
+				break;
+			case 5:
+				addText(new Text(new Position(30,540), 1200, "How is he going to escape?", 28, Color.WHITE));
+				addText(new Text(new Position(30,580), 1200, "We need to collect moon dust and stardust!", 28, Color.WHITE));
+				player = new MediaPlayer(new Media(new File("./src/resource/gameOver.wav").toURI().toString()));
+				break;
+			};
+			player.play();
+		}
+		public Story() {
+			objects.clear();
+			texts.clear();
+			sel = 0;
+			showNextScene();
+		}
+	}
 	
 	public class MultiInGame {
 		
@@ -119,7 +174,7 @@ public class GameModelHandler {
 		}
 		
 		public void ghostAi() {
-			double range = 250 + level.getWorld()*50;
+			double range = 300;
 			double speed;
 			double xDiff;
 			double yDiff;
@@ -127,7 +182,7 @@ public class GameModelHandler {
 				if(level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze && i != playerGhost) {
 				if(level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR || level.getGhosts().get(i).getAbility() == Ability.NINJA) {
 				int count = 0;
-				speed = 1.5 + level.getWorld()*0.5;
+				speed = 2;
 				xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
 				yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
 				if(xDiff == 0 && yDiff < 0) {
@@ -182,7 +237,7 @@ public class GameModelHandler {
 				ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 				}
 				if (level.getGhosts().get(i).getAbility() == Ability.NURSE) {
-					speed = 1 + level.getWorld()*0.25;
+					speed = 1.25;
 					xDiff = level.getPro().getPosition().getX() - level.getGhosts().get(i).getPosition().getX();
 					yDiff = level.getPro().getPosition().getY() - level.getGhosts().get(i).getPosition().getY();
 					if((xDiff > -100 && xDiff < 100 && yDiff > -100 && yDiff < 100) && (yDiff == 0 || xDiff == 0)) {
@@ -228,7 +283,7 @@ public class GameModelHandler {
 					}
 					}
 				if(level.getGhosts().get(i).getAbility() == Ability.WIZARD || level.getGhosts().get(i).getAbility() == Ability.ICE) {
-					speed = 1 + level.getWorld()*0.25;
+					speed = 1.25;
 					boolean moved = false;
 					for (int j = 0; j < level.getGhosts().size(); j++) {
 						if (i != j && !moved) {
@@ -370,9 +425,9 @@ public class GameModelHandler {
 
 			ArrayList<Object> buttons = new ArrayList<Object>();
 			if (win) 
-				gameFinishText = new Text(new Position(480, 225), 250, "Player Won", 32, Color.BLACK);	
+				gameFinishText = new Text(new Position(500, 225), 250, "Player Won", 32, Color.BLACK);	
 			else 
-				gameFinishText = new Text(new Position(480, 225), 250, "Ghost Won", 32, Color.BLACK);
+				gameFinishText = new Text(new Position(500, 225), 250, "Ghost Won", 32, Color.BLACK);
 				
 			addText(gameFinishText);
 			Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);	
@@ -383,8 +438,9 @@ public class GameModelHandler {
 			buttons.add(background);
 			buttons.add(menu_button);
 			buttons.add(retry_button);
+			addObject(buttons);
 			Object textHighlighter = new Object(new Position(
-					gameFinishText.getPosition().getX() - 10,
+					gameFinishText.getPosition().getX() - 20,
 					gameFinishText.getPosition().getY() - 34
 					),
 					new Position(190, 41),
@@ -402,10 +458,6 @@ public class GameModelHandler {
 			Media gameWinSound = new Media(new File("./src/resource/gameWin.wav").toURI().toString());
 			mediaPlayer = new MediaPlayer(gameWinSound);
 			mediaPlayer.play();
-		
-			addObject(buttons);
-			
-			
 		}
 		
 		public boolean getGameFinish() {
@@ -472,21 +524,23 @@ public class GameModelHandler {
 		}
 		
 		public void ghostMove() {
-			if (movePressed.getGhostMovePressed(Direction.UP)) {
-				level.getGhosts().get(playerGhost).setDirection(Direction.UP);
-				moveGhostUp();
-			}
-			if (movePressed.getGhostMovePressed(Direction.DOWN)) {
-				level.getGhosts().get(playerGhost).setDirection(Direction.DOWN);
-				moveGhostDown();
-			}
-			if (movePressed.getGhostMovePressed(Direction.RIGHT)) {
-				level.getGhosts().get(playerGhost).setDirection(Direction.RIGHT);
-				moveGhostRight();
-			}
-			if (movePressed.getGhostMovePressed(Direction.LEFT)) {
-				level.getGhosts().get(playerGhost).setDirection(Direction.LEFT);
-				moveGhostLeft();
+			if (!level.getGhosts().get(playerGhost).getAlive() && !level.getGhosts().get(playerGhost).freeze) {
+				if (movePressed.getGhostMovePressed(Direction.UP)) {
+					level.getGhosts().get(playerGhost).setDirection(Direction.UP);
+					moveGhostUp();
+				}
+				if (movePressed.getGhostMovePressed(Direction.DOWN)) {
+					level.getGhosts().get(playerGhost).setDirection(Direction.DOWN);
+					moveGhostDown();
+				}
+				if (movePressed.getGhostMovePressed(Direction.RIGHT)) {
+					level.getGhosts().get(playerGhost).setDirection(Direction.RIGHT);
+					moveGhostRight();
+				}
+				if (movePressed.getGhostMovePressed(Direction.LEFT)) {
+					level.getGhosts().get(playerGhost).setDirection(Direction.LEFT);
+					moveGhostLeft();
+				}
 			}
 		}
 		
@@ -598,7 +652,7 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (singleInGame != null) {
+								if (multiInGame != null) {
 									level.getPro().setIterator(5);
 									level.getPro().decreaseLife();
 									drawLife();
@@ -613,10 +667,8 @@ public class GameModelHandler {
 							@Override
 							public void run() {
 								if (multiInGame != null) {
-									level.getPro().decreaseLife();
 									proAlive();
 									proDied();
-									drawLife();
 								}
 							}
 						}, 3000l);
@@ -1189,6 +1241,7 @@ public class GameModelHandler {
 							this.cancel();
 						}
 						else if (min == 0 && sec == 0) {
+							gameCount.setString("0:00");
 							gameFinish();
 							this.cancel();
 						} else if (sec == 0 && min != 0) {
@@ -1247,6 +1300,9 @@ public class GameModelHandler {
 		ArrayList<Object> ghostTeams;
 		Object highlight;
 
+		MediaPlayer background;
+		MediaPlayer selectSound;
+		
 		int sel = 1;
 		
 		public MultiSelect() {
@@ -1284,6 +1340,8 @@ public class GameModelHandler {
 		public int selectMouse_ghostTeam(double x, double y) {
 			for (int i = 0; i < ghostTeams.size(); i++)
 				if (ghostTeams.get(i).isInsideObject(x, y)) {
+					selectSound = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
+					selectSound.play();
 					setGhostTeam(i);
 					return i;
 				}
@@ -1310,6 +1368,8 @@ public class GameModelHandler {
 			}
 		}
 		public void setGhostTeam() {
+			selectSound = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
+			selectSound.play();
 			switch(sel) {
 			case 1:
 				ghostTeam = Ability.RAINBOW_STAR;
@@ -2387,6 +2447,7 @@ public class GameModelHandler {
 							this.cancel();
 						}
 						else if (min == 0 && sec == 0) {
+							gameCount.setString("0:00");
 							gameFinish();
 							this.cancel();
 						} else if (sec == 0 && min != 0) {
@@ -2441,6 +2502,8 @@ public class GameModelHandler {
 	
 	
 	public class SingleStageSelect {
+		MediaPlayer selectSound;
+		MediaPlayer backgroundPlayer;
 		Object world_1;
 		Object world_2;
 		Object world_3;
@@ -2492,7 +2555,11 @@ public class GameModelHandler {
 		public void setStage(int n) {
 			stage = n;
 		}
-				
+		public void stopMedia() {	
+			backgroundPlayer.stop();
+			backgroundPlayer.dispose();
+		}
+		
 		public void showSelected() {
 			removeObject(pointer);
 			Position pos;
@@ -2535,7 +2602,12 @@ public class GameModelHandler {
 			
 		}
 		
+		public void playSelectSound() {
+			selectSound = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
+			selectSound.play();
+		}
 		public void showStages() {
+			playSelectSound();
 			stage = 0;
 			window = new Object(new Position(240, 180), windowImages);
 			window.setIterator(world);
@@ -2647,6 +2719,14 @@ public class GameModelHandler {
 					Color.WHITE
 					);
 			addText(stageSel);
+			Media music = new Media(new File("./src/resource/choice.wav").toURI().toString());
+			backgroundPlayer = new MediaPlayer(music);
+			backgroundPlayer.setOnEndOfMedia(new Runnable() {
+			       public void run() {
+			    	   backgroundPlayer.seek(Duration.ZERO);
+			       }
+			   });
+			backgroundPlayer.play();
 		}
 	}
 	
@@ -2657,6 +2737,10 @@ public class GameModelHandler {
 		Object arrow;
 		int sel;
 		MediaPlayer mediaPlayer;
+		public void stopMedia() {
+			mediaPlayer.stop();
+			mediaPlayer.dispose();
+		}
 		
 		public int getSelected() {
 			return sel;
@@ -2678,6 +2762,11 @@ public class GameModelHandler {
 			
 			Media music = new Media(new File("./src/resource/start.wav").toURI().toString());
 			mediaPlayer = new MediaPlayer(music);
+			mediaPlayer.setOnEndOfMedia(new Runnable() {
+			       public void run() {
+			    	   mediaPlayer.seek(Duration.ZERO);
+			       }
+			   });
 			mediaPlayer.play();
 		}
 		public void selectDown() {
