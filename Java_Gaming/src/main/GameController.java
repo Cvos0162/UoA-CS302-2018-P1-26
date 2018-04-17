@@ -412,8 +412,8 @@ public class GameController {
 			break;
 		case MULTI_IN_GAME:
 			Random rand = new Random();
-			world = rand.nextInt(3);
-			stage = rand.nextInt(4);
+			world = rand.nextInt(4);
+			stage = 4;
 			System.out.println(world);
 			System.out.println(stage);
 

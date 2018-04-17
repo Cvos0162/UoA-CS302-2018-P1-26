@@ -426,22 +426,14 @@ public class GameModelHandler {
 		}
 		
 		public void initLevel() {
-			multiInGame = new MultiInGame(rand.nextInt(3), rand.nextInt(4));
+			multiInGame = new MultiInGame(rand.nextInt(4), 4);
 		}
 		public void resetCharacter() {
 			objects.removeAll(level.getGhosts());
 			level.resetCharacter();
 			objects.addAll(level.getGhosts());
 		}
-		public void getBackgroundMusic() {
-			switch(level.getWorld()) {
-			case 0:
-				background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
-				backPlayer = new MediaPlayer(background_sound);
-				backPlayer.play();
-				break;
-			}
-		}
+
 		
 		public void proAlive() {
 			if(level.getPro().getLife() <= 0)
@@ -455,7 +447,6 @@ public class GameModelHandler {
 				Media reviveSound = new Media(new File("./src/resource/revived_InGame.wav").toURI().toString());
 				mediaPlayer = new MediaPlayer(reviveSound);
 				mediaPlayer.play();
-				getBackgroundMusic();
 				resetCharacter();
 			}
 		}
@@ -1773,15 +1764,7 @@ public class GameModelHandler {
 			}
 				
 		}
-		public void getBackgroundMusic() {
-			switch(level.getWorld()) {
-			case 0:
-				background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
-				backPlayer = new MediaPlayer(background_sound);
-				backPlayer.play();
-				break;
-			}
-		}
+
 		
 		public void initLevel() {
 			singleInGame = new SingleInGame(level.getWorld(), level.getStage());
@@ -1811,7 +1794,6 @@ public class GameModelHandler {
 				Media reviveSound = new Media(new File("./src/resource/revived_InGame.wav").toURI().toString());
 				mediaPlayer = new MediaPlayer(reviveSound);
 				mediaPlayer.play();
-				getBackgroundMusic();
 				resetCharacter();
 			}
 		}
@@ -2438,7 +2420,6 @@ public class GameModelHandler {
 								removeObject(highlight);
 								count = null;
 								timer.scheduleAtFixedRate(gameTimerTask, 0l, 1000l);
-								getBackgroundMusic();
 							}
 						}, 1000l);
 						this.cancel();
