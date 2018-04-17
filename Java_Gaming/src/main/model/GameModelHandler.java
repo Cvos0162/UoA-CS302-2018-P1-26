@@ -61,6 +61,9 @@ public class GameModelHandler {
 	public class MultiInGame {
 		
 		Level level;
+		MediaPlayer mediaPlayer;
+		Media background_sound;
+		MediaPlayer backPlayer;
 		
 		
 		int playerGhost;
@@ -68,6 +71,7 @@ public class GameModelHandler {
 		boolean inCountdown;
 		boolean inPause;
 		boolean dying = false;
+
 		boolean gameWin;
 		boolean gameFinish;
 		double speed = 2.5;
@@ -110,32 +114,7 @@ public class GameModelHandler {
 						isGhostCollideIce();
 				}
 				isProCollideGhost();
-				//rainbowFolow();
-			}
-		}
-		public void rainbowFolow() {
-			for (int i = 0; i < level.getGhosts().size(); i++) {
-				if (level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR && level.getGhosts().get(i).getAlive()) {
-					Image rainbowImage;
-					if (level.getGhosts().get(i).getDirection() == Direction.UP || level.getGhosts().get(i).getDirection() == Direction.DOWN) {
-						rainbowImage =  new Image("/resource/rainbow_follower_0.png");
-					}
-					else {
-						rainbowImage = new Image("/resource/rainbow_follower_1.png");
-					}
-					Object rainbow = new Object(level.getGhosts().get(i).getPosition(), rainbowImage);
-					if (objects.indexOf(level.getPro()) != -1) {
-						objects.add(objects.indexOf(level.getPro()), rainbow);
-						Timer t = new Timer();
-						t.schedule(new TimerTask() {
-							@Override
-							public void run() {
-								if (rainbow != null)
-									removeObject(rainbow);
-							}
-						}, 1000l);
-					}
-				}
+
 			}
 		}
 		
@@ -387,23 +366,42 @@ public class GameModelHandler {
 				showFinish(gameWin);
 			}
 		}
-		
 		public void showFinish(boolean win) {
 
 			ArrayList<Object> buttons = new ArrayList<Object>();
 			if (win) 
-				gameFinishText = new Text(new Position(450, 200), 250, "Player Won", 50, Color.BLACK);	
+				gameFinishText = new Text(new Position(480, 225), 250, "Player Won", 32, Color.BLACK);	
 			else 
-				gameFinishText = new Text(new Position(450, 200), 250, "Ghost Won", 50, Color.BLACK);
+				gameFinishText = new Text(new Position(480, 225), 250, "Ghost Won", 32, Color.BLACK);
 				
 			addText(gameFinishText);
-				
-			background = new Object(new Position (450, 300), new Position (250, 150), new Image("resource/test_LevelSelectWindow_" + (level.world + 1) +".png"));
-			menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/test_ReturnButton.png"));
-			retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/test_BackButton.png"));
+			Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);	
+			addText(score);
+			background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
+			menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
+			retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/retryButton.png"));
 			buttons.add(background);
 			buttons.add(menu_button);
 			buttons.add(retry_button);
+			Object textHighlighter = new Object(new Position(
+					gameFinishText.getPosition().getX() - 10,
+					gameFinishText.getPosition().getY() - 34
+					),
+					new Position(190, 41),
+					new Image("resource/Text_Highlight.png"));
+			addObject(textHighlighter);
+			Object scoreHighlighter = new Object(new Position(
+					score.getPosition().getX() - 12,
+					score.getPosition().getY() - 34
+					),
+					new Position(140, 41),
+					new Image("resource/Text_Highlight.png"));
+			addObject(scoreHighlighter);
+			
+			stopMedia();
+			Media gameWinSound = new Media(new File("./src/resource/gameWin.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(gameWinSound);
+			mediaPlayer.play();
 		
 			addObject(buttons);
 			
@@ -435,6 +433,15 @@ public class GameModelHandler {
 			level.resetCharacter();
 			objects.addAll(level.getGhosts());
 		}
+		public void getBackgroundMusic() {
+			switch(level.getWorld()) {
+			case 0:
+				background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
+				backPlayer = new MediaPlayer(background_sound);
+				backPlayer.play();
+				break;
+			}
+		}
 		
 		public void proAlive() {
 			if(level.getPro().getLife() <= 0)
@@ -445,6 +452,10 @@ public class GameModelHandler {
 			if(!level.getPro().alive) {
 				removeObject(level.getPro());
 			} else {
+				Media reviveSound = new Media(new File("./src/resource/revived_InGame.wav").toURI().toString());
+				mediaPlayer = new MediaPlayer(reviveSound);
+				mediaPlayer.play();
+				getBackgroundMusic();
 				resetCharacter();
 			}
 		}
@@ -578,18 +589,33 @@ public class GameModelHandler {
 								cancel();
 							}
 						}, 2000l);
+						Media startSound = new Media(new File("./src/resource/kill.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 						level.getPro().usableAbility = true;
 						removeText(itemTime);
 						level.getPro().item = false;
 					}
 					else {
+						stopMedia();
+						Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 						Timer stop = new Timer();
 						dying = true;
 						level.getPro().setIterator(4);
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								level.getPro().setIterator(5);
+								if (singleInGame != null) {
+									level.getPro().setIterator(5);
+									level.getPro().decreaseLife();
+									drawLife();
+									stopMedia();
+									Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
+									mediaPlayer = new MediaPlayer(startSound);
+									mediaPlayer.play();
+								}
 							}
 						}, 1500l);
 						stop.schedule(new TimerTask() {
@@ -622,6 +648,11 @@ public class GameModelHandler {
 					Object ice = new Object(level.getGhosts().get(i).getPosition(), new Image("/resource/iced.png"));
 					icedGhost.add(ice);
 					addObject(ice);
+					if (level.getGhosts().get(i).freeze == false) {
+						Media startSound = new Media(new File("./src/resource/iced.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
+					}
 					level.getGhosts().get(i).freeze = true;
 				}
 			}
@@ -635,10 +666,12 @@ public class GameModelHandler {
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
 					abilityTimer();
+
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
+
 							speed = 2.5;
 							cancel();
 						}
@@ -646,6 +679,9 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/rainbow.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				else if(ability == Ability.NURSE) {
 					level.getPro().increaseLife();
@@ -653,6 +689,9 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/nurse.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				else if(ability == Ability.WIZARD) {
 					Direction direction = level.getPro().getDirection();
@@ -688,6 +727,9 @@ public class GameModelHandler {
 						level.getPro().usableAbility = false;
 						level.getPro().setStoredAbility(Ability.DEFAULT);
 						drawAbility();
+						Media startSound = new Media(new File("./src/resource/wizard.wav").toURI().toString());
+						mediaPlayer = new MediaPlayer(startSound);
+						mediaPlayer.play();
 					}
 				}
 				else if(ability == Ability.ICE) {
@@ -696,6 +738,9 @@ public class GameModelHandler {
 					objects.add(ice);
 					iceAppear = true;
 					abilityTimer();
+					Media startSound = new Media(new File("./src/resource/iceAbility.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -758,10 +803,21 @@ public class GameModelHandler {
 					level.getPro().usableAbility = false;
 					level.getPro().setStoredAbility(Ability.DEFAULT);
 					drawAbility();
+					Media startSound = new Media(new File("./src/resource/ninja.wav").toURI().toString());
+					mediaPlayer = new MediaPlayer(startSound);
+					mediaPlayer.play();
 				}
 				
 			}
 			
+		}
+		public void stopMedia() {
+			if (mediaPlayer != null) {
+				mediaPlayer.stop();
+			}
+			if (backPlayer != null) {
+				backPlayer.stop();
+			}
 		}
 		private void abilityTimer() {
 			Text abilityTime = new Text(new Position(1200,650), 80, 3, 24, Color.BLACK);
@@ -923,6 +979,9 @@ public class GameModelHandler {
 			info.addScore(item);
 			playerScore.setString(info.getScore());
 			level.removeItems(item);
+			Media startSound = new Media(new File("./src/resource/item_ground.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 		
 		private void eatPellet(Pellet pellet) {
@@ -930,6 +989,9 @@ public class GameModelHandler {
 			info.addScore(pellet);
 			playerScore.setString(info.getScore());
 			level.removePellets(pellet);
+			Media startSound = new Media(new File("./src/resource/pellet.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 		
 		public class MovePressed {
@@ -1179,6 +1241,10 @@ public class GameModelHandler {
 				}
 			};
 			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
+			
+			Media startSound = new Media(new File("./src/resource/start_InGame.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(startSound);
+			mediaPlayer.play();
 		}
 	
 	}
@@ -1298,7 +1364,7 @@ public class GameModelHandler {
 		boolean dying = false;
 		boolean gameWin;
 		boolean gameFinish;
-		boolean usingRainbow = false;
+
 		double speed = 2.5;
 		Random rand = new Random();
 
@@ -1339,7 +1405,6 @@ public class GameModelHandler {
 							isGhostCollideIce();
 					}
 				}
-				//rainbowFolow();
 			}
 		}
 		public void stopMedia() {
@@ -1348,52 +1413,6 @@ public class GameModelHandler {
 			}
 			if (backPlayer != null) {
 				backPlayer.stop();
-			}
-		}
-		public void rainbowFolow() {
-			for (int i = 0; i < level.getGhosts().size(); i++) {
-				if (level.getGhosts().get(i).getAbility() == Ability.RAINBOW_STAR && level.getGhosts().get(i).getAlive()) {
-					Image rainbowImage;
-					if (level.getGhosts().get(i).getDirection() == Direction.UP || level.getGhosts().get(i).getDirection() == Direction.DOWN) {
-						rainbowImage =  new Image("/resource/rainbow_follower_0.png");
-					}
-					else {
-						rainbowImage = new Image("/resource/rainbow_follower_1.png");
-					}
-					Object rainbow = new Object(level.getGhosts().get(i).getPosition(), rainbowImage);
-					if (objects.indexOf(level.getPro()) != -1) {
-						objects.add(objects.indexOf(level.getPro()), rainbow);
-						Timer t = new Timer();
-						t.schedule(new TimerTask() {
-							@Override
-							public void run() {
-								if (rainbow != null)
-									removeObject(rainbow);
-							}
-						}, 200l);
-					}
-				}
-			}
-			if (usingRainbow) {
-				Image rainbowImage;
-				if (level.getPro().getDirection() == Direction.UP || level.getPro().getDirection() == Direction.DOWN) {
-					rainbowImage =  new Image("/resource/rainbow_follower_0.png");
-				}
-				else {
-					rainbowImage = new Image("/resource/rainbow_follower_1.png");
-				}
-				Object rainbow = new Object(level.getPro().getPosition(), rainbowImage);
-				if (objects.indexOf(level.getPro()) != -1) {
-					objects.add(objects.indexOf(level.getPro()), rainbow);
-					Timer t = new Timer();
-					t.schedule(new TimerTask() {
-						@Override
-						public void run() {
-							if (rainbow != null)
-								removeObject(rainbow);
-						}
-					}, 200l);
-				}
 			}
 		}
 		
@@ -1757,9 +1776,9 @@ public class GameModelHandler {
 		public void getBackgroundMusic() {
 			switch(level.getWorld()) {
 			case 0:
-				//background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
-				//backPlayer = new MediaPlayer(background_sound);
-				//backPlayer.play();
+				background_sound = new Media(new File("./src/resource/forest.wav").toURI().toString());
+				backPlayer = new MediaPlayer(background_sound);
+				backPlayer.play();
 				break;
 			}
 		}
@@ -1949,12 +1968,12 @@ public class GameModelHandler {
 				if(ability == Ability.RAINBOW_STAR) {
 					speed = speed * 2;
 					abilityTimer();
-					usingRainbow = true;
+
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
-							usingRainbow = false;
+
 							speed = 2.5;
 							cancel();
 						}
@@ -2672,44 +2691,38 @@ public class GameModelHandler {
 			addObject(option_1);
 			option_2 = new Object(new Position(435, 500), new Image("/resource/test_MultiPlayer.png"));
 			addObject(option_2);
-			//option_3 = new Object (new Position(572, 575), new Image("/resource/test_Credit.png"));
-			//addObject(option_3);
 			arrow = new Object(new Position(425, 430), new Image("/resource/test_Arrow.png"));
 			addObject(arrow);
 			sel = 1;
 			
-		//	Media music = new Media(new File("./src/resource/start.wav").toURI().toString());
-		//	mediaPlayer = new MediaPlayer(music);
-		//	mediaPlayer.play();
+			Media music = new Media(new File("./src/resource/start.wav").toURI().toString());
+			mediaPlayer = new MediaPlayer(music);
+			mediaPlayer.play();
 		}
 		public void selectDown() {
 			if (sel == 1) {
 				sel = 2;
 			} else if (sel == 2) {
 				sel = 1;
-			}// else if (sel == 3) {
-			//	sel = 1;
-			//}
+			}
 		}
 		public void selectUp() {
 			if (sel == 1) {
 				sel = 2;
 			} else if (sel == 2) {
 				sel = 1;
-			}// else if (sel == 3) {
-			//	sel = 2;
-			//}
+			}
 		}
 		public int selectMouse(double x, double y) {
 			if (option_1.isInsideObject(x, y)) return 1;
 			else if (option_2.isInsideObject(x, y)) return 2;
-			//else if (option_3.isInsideObject(x, y)) return 3;
+
 			else return 0;
 		}
 		public void moveMouse(double x, double y) {
 			if (option_1.isInsideObject(x, y)) sel = 1;
 			else if (option_2.isInsideObject(x, y)) sel = 2;
-			//else if (option_3.isInsideObject(x, y)) sel = 3;
+			
 		}
 		
 		public void update() {
@@ -2717,9 +2730,7 @@ public class GameModelHandler {
 				arrow.setPosition(425, 430);
 			} else if (sel == 2) {
 				arrow.setPosition(435 - 68, 505);
-			}// else if (sel == 3) {
-			//	arrow.setPosition(572 - 68, 580);
-			//}
+			}
 		}
 	}
 	
