@@ -718,11 +718,39 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.NINJA) {
 					level.getPro().setUntouchable(true);
+					switch(level.getPro().getDirection()) {
+					case UP:
+						level.getPro().setIterator(7);
+						break;
+					case DOWN:
+						level.getPro().setIterator(6);
+						break;
+					case RIGHT:
+						level.getPro().setIterator(8);
+						break;
+					case LEFT:
+						level.getPro().setIterator(9);
+						break;
+					}
 					abilityTimer();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
+							switch(level.getPro().getDirection()) {
+							case UP:
+								level.getPro().setIterator(1);
+								break;
+							case DOWN:
+								level.getPro().setIterator(0);
+								break;
+							case RIGHT:
+								level.getPro().setIterator(2);
+								break;
+							case LEFT:
+								level.getPro().setIterator(3);
+								break;
+							}
 							level.getPro().setUntouchable(false);
 							cancel();
 						}
@@ -1634,7 +1662,8 @@ public class GameModelHandler {
 			if (win) {
 				gameFinishText = new Text(new Position(490, 225), 250, "Game Won", 36, Color.BLACK);
 				addText(gameFinishText);
-				
+				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
+				addText(score);
 				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
 				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
 				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/nextButton.png"));
@@ -1650,6 +1679,13 @@ public class GameModelHandler {
 						new Position(190, 41),
 						new Image("resource/Text_Highlight.png"));
 				addObject(textHighlighter);
+				Object scoreHighlighter = new Object(new Position(
+						score.getPosition().getX() - 12,
+						score.getPosition().getY() - 34
+						),
+						new Position(140, 41),
+						new Image("resource/Text_Highlight.png"));
+				addObject(scoreHighlighter);
 				
 				stopMedia();
 				Media gameWinSound = new Media(new File("./src/resource/gameWin.wav").toURI().toString());
@@ -1658,7 +1694,8 @@ public class GameModelHandler {
 			} else {
 				gameFinishText = new Text(new Position(490, 225), 250, "Game Lost", 36, Color.BLACK);
 				addText(gameFinishText);
-				
+				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
+				addText(score);
 				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
 				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
 				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/retryButton.png"));
@@ -1674,7 +1711,13 @@ public class GameModelHandler {
 						new Position(190, 41),
 						new Image("resource/Text_Highlight.png"));
 				addObject(textHighlighter);
-				
+				Object scoreHighlighter = new Object(new Position(
+						score.getPosition().getX() - 12,
+						score.getPosition().getY() - 34
+						),
+						new Position(140, 41),
+						new Image("resource/Text_Highlight.png"));
+				addObject(scoreHighlighter);
 				stopMedia();
 				Media gameOverSound = new Media(new File("./src/resource/gameOver.wav").toURI().toString());
 				mediaPlayer = new MediaPlayer(gameOverSound);
@@ -2003,11 +2046,39 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.NINJA) {
 					level.getPro().setUntouchable(true);
+					switch(level.getPro().getDirection()) {
+					case UP:
+						level.getPro().setIterator(7);
+						break;
+					case DOWN:
+						level.getPro().setIterator(6);
+						break;
+					case RIGHT:
+						level.getPro().setIterator(8);
+						break;
+					case LEFT:
+						level.getPro().setIterator(9);
+						break;
+					}
 					abilityTimer();
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
+							switch(level.getPro().getDirection()) {
+							case UP:
+								level.getPro().setIterator(1);
+								break;
+							case DOWN:
+								level.getPro().setIterator(0);
+								break;
+							case RIGHT:
+								level.getPro().setIterator(2);
+								break;
+							case LEFT:
+								level.getPro().setIterator(3);
+								break;
+							}
 							level.getPro().setUntouchable(false);
 							cancel();
 						}
