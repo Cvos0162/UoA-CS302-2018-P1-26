@@ -524,7 +524,7 @@ public class GameModelHandler {
 		}
 		
 		public void ghostMove() {
-			if (!level.getGhosts().get(playerGhost).getAlive() && !level.getGhosts().get(playerGhost).freeze) {
+			if (level.getGhosts().get(playerGhost).getAlive() && !level.getGhosts().get(playerGhost).freeze) {
 				if (movePressed.getGhostMovePressed(Direction.UP)) {
 					level.getGhosts().get(playerGhost).setDirection(Direction.UP);
 					moveGhostUp();
