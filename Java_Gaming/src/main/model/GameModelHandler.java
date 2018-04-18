@@ -347,22 +347,22 @@ public class GameModelHandler {
 							}
 						}
 						else if(xDiff > -range && xDiff < range && yDiff > -range && yDiff < range && !level.getPro().untouchable) {
-								if(xDiff < 0 && xDiff > -range){
-									level.getGhosts().get(i).changeDirection(Direction.LEFT);
-									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-								}
-								else if(xDiff > 0 && xDiff < range){
-									level.getGhosts().get(i).changeDirection(Direction.RIGHT);
-									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-								}								
-								else if(yDiff < 0 && yDiff > -range){
-									level.getGhosts().get(i).changeDirection(Direction.UP);
-									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-								}
-								else if(yDiff > 0 && yDiff < range){
-									level.getGhosts().get(i).changeDirection(Direction.DOWN);
-									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
-								}
+							if(xDiff < 0 && xDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.LEFT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(xDiff > 0 && xDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.RIGHT);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}								
+							if(yDiff < 0 && yDiff > -range){
+								level.getGhosts().get(i).changeDirection(Direction.UP);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
+							else if(yDiff > 0 && yDiff < range){
+								level.getGhosts().get(i).changeDirection(Direction.DOWN);
+								ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
+							}
 						}
 						else {
 							ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
@@ -389,7 +389,7 @@ public class GameModelHandler {
 										ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 										moved = true;
 									}
-									else if(ghyDiff < 0 && ghyDiff > -ghrange){
+									if(ghyDiff < 0 && ghyDiff > -ghrange){
 										level.getGhosts().get(i).changeDirection(Direction.DOWN);
 										ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 										moved = true;
@@ -415,7 +415,7 @@ public class GameModelHandler {
 									level.getGhosts().get(i).changeDirection(Direction.RIGHT);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}	
-								else if(yDiff < 0 && yDiff > -range){
+								if(yDiff < 0 && yDiff > -range){
 									level.getGhosts().get(i).changeDirection(Direction.UP);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}
@@ -1830,7 +1830,7 @@ public class GameModelHandler {
 									level.getGhosts().get(i).changeDirection(Direction.RIGHT);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}								
-								else if(yDiff < 0 && yDiff > -range){
+								if(yDiff < 0 && yDiff > -range){
 									level.getGhosts().get(i).changeDirection(Direction.UP);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}
@@ -1864,7 +1864,7 @@ public class GameModelHandler {
 										ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 										moved = true;
 									}
-									else if(ghyDiff < 0 && ghyDiff > -ghrange){
+									if(ghyDiff < 0 && ghyDiff > -ghrange){
 										level.getGhosts().get(i).changeDirection(Direction.DOWN);
 										ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 										moved = true;
@@ -1890,7 +1890,7 @@ public class GameModelHandler {
 									level.getGhosts().get(i).changeDirection(Direction.RIGHT);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}	
-								else if(yDiff < 0 && yDiff > -range){
+								if(yDiff < 0 && yDiff > -range){
 									level.getGhosts().get(i).changeDirection(Direction.UP);
 									ghostMove(i,level.getGhosts().get(i).getDirection(),speed);
 								}
@@ -2090,8 +2090,19 @@ public class GameModelHandler {
 
 		//initiate map level
 		public void initLevel() {
-			multiInGame = new MultiInGame(rand.nextInt(4), 4);
+			singleInGame = new SingleInGame(level.getWorld(),level.getStage());
 		}
+		
+		//initiate map level
+		public void initNextLevel() {
+			if(level.getStage()+1 < maxLevel.get(level.getWorld()))
+				singleInGame = new SingleInGame(level.getWorld(),level.getStage() +1);
+			else if(level.getWorld() < 3 )
+				singleInGame = new SingleInGame(level.getWorld()+1,0);
+			else
+				singleInGame = new SingleInGame(level.getWorld(), level.getStage());
+		}
+		
 		
 		//reset character when it collide to ghost
 		public void resetCharacter() {
@@ -2224,7 +2235,7 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (multiInGame != null) {
+								if (singleInGame != null) {
 									//decrease life
 									level.getPro().setIterator(5);
 									level.getPro().decreaseLife();
@@ -2240,7 +2251,7 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (multiInGame != null) {
+								if (singleInGame != null) {
 									proAlive();
 									proDied();
 								}
