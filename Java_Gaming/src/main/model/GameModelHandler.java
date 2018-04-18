@@ -15,8 +15,12 @@ import javafx.util.Duration;
 
 public class GameModelHandler {
 	Ability ghostTeam;
+	
+	//Rendering List
 	private ArrayList<Object> objects;
 	private ArrayList<Text> texts;
+	
+	//Structure Class
 	public Start start = null;
 	public SingleStageSelect singleStageSel = null;
 	public SingleInGame singleInGame = null;
@@ -24,6 +28,7 @@ public class GameModelHandler {
 	public MultiInGame multiInGame = null;
 	public Story story = null;
 	
+	//maximum level stages and world can have
 	@SuppressWarnings("serial")
 	ArrayList<Integer> maxLevel = new ArrayList<Integer>() {
 		{
@@ -34,6 +39,7 @@ public class GameModelHandler {
 		}
 	};
 	
+	//garbage collector
 	public void deleteStates() {
 		start = null;
 		singleStageSel = null;
@@ -43,6 +49,7 @@ public class GameModelHandler {
 		multiInGame = null;
 		System.gc();
 	}
+	//getter adder remover of rendering list
 	public ArrayList<Object> getObjects() {
 		return objects; 
 	}
@@ -1409,6 +1416,7 @@ public class GameModelHandler {
 			//count down is started
 			inCountdown = true;
 			inPause = false;
+			//2 min countdown
 			Timer timer = new Timer();
 			TimerTask gameTimerTask = new TimerTask() {
 				@Override
@@ -1443,6 +1451,7 @@ public class GameModelHandler {
 					}
 				}
 			};
+			//3 to 0 countdown
 			TimerTask counter = new TimerTask() {
 				@Override
 				public void run() {
@@ -1472,6 +1481,7 @@ public class GameModelHandler {
 			};
 			timer.scheduleAtFixedRate(counter, 1000l, 1000l);
 			
+			//background music
 			Media startSound = new Media(new File("./src/resource/start_InGame.wav").toURI().toString());
 			mediaPlayer = new MediaPlayer(startSound);
 			mediaPlayer.play();
@@ -1479,30 +1489,39 @@ public class GameModelHandler {
 	
 	}
 		
-	
-	
+	//Multiplayer mode ghost selection
 	public class MultiSelect {
 		
+		//initialise Objects
 		ArrayList<Object> ghostTeams;
 		Object backButton;
 		Object highlight;
 
+		//initialise MediaPlayer
 		MediaPlayer background;
 		MediaPlayer selectSound;
 		
+		//init and declare in representing selected ghost
 		int sel = 1;
 		
+		//constructor
 		public MultiSelect() {
+			//render clear
 			objects.clear();
 			texts.clear();
-
+			//init ArrayList
 			ghostTeams = new ArrayList<Object>();
+			//add Back button
 			backButton = new Object(new Position(20,20), new Image("/resource/BackButton.png"));
 			addObject(backButton);
+			//instruction text
 			Text select = new Text(new Position(125,100), 500, "Select Ghost :", 80, Color.WHITE);
 			addText(select);
+			//highlight
 			highlight = new Object(new Position(0,0), new Position(250, 250) , new Image("/resource/test_HighLightStage.png"));
 			objects.add(highlight);
+			
+			//add Ghost
 			Object ghost = new Object(new Position(300, 150), new Position(200, 200), new Image("/resource/rainbow_sel.png"));
 			ghostTeams.add(ghost);
 			ghost = new Object(new Position(550, 150), new Position(200, 200), new Image("/resource/nurse_sel.png"));
@@ -1515,9 +1534,11 @@ public class GameModelHandler {
 			ghostTeams.add(ghost);
 			objects.addAll(ghostTeams);	
 			
+			//highlight 1st ghost
 			highlight.setPosition(ghostTeams.get(sel-1).getPosition().getX() - 50, ghostTeams.get(sel-1).getPosition().getY() - 50);
 		}
 		
+		//checks if the mouse is on the ghost and change selected ghosts to corresponding
 		public void moveMouse(double x, double y) {
 			for (int i = 0; i < ghostTeams.size(); i++) {
 				if (ghostTeams.get(i).isInsideObject(x, y)) {
@@ -1526,6 +1547,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//selecting ghost to corresponding mouse click
 		public int selectMouse_ghostTeam(double x, double y) {
 			for (int i = 0; i < ghostTeams.size(); i++)
 				if (ghostTeams.get(i).isInsideObject(x, y)) {
@@ -1539,6 +1561,7 @@ public class GameModelHandler {
 			else return -1;
 		}
 		
+		//set ghost team by given representation of integer
 		public void setGhostTeam(int n) {
 			if(n==0) {
 				ghostTeam = Ability.RAINBOW_STAR;
@@ -1557,6 +1580,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//set ghost team by selected
 		public void setGhostTeam() {
 			selectSound = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
 			selectSound.play();
@@ -1579,16 +1603,18 @@ public class GameModelHandler {
 			}
 		}
 		
+		//Key up, selects next ghost
 		public void selectUp() {
 			if (sel >= ghostTeams.size()) sel = 1;
 			else sel++;
 		}
-		
+		//Key down, selects ghost 1 before
 		public void selectDown() {
 			if (sel <= 1) sel = ghostTeams.size();
 			else sel--;
 		}
 		
+		//change highlight to selected ghost
 		public void showSelected() {
 			highlight.setPosition(ghostTeams.get(sel-1).getPosition().getX() - 10, ghostTeams.get(sel-1).getPosition().getY() - 10);
 		}
@@ -2737,14 +2763,14 @@ public class GameModelHandler {
 		}
 	}
 	
-	
-	
-	
+	//Stage selection in single game mode
 	public class SingleStageSelect {
 		
+		//initialise MediaPlayer
 		MediaPlayer selectSound;
 		MediaPlayer backgroundPlayer;
 		
+		//initialise Object
 		Object world_1;
 		Object world_2;
 		Object world_3;
@@ -2754,15 +2780,19 @@ public class GameModelHandler {
 		Object unselectButton;
 		Object pointer = null;
 		
+		//initialise Text
 		Text stageSel;
 		
+		//initialise ArrayList
 		ArrayList<Object> stage_buttons;
 		ArrayList<Text> stage_texts;
 		
+		//init variables
 		boolean sel = false;
 		int world = 0;
 		int stage = 0;
 		
+		//init and declare Images for each world design
 		ArrayList<Image> windowImages = new ArrayList<Image>() {
 			{
 				add(new Image("/resource/LevelSelectWindow_1.png"));
@@ -2780,31 +2810,30 @@ public class GameModelHandler {
 			}
 		};
 		
+		//getter and setter
 		public boolean getSel() {
 			return sel;
 		}
-		
 		public int getWorld() {
 			return world;
 		}
-		
 		public int getStage() {
 			return stage;
 		}
-		
 		public void setWorld(int n) {
 			world = n;
 		}
-		
 		public void setStage(int n) {
 			stage = n;
 		}
 		
+		//stop and dispose background music
 		public void stopMedia() {	
 			backgroundPlayer.stop();
 			backgroundPlayer.dispose();
 		}
 		
+		//highlights current selected object
 		public void showSelected() {
 			removeObject(pointer);
 			Position pos;
@@ -2845,11 +2874,13 @@ public class GameModelHandler {
 			
 		}
 		
+		//playing sound when selected
 		public void playSelectSound() {
 			selectSound = new MediaPlayer(new Media(new File("./src/resource/select.wav").toURI().toString()));
 			selectSound.play();
 		}
 		
+		//add list of stages to renderer 
 		public void showStages() {
 			playSelectSound();
 			stage = 0;
@@ -2883,6 +2914,7 @@ public class GameModelHandler {
 			sel = true;
 		}
 		
+		//remove list from renderer
 		public void hideStages() {
 			removeObject(window);
 			removeObject(unselectButton);
@@ -2891,6 +2923,7 @@ public class GameModelHandler {
 			sel = false;
 		}
 		
+		//change selected stage/world upon mouse movement
 		public void moveMouse(double x, double y) {
 			if (sel) {
 				for (int i = 0; i < stage_buttons.size(); i++) {
@@ -2908,6 +2941,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//returns if the user is clickling an object or not and the integer representation of it for worlds
 		public int selectMouse_world(double x, double y) {
 			if (world_1.isInsideObject(x, y)) 
 				return 1;
@@ -2922,6 +2956,7 @@ public class GameModelHandler {
 			else return 0;
 		}
 		
+		//returns if the user is clickling an object or not and ther integer represntation of it for stages
 		public int selectMouse_stage(double x, double y) {
 			for (int i = 0; i < stage_buttons.size(); i++)
 				if (stage_buttons.get(i).isInsideObject(x, y)) 
@@ -2933,6 +2968,7 @@ public class GameModelHandler {
 			else return -1;
 		}
 		
+		//update selected upon Up Key press
 		public void selectUp() {
 			if (sel) {
 				if (stage >= maxLevel.get(world) - 1);
@@ -2946,6 +2982,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//update selected upon Down Key press
 		public void selectdown() {
 			if (sel) {
 				if (stage <= 0);
@@ -2959,13 +2996,18 @@ public class GameModelHandler {
 			}
 		}
 		
+		//list of function upon update of rendering
 		public void update() {
 			showSelected();
 		}
 		
+		//constructor
 		public SingleStageSelect() {
+			//rendering clear
 			objects.clear();
 			texts.clear();
+			
+			//create world objects
 			world_1 = new Object(new Position(85, 150), new Image("/resource/World_1.png"));
 			addObject(world_1);
 			world_2 = new Object(new Position(515, 40), new Image("/resource/World_2.png"));
@@ -2974,8 +3016,10 @@ public class GameModelHandler {
 			addObject(world_3);
 			world_4 = new Object(new Position(420, 390), new Image("/resource/World_4.png"));
 			addObject(world_4);
+			//add back button
 			backButton = new Object(new Position(20,20), new Image("/resource/BackButton.png"));
 			addObject(backButton);
+			//add text instruction
 			stageSel = new Text(
 					new Position(125,60),
 					300,
@@ -2984,6 +3028,7 @@ public class GameModelHandler {
 					Color.WHITE
 					);
 			addText(stageSel);
+			//Play background music repeatedly
 			Media music = new Media(new File("./src/resource/choice.wav").toURI().toString());
 			backgroundPlayer = new MediaPlayer(music);
 			backgroundPlayer.setOnEndOfMedia(new Runnable() {
@@ -2995,26 +3040,38 @@ public class GameModelHandler {
 		}
 	}
 	
+	//Main Start class
 	public class Start {
+		//init Object
 		Object option_1;
 		Object option_2;
 		Object option_3;
 		Object arrow;
+		
+		//init integer representation of selected mode
 		int sel;
+		
+		//init media player
 		MediaPlayer mediaPlayer;
+		
+		//stop and dispose media
 		public void stopMedia() {
 			mediaPlayer.stop();
 			mediaPlayer.dispose();
 		}
 		
+		//getter of selected option
 		public int getSelected() {
 			return sel;
 		}
 		
+		//constructor
 		public Start() {
+			//renderer clear
 			objects.clear();
 			texts.clear();
-
+			
+			//declare and add object into rendering list
 			addObject(new Object(new Position(390, 100), new Image("/resource/test_Planet.png")));
 			addObject(new Object(new Position(520, 210), new Image("/resource/test_Escape.png")));
 			option_1 = new Object(new Position(493, 425), new Image("/resource/test_SinglePlayer.png"));
@@ -3023,8 +3080,11 @@ public class GameModelHandler {
 			addObject(option_2);
 			arrow = new Object(new Position(425, 430), new Image("/resource/test_Arrow.png"));
 			addObject(arrow);
+			
+			//selected option declared as 1 at first
 			sel = 1;
 			
+			//play background music
 			Media music = new Media(new File("./src/resource/start.wav").toURI().toString());
 			mediaPlayer = new MediaPlayer(music);
 			mediaPlayer.setOnEndOfMedia(new Runnable() {
@@ -3035,6 +3095,7 @@ public class GameModelHandler {
 			mediaPlayer.play();
 		}
 		
+		//Key down pressed, option goes down
 		public void selectDown() {
 			if (sel == 1) {
 				sel = 2;
@@ -3042,7 +3103,7 @@ public class GameModelHandler {
 				sel = 1;
 			}
 		}
-		
+		//Key Up pressed, option goes up
 		public void selectUp() {
 			if (sel == 1) {
 				sel = 2;
@@ -3050,7 +3111,7 @@ public class GameModelHandler {
 				sel = 1;
 			}
 		}
-		
+		//return selected object upon mouse click
 		public int selectMouse(double x, double y) {
 			if (option_1.isInsideObject(x, y)) 
 				return 1;
@@ -3059,7 +3120,7 @@ public class GameModelHandler {
 
 			else return 0;
 		}
-		
+		//set selected option upon mouse move
 		public void moveMouse(double x, double y) {
 			if (option_1.isInsideObject(x, y)) 
 				sel = 1;
@@ -3067,7 +3128,7 @@ public class GameModelHandler {
 				sel = 2;
 			
 		}
-		
+		// update renderer
 		public void update() {
 			if (sel == 1) {
 				arrow.setPosition(425, 430);
@@ -3077,7 +3138,9 @@ public class GameModelHandler {
 		}
 	}
 	
+	//Game model handler constructor
 	public GameModelHandler() {
+		//declare new rendering list
 		objects = new ArrayList<Object>();
 		texts = new ArrayList<Text>();
 	}

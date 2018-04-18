@@ -7,18 +7,22 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class QuitController {
+	//init connector
 	WindowEvent e;
 	Stage s;
+	//init buttons
 	@FXML
 	private Button yesButton;
 	@FXML
 	private Button noButton;
 	
+	//no button press
 	@FXML
 	private void pressNo() {
 		e.consume();
 		s.close();
 	}
+	//yes button press
 	@FXML
 	private void pressYes() {
 		System.exit(0);
@@ -26,6 +30,7 @@ public class QuitController {
 		s.close();
 	}
 	
+	//setter (connection of stage and event)
 	public void setEvent(WindowEvent e) {
 		this.e = e;
 	}

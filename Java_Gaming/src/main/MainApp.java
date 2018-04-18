@@ -19,7 +19,7 @@ import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
 public class MainApp extends Application {
-	
+	//declare classes
 	private Group root;
 	private Canvas canvas;
 	private Stage primaryStage;
@@ -27,12 +27,14 @@ public class MainApp extends Application {
 	private GraphicsContext graphic;
 	private AnimationTimer gameLoop;
 	
+	//initialise window through primary stage
 	public void init(Stage primaryStage) {
+		//declare primary stage
 		this.primaryStage = primaryStage;
 		this.primaryStage.setTitle("Planet Escape (Java Gaming - InJae)");
 
+		//init canvas and control class
 		root = new Group();
-		
 		canvas = new Canvas();
 		canvas.setWidth(1280);
 		canvas.setHeight(720);
@@ -40,13 +42,17 @@ public class MainApp extends Application {
 		control = new GameController(graphic, this.primaryStage);
 		root.getChildren().add(canvas);
 		
+		//init scene
 		Scene scene = new Scene(root);
 		this.primaryStage.setScene(scene);
 		this.primaryStage.setWidth(1280);
 		this.primaryStage.setHeight(720);
 		this.primaryStage.setResizable(false);
 		
+		//show window
 		this.primaryStage.show();
+		
+		//upon window closing show quit confirmation window
 		this.primaryStage.setOnCloseRequest(new EventHandler<WindowEvent>() {
 			@Override
 			public void handle(WindowEvent event) {
@@ -76,7 +82,7 @@ public class MainApp extends Application {
 		});
 		
 	}
-	
+	//connect canvas event and controller class
 	public void initEvent(Canvas canvas, GameController control) {
 		canvas.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
 		    public void handle(MouseEvent event) {
@@ -102,12 +108,14 @@ public class MainApp extends Application {
 		
 	}
 	
+	//Application start
 	@Override
 	public void start(Stage primaryStage) {
+		//initialise functions
 		init(primaryStage);
-		
 		initEvent(canvas, control);
 		
+		//game rendering loop
 		gameLoop = new AnimationTimer() {
 			
 			@Override
@@ -118,7 +126,8 @@ public class MainApp extends Application {
 		};
 		gameLoop.start();
 	}
-
+	
+	//Application launch
 	public static void main(String[] args) {
 		launch(args);
 	}

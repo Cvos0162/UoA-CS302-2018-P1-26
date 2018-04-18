@@ -17,7 +17,7 @@ import main.view.Colour;
 import main.view.GameViewer;
 
 public class GameController {
-	
+	//static enum State for FSM
 	static enum State {
 		START,
 		SINGLE_STAGE_SEL,
@@ -26,21 +26,23 @@ public class GameController {
 		MULTI_SEL,
 		MULTI_IN_GAME
 	};
-	
+	//initialise connection
 	private Stage stage;
-	
 	private GameViewer view;
 	private GameModelHandler model;
+	
+	//initialise game state and level
 	private State gState;
 	private Level level;
 	
+	//take mouse position when clicked
 	public void takeMouseClicked(double x, double y) {
 		switch(gState) {
 		case START:
+			//when model tells selected change game state to corresponding
 			if (model.start.selectMouse(x, y) == 1) {
 				model.start.stopMedia();
 				gState = State.STORY;
-				
 				initState();
 			} else if (model.start.selectMouse(x, y) == 2) {
 				model.start.stopMedia();
@@ -49,10 +51,9 @@ public class GameController {
 			}
 			break;
 		case SINGLE_STAGE_SEL:
-					
-			
+			//when stage selection gets option selected and init game
+			//when world selection gets show stage selection with corresponding world selected
 			if (model.singleStageSel.getSel()) {
-				
 				switch(model.singleStageSel.selectMouse_stage(x, y)) {
 				case -1:
 					break;
@@ -102,6 +103,7 @@ public class GameController {
 			}
 			break;
 		case SINGLE_IN_GAME:
+			//After game has been finished, get option selected from model and do correspond
 			if(model.singleInGame.getGameFinish()) {
 				switch(model.singleInGame.nextRound(x, y)) {
 				case 0:
@@ -122,6 +124,7 @@ public class GameController {
 			}
 			break;
 		case STORY:
+			//if story is at end of the slide change stage to single stage selection else show next scene
 			if (model.story.getSel() == 5) {
 				gState = State.SINGLE_STAGE_SEL;
 				initState();
@@ -129,7 +132,7 @@ public class GameController {
 				model.story.showNextScene();
 			break;
 		case MULTI_SEL:
-
+			//when ghost is selected change state to multiplayer game or backbutton to go back to start
 			switch(model.multiSelect.selectMouse_ghostTeam(x, y)) {
 				case -1:
 					break;
@@ -144,7 +147,7 @@ public class GameController {
 			}
 			break;
 		case MULTI_IN_GAME:
-			
+			//after finishing the game decide to either replay or back to start
 			if(model.multiInGame.getGameFinish())
 				switch(model.multiInGame.nextRound(x, y)){
 				case 0:
@@ -159,6 +162,7 @@ public class GameController {
 			break;
 		}
 	}
+	//takes movement of the mouse and let model react
 	public void takeMouseMoved(double x, double y) {
 		switch(gState) {
 		case START:
@@ -176,11 +180,13 @@ public class GameController {
 			break;
 		}
 	}
+	//take Key Pressed
 	public void takeKeyPressed(KeyCode code) {
 		switch(gState) {
 		case START:
 			switch (code) {
 			case ESCAPE:
+				//quit confirmation fires
 				stage.fireEvent(
                         new WindowEvent(
                                 stage,
@@ -189,12 +195,15 @@ public class GameController {
                 );
 				break;
 			case UP:
+				//update selected option
 				model.start.selectUp();
 				break;
 			case DOWN:
+				//update selected option
 				model.start.selectDown();
 				break;
 			case ENTER:
+				//get selected option, 1 to single game mode, 2 multi player game mode
 				int sel = model.start.getSelected();
 				if (sel == 1) {
 					gState = State.STORY;

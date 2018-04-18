@@ -8,12 +8,14 @@ import main.model.Object;
 import main.model.Text;
 
 public class GameViewer {
+	//init graphic and colour
 	GraphicsContext graphic;
 	Colour colour;
-	
+	//set background color
 	public void setColour(Colour colour) {
 		this.colour = colour;
 	}
+	
 	//draws objects into viewer graphics, draws clears the frame then draws object with given list.
 	public void draw(ArrayList<Object> objects) {
 		switch(colour) {
@@ -37,6 +39,8 @@ public class GameViewer {
 				);
 		}
 	}
+	
+	//draws texts into viewer graphcs
 	public void write(ArrayList<Text> texts) {
 		for (int i = 0; i < texts.size(); i++) {
 			graphic.setFont(texts.get(i).getFont());
@@ -49,6 +53,7 @@ public class GameViewer {
 		}
 	}
 	
+	//constructor
 	public GameViewer(GraphicsContext graphic) {
 		this.graphic = graphic;
 		this.colour = Colour.WHITE;
