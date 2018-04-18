@@ -619,7 +619,7 @@ public class GameModelHandler {
 				level.getPro().setDirection(Direction.DOWN);
 				moveDown();
 			}
-			else if (movePressed.getMovePressed(Direction.RIGHT)) {
+			if (movePressed.getMovePressed(Direction.RIGHT)) {
 				level.getPro().setDirection(Direction.RIGHT);
 				moveRight();
 			}
@@ -631,7 +631,7 @@ public class GameModelHandler {
 			checkPelletsAndItems();
 		}
 		
-		//make ghost that is controlled by player mvoe
+		//make ghost that is controlled by player move
 		public void ghostMove() {
 			if (level.getGhosts().get(playerGhost).getAlive() && !level.getGhosts().get(playerGhost).freeze) {
 				if (movePressed.getGhostMovePressed(Direction.UP)) {
@@ -642,7 +642,7 @@ public class GameModelHandler {
 					level.getGhosts().get(playerGhost).setDirection(Direction.DOWN);
 					moveGhostDown();
 				}
-				else if (movePressed.getGhostMovePressed(Direction.RIGHT)) {
+				if (movePressed.getGhostMovePressed(Direction.RIGHT)) {
 					level.getGhosts().get(playerGhost).setDirection(Direction.RIGHT);
 					moveGhostRight();
 				}
@@ -2089,7 +2089,7 @@ public class GameModelHandler {
 				level.getPro().setDirection(Direction.DOWN);
 				moveDown();
 			}
-			else if (movePressed.getMovePressed(Direction.RIGHT)) {
+			if (movePressed.getMovePressed(Direction.RIGHT)) {
 				level.getPro().setDirection(Direction.RIGHT);
 				moveRight();
 			}
