@@ -293,6 +293,7 @@ public class GameController {
 					model.story.showNextScene();
 				break;
 			}
+			break;
 		case MULTI_SEL:
 			switch(code) {
 			case ESCAPE:

@@ -1233,6 +1233,9 @@ public class GameModelHandler {
 			TimerTask gameTimerTask = new TimerTask() {
 				@Override
 				public void run() {
+					if (multiInGame == null) {
+						this.cancel();
+					}
 					String timerString[] = gameCount.getString().split(":");
 					int min = Integer.valueOf(timerString[0]);
 					int sec = Integer.valueOf(timerString[1]);
@@ -1263,6 +1266,9 @@ public class GameModelHandler {
 			TimerTask counter = new TimerTask() {
 				@Override
 				public void run() {
+					if (multiInGame == null) {
+						this.cancel();
+					}
 					if (count.getString().equals("1")) {
 						count.setString("Start!");
 						highlight.setSize(80, 30);
@@ -2439,6 +2445,9 @@ public class GameModelHandler {
 			TimerTask gameTimerTask = new TimerTask() {
 				@Override
 				public void run() {
+					if (singleInGame == null) {
+						this.cancel();
+					}
 					String timerString[] = gameCount.getString().split(":");
 					int min = Integer.valueOf(timerString[0]);
 					int sec = Integer.valueOf(timerString[1]);
@@ -2469,6 +2478,9 @@ public class GameModelHandler {
 			TimerTask counter = new TimerTask() {
 				@Override
 				public void run() {
+					if (singleInGame == null) {
+						this.cancel();
+					}
 					if (count.getString().equals("1")) {
 						count.setString("Start!");
 						highlight.setSize(80, 30);
