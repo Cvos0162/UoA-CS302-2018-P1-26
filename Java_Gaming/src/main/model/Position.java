@@ -1,6 +1,7 @@
 package main.model;
 
 public class Position {
+	//basic getter and setter 
 	private double x, y;
 	public void setX(double x) {this.x = x;}
 	public void setY(double y) {this.y = y;}

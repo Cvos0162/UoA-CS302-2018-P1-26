@@ -10,6 +10,7 @@ public class Object {
 	ArrayList<Image> images;
 	int p; //iterator
 	
+	//intialise objects
 	public Object(Position cornor_1, Position size) {
 		this.position = cornor_1;
 		this.size = size;
@@ -44,7 +45,8 @@ public class Object {
 		images.add(im);
 		p = 0;
 	}
-	//basic getter and setter //adder and remover for arrays
+	//basic getter and setter 
+	//adder and remover for arrays
 	public Position getSize() { return size; }
 	public void setSize(Position size) {this.size = size;}
 	public void setSize(int x, int y) {this.size = new Position(x, y);}
@@ -58,12 +60,14 @@ public class Object {
 	public void addImage (ArrayList<Image> im) {images.addAll(im);}
 	public void removeImage(int index) {images.remove(index);}
 	
+	//check whether position is inside the object or not
 	public boolean isInsideObject(double x, double y) {
 		if (x >= position.getX() && y >= position.getY() && x <= (position.getX() + size.getX()) && y <= (position.getY() + size.getY()))
 			return true;
 		else return false;
 	}
 	
+	//check whether object is collide another object
 	public boolean isCollideObject(Object object) {
 		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
 				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()) ||
@@ -73,7 +77,7 @@ public class Object {
 		else
 			return false;
 	}
-	
+	//check whether object collide top side with another object
 	public boolean isCollideTop(Object object) {
 		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
 				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()))
@@ -81,7 +85,7 @@ public class Object {
 		else
 			return false;
 	}
-	
+	//check whether object collide bottom side with another object
 	public boolean isCollideBottom(Object object) {
 		if (isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY() + object.getSize().getY()) ||
 				isInsideObject(object.getPosition().getX(),object.getPosition().getY() + object.getSize().getY()))
@@ -89,7 +93,7 @@ public class Object {
 		else
 			return false;
 	}
-	
+	//check whether object collide left side with another object
 	public boolean isCollideLeft(Object object) {
 		if (isInsideObject(object.getPosition().getX(),object.getPosition().getY()) || 
 				isInsideObject(object.getPosition().getX(),object.getPosition().getY() + object.getSize().getY()))
@@ -97,7 +101,7 @@ public class Object {
 		else
 			return false;
 	}
-	
+	//check whether object collide right side with another object
 	public boolean isCollideRight(Object object) {
 		if (isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY()) ||
 				isInsideObject(object.getPosition().getX() + object.getSize().getX(),object.getPosition().getY() + object.getSize().getY()))

@@ -51,7 +51,7 @@ public class GameController {
 			}
 			break;
 		case SINGLE_STAGE_SEL:
-			//when stage selection gets option selected and init game
+			//when stage selection gets option selected and initialise game
 			//when world selection gets show stage selection with corresponding world selected
 			if (model.singleStageSel.getSel()) {
 				switch(model.singleStageSel.selectMouse_stage(x, y)) {
@@ -268,6 +268,7 @@ public class GameController {
 				gState = State.SINGLE_STAGE_SEL;
 				initState();
 				break;
+			//these keys make movement of protagonist
 			case UP:
 			case DOWN:
 			case RIGHT:
@@ -275,11 +276,13 @@ public class GameController {
 				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.pressMove(code);
 				break;
+			//these keys are for using ability
 			case SPACE:
 			case ENTER:
 				if (!model.singleInGame.getCountdownFlag() && !model.singleInGame.getPauseFlag() && !model.singleInGame.getGameFinish())
 					model.singleInGame.useAbility();
 				break;
+			//to pause the game
 			case P:
 				model.singleInGame.setPause(!model.singleInGame.getPauseFlag());
 				model.singleInGame.releaseMove(code);
@@ -330,6 +333,7 @@ public class GameController {
 				gState = State.MULTI_SEL;
 				initState();
 				break;
+			//these keys make movement of protagonist
 			case UP:
 			case DOWN:
 			case RIGHT:
@@ -337,6 +341,7 @@ public class GameController {
 				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
 					model.multiInGame.pressMove(code);
 				break;
+			//these keys make movement of ghost player
 			case W:
 			case A:
 			case S:
@@ -344,11 +349,13 @@ public class GameController {
 				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
 					model.multiInGame.pressGhostMove(code);
 				break;
+			//these keys are for using ability
 			case SPACE:
 			case ENTER:
 				if (!model.multiInGame.getCountdownFlag() && !model.multiInGame.getPauseFlag() && !model.multiInGame.getGameFinish())
 					model.multiInGame.useAbility();
 				break;
+			//to pause the game
 			case P:
 				model.multiInGame.setPause(!model.multiInGame.getPauseFlag());
 				model.multiInGame.releaseMove(code);
@@ -406,6 +413,7 @@ public class GameController {
 		
 	}
 	
+	//update game
 	public void gameUpdate() {
 		switch(gState) {
 		case START:

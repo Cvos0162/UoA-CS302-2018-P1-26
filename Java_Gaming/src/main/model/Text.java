@@ -9,7 +9,7 @@ public class Text {
 	String string;
 	Color color;
 	Font font;
-	
+	//initialise text
 	public Text(Position position, double maxWidth, String string, int size, Color color) {
 		this.position = position;
 		this.maxWidth = maxWidth;
@@ -24,7 +24,7 @@ public class Text {
 		this.color = color;
 		this.font = new Font("Calibri", size);
 	}
-	
+	//basic getter and setter
 	public void setString(String string) {
 		this.string = string;
 	}
