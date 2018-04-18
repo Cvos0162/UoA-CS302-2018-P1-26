@@ -130,7 +130,7 @@ public class GameModelHandler {
 			Object textBox = new Object(new Position(0, 495), new Position(1280,225), new Image("/resource/storyTextBox.png"));
 			addObject(textBox);
 			//helping text
-			Text key = new Text(new Position(950, 680), 330, "Press any key or mouse for next.", 24, Color.WHITE);
+			Text key = new Text(new Position(930, 680), 330, "Press any key or mouse for next.", 24, Color.WHITE);
 			addText(key);
 			switch (sel) {
 			//first scene of story
