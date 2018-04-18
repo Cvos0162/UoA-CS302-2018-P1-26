@@ -527,7 +527,7 @@ public class GameModelHandler {
 			}
 			//if ghost win the game
 			else {
-				gameFinishText = new Text(new Position(500, 225), 250, "Ghost Won", 26, Color.BLACK);
+				gameFinishText = new Text(new Position(500, 225), 250, "Ghost Won", 28, Color.BLACK);
 			}
 			
 			//show scores
@@ -2000,7 +2000,7 @@ public class GameModelHandler {
 			//if player won
 			if (win) {
 				//show score text and message that player won the game
-				gameFinishText = new Text(new Position(490, 225), 250, "Game Won", 36, Color.BLACK);
+				gameFinishText = new Text(new Position(490, 225), 250, "Game Won", 30, Color.BLACK);
 				addText(gameFinishText);
 				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
 				addText(score);
@@ -2029,7 +2029,7 @@ public class GameModelHandler {
 			//when player lost
 			else {
 				//show score text and message that player lost the game
-				gameFinishText = new Text(new Position(490, 225), 250, "Game Lost", 36, Color.BLACK);
+				gameFinishText = new Text(new Position(490, 225), 250, "Game Lost", 30, Color.BLACK);
 				addText(gameFinishText);
 				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
 				addText(score);
