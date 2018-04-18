@@ -568,10 +568,12 @@ public class GameModelHandler {
 			
 			//go back to menu
 			if(menu_button.isInsideObject(x, y)) {
+				//go back to menu
 				return 1;
 			}
 			//play once again
 			else if(retry_button.isInsideObject(x, y)) {
+				//play one more game
 				return 2;
 			}
 			else 
@@ -671,7 +673,7 @@ public class GameModelHandler {
 			}
 		}
 		//if key that is used for control ghost is pressed
-		public void pressGhostMove(KeyCode code) {
+		public void pressGhostMove(KeyCode code) {//n
 		switch(code) {
 			case W:
 				movePressed.setGhostMovePressed(Direction.UP, true);
@@ -838,7 +840,6 @@ public class GameModelHandler {
 					//speed is doubled
 					speed = speed * 2;
 					abilityTimer();
-
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
@@ -1023,7 +1024,7 @@ public class GameModelHandler {
 			}, 1000l, 1000l);
 		}
 		
-		//find players ghost that palyer want to play
+		//find players ghost that player want to play
 		public void findPlayerGhost() {
 			for(int i=0; i <level.getGhosts().size(); i++) {
 				if(level.getGhosts().get(i).getAbility() == ghostTeam) {
@@ -1081,13 +1082,19 @@ public class GameModelHandler {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideTop(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(7);
-				else level.getPro().setIterator(1);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(7);
+				//if protagnost is moving up, it face top
+				else 
+					level.getPro().setIterator(1);
 			}
 		}
 		//protagonist moving down
@@ -1095,13 +1102,19 @@ public class GameModelHandler {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideBottom(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getPro().getSize().getY() - 1);
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(6);
-				else level.getPro().setIterator(0);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(6);
+				//if protagnost is moving down, it face bottom
+				else 
+					level.getPro().setIterator(0);
 			}
 		}
 		//protagonist moving right
@@ -1109,13 +1122,19 @@ public class GameModelHandler {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideRight(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() - level.getPro().getSize().getX() - 1, level.getPro().getPosition().getY());
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(8);
-				else level.getPro().setIterator(2);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(8);
+				//if protagnost is moving right, it face right
+				else 
+					level.getPro().setIterator(2);
 			}
 		}
 		//protagonist moving left
@@ -1123,13 +1142,19 @@ public class GameModelHandler {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideLeft(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getPro().getPosition().getY());
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(9);
-				else level.getPro().setIterator(3);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(9);
+				//if protagnost is moving right, it face right
+				else 
+					level.getPro().setIterator(3);
 			}
 		}
 		
@@ -1968,15 +1993,18 @@ public class GameModelHandler {
 			}
 		}
 		
+		//when game is finished
 		public void showFinish(boolean win) {
-
 			ArrayList<Object> buttons = new ArrayList<Object>();
+			//if player won
 			if (win) {
+				//show score text and message that player won the game
 				gameFinishText = new Text(new Position(490, 225), 250, "Game Won", 36, Color.BLACK);
 				addText(gameFinishText);
 				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
 				addText(score);
 				
+				//make buttons that can go menu or next round
 				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
 				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
 				next_round_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/nextButton.png"));
@@ -1985,22 +2013,27 @@ public class GameModelHandler {
 				buttons.add(next_round_button);
 				addObject(buttons);
 				
+				//highlight the texts
 				Object textHighlighter = new Object(new Position(gameFinishText.getPosition().getX() - 10,gameFinishText.getPosition().getY() - 34),new Position(190, 41),new Image("resource/Text_Highlight.png"));
 				addObject(textHighlighter);
 				Object scoreHighlighter = new Object(new Position(score.getPosition().getX() - 12,score.getPosition().getY() - 34),new Position(140, 41),new Image("resource/Text_Highlight.png"));
 				addObject(scoreHighlighter);
 				
+				//stop media play
 				stopMedia();
 				Media gameWinSound = new Media(new File("./src/resource/gameWin.wav").toURI().toString());
 				mediaPlayer = new MediaPlayer(gameWinSound);
 				mediaPlayer.play();
 			} 
+			//when player lost
 			else {
+				//show score text and message that player lost the game
 				gameFinishText = new Text(new Position(490, 225), 250, "Game Lost", 36, Color.BLACK);
 				addText(gameFinishText);
 				Text score = new Text(new Position(515, 290), 200, info.getScore(), 36, Color.BLACK);
 				addText(score);
 				
+				//make buttons that can go menu or retry stage
 				background = new Object(new Position (450, 150), new Position (250, 300), new Image("resource/gameFinishWindow_" + (level.world + 1) +".png"));
 				menu_button = new Object(new Position (600, 350), new Position (50,50), new Image("resource/menuButton.png"));
 				retry_button = new Object(new Position (500, 350), new Position (50,50), new Image("resource/retryButton.png"));
@@ -2009,10 +2042,13 @@ public class GameModelHandler {
 				buttons.add(retry_button);
 				addObject(buttons);
 				
+				//highlight the texts
 				Object textHighlighter = new Object(new Position(gameFinishText.getPosition().getX() - 12,gameFinishText.getPosition().getY() - 34),new Position(190, 41),new Image("resource/Text_Highlight.png"));
 				addObject(textHighlighter);
 				Object scoreHighlighter = new Object(new Position(score.getPosition().getX() - 12,score.getPosition().getY() - 34),new Position(140, 41),new Image("resource/Text_Highlight.png"));
 				addObject(scoreHighlighter);
+				
+				//stop media play
 				stopMedia();
 				Media gameOverSound = new Media(new File("./src/resource/gameOver.wav").toURI().toString());
 				mediaPlayer = new MediaPlayer(gameOverSound);
@@ -2020,16 +2056,20 @@ public class GameModelHandler {
 			}
 		}
 		
+		//get game finish
 		public boolean getGameFinish() {
 			return gameFinish;
 		}
 		
+		//when game is finished, player can choose their next round
 		public int nextRound(double x, double y) {
 			if(gameWin) {
 				if(menu_button.isInsideObject(x, y)) {
+					//go back to menu
 					return 1;
 				}
 				else if(next_round_button.isInsideObject(x, y)) {
+					//go to next stage
 					return 3;
 				}
 				else
@@ -2037,38 +2077,36 @@ public class GameModelHandler {
 			}
 			else {
 				if(menu_button.isInsideObject(x, y)) {
+					//go back to menu
 					return 1;
 					}
 				else if(retry_button.isInsideObject(x, y)) {
+					//retry stage
 					return 2;
 				}
 				else return 0;
 			}
 		}
 
-		
+		//initiate map level
 		public void initLevel() {
-			singleInGame = new SingleInGame(level.getWorld(), level.getStage());
+			multiInGame = new MultiInGame(rand.nextInt(4), 4);
 		}
 		
+		//reset character when it collide to ghost
 		public void resetCharacter() {
 			objects.removeAll(level.getGhosts());
 			level.resetCharacter();
 			objects.addAll(level.getGhosts());
 		}
 
-		public void initNextLevel() {
-			if((level.getStage()+1) < maxLevel.get(level.getWorld()))
-				singleInGame = new SingleInGame(level.getWorld(), (level.getStage()+1));
-			else
-				singleInGame = new SingleInGame((level.getWorld() +1), 0);
-		}
-		
+		//check protagonist is alive or not
 		public void proAlive() {
 			if(level.getPro().getLife() <= 0)
 				level.getPro().alive = false;
 		}
 		
+		//when protagonist is died
 		public void proDied() {
 			if(!level.getPro().alive) {
 				removeObject(level.getPro());
@@ -2080,6 +2118,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//make protagonist character move
 		public void protagonistMove() {
 			if (movePressed.getMovePressed(Direction.UP)) {
 				level.getPro().setDirection(Direction.UP);
@@ -2097,11 +2136,11 @@ public class GameModelHandler {
 				level.getPro().setDirection(Direction.LEFT);
 				moveLeft();
 			}
+			//check that whether protagonist is colliding pellets or items
 			checkPelletsAndItems();
 		}
 		
-		
-		
+		//if key that is used for control protagonist is pressed
 		public void pressMove(KeyCode code) {
 			switch(code) {
 			case UP:
@@ -2119,6 +2158,7 @@ public class GameModelHandler {
 			}
 		}
 		
+		//if key that is used for control protagonist is released
 		public void releaseMove(KeyCode code) {
 			switch(code) {
 			case UP:
@@ -2139,11 +2179,16 @@ public class GameModelHandler {
 			}
 		}
 
+		//if protagonist collide ghost
 		public void isProCollideGhost() {
+			//check which ghost is collided
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
 				if(level.getGhosts().get(i).isCollideObject(level.getPro()) && !level.getPro().untouchable && level.getGhosts().get(i).alive && !level.getGhosts().get(i).freeze) {
+					//if protagonist had item before
 					if(level.getPro().item) {
+						//ghost died
 						level.getGhosts().get(i).setIterator(2);
+						//protagonist copy ghsot ability
 						level.getPro().setStoredAbility(level.getGhosts().get(i).getAbility());
 						drawAbility();
 						level.getGhosts().get(i).alive = false;
@@ -2152,11 +2197,13 @@ public class GameModelHandler {
 						t.schedule(new TimerTask() {
 							@Override
 							public void run() {
+								//revive died ghost
 								level.getGhosts().get(diedGhost).alive = true;
 								level.getGhosts().get(diedGhost).setIterator(0);
 								cancel();
 							}
 						}, 2000l);
+						//sound play
 						Media startSound = new Media(new File("./src/resource/kill.wav").toURI().toString());
 						mediaPlayer = new MediaPlayer(startSound);
 						mediaPlayer.play();
@@ -2165,20 +2212,24 @@ public class GameModelHandler {
 						level.getPro().item = false;
 					}
 					else {
+						//sound play
 						stopMedia();
 						Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
 						mediaPlayer = new MediaPlayer(startSound);
 						mediaPlayer.play();
 						Timer stop = new Timer();
+						//protagonist died
 						dying = true;
 						level.getPro().setIterator(4);
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (singleInGame != null) {
+								if (multiInGame != null) {
+									//decrease life
 									level.getPro().setIterator(5);
 									level.getPro().decreaseLife();
 									drawLife();
+									//stop sound
 									stopMedia();
 									Media startSound = new Media(new File("./src/resource/die.wav").toURI().toString());
 									mediaPlayer = new MediaPlayer(startSound);
@@ -2189,7 +2240,7 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
-								if (singleInGame != null) {
+								if (multiInGame != null) {
 									proAlive();
 									proDied();
 								}
@@ -2198,20 +2249,24 @@ public class GameModelHandler {
 						stop.schedule(new TimerTask() {
 							@Override
 							public void run() {
+								//revive protagonist if life is left
 								dying = false;
 							}
-						}, 4500l);
+						}, 4500l);				
 					}
 				}
 			}
 		}
 		
+		//if ghost collide ice
 		public void isGhostCollideIce() {
 			for(int i = 0; i < level.getGhosts().size(); i++ ) {
 				if(ice.isCollideObject(level.getGhosts().get(i))) {
+					//ghost change to ice
 					Object ice = new Object(level.getGhosts().get(i).getPosition(), new Image("/resource/iced.png"));
 					icedGhost.add(ice);
 					addObject(ice);
+					//ghost unfreezed
 					if (level.getGhosts().get(i).freeze == false) {
 						Media startSound = new Media(new File("./src/resource/iced.wav").toURI().toString());
 						mediaPlayer = new MediaPlayer(startSound);
@@ -2222,20 +2277,20 @@ public class GameModelHandler {
 			}
 		}
 		
+		//if protagonist use ability
 		public void useAbility() {
 			Object newPosition = new Object(new Position (0,0), new Position(20,20));
 			int count = 0;
 			if(level.getPro().usableAbility) {
 				Ability ability = level.getPro().getStoredAbility();
 				if(ability == Ability.RAINBOW_STAR) {
+					//speed is doubled
 					speed = speed * 2;
 					abilityTimer();
-
 					Timer t = new Timer();
 					t.schedule(new TimerTask() {
 						@Override
 						public void run() {
-
 							speed = 2.5;
 							cancel();
 						}
@@ -2248,6 +2303,7 @@ public class GameModelHandler {
 					mediaPlayer.play();
 				}
 				else if(ability == Ability.NURSE) {
+					//life is increased
 					level.getPro().increaseLife();
 					drawLife();
 					level.getPro().usableAbility = false;
@@ -2259,7 +2315,7 @@ public class GameModelHandler {
 				}
 				else if(ability == Ability.WIZARD) {
 					Direction direction = level.getPro().getDirection();
-					
+					//check what is on next pixel
 					if (direction == Direction.UP) {
 						newPosition.setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - level.getWalls().get(0).getSize().getY()*2);
 						if (level.getPro().untouchable) 
@@ -2283,28 +2339,31 @@ public class GameModelHandler {
 					}
 					else if (direction == Direction.LEFT) {
 						newPosition.setPosition(level.getPro().getPosition().getX() - level.getWalls().get(0).getSize().getY()*2, level.getPro().getPosition().getY());
-						if (level.getPro().untouchable)
+						if (level.getPro().untouchable) 
 							level.getPro().setIterator(9);
 						else 
 							level.getPro().setIterator(3);
 					}
+					//check that whether wall is at where the protagonist want to move
 					for(int i = 0; i < level.getWalls().size(); i++ ) {
 						if(!level.getWalls().get(i).isCollideObject(newPosition)) {
+							//if there is nothing on where the protagonist want to move, count is up
 							count++;
 						}
-							
 					}
+					//if protagonist use wizard ability it can teleport through the wall
 					if (count == level.getWalls().size()) {
 						level.getPro().setPosition(newPosition.getPosition().getX(), newPosition.getPosition().getY());
 						level.getPro().usableAbility = false;
-						level.getPro().setStoredAbility(Ability.DEFAULT);
-						drawAbility();
-						Media startSound = new Media(new File("./src/resource/wizard.wav").toURI().toString());
-						mediaPlayer = new MediaPlayer(startSound);
-						mediaPlayer.play();
+									level.getPro().setStoredAbility(Ability.DEFAULT);
+									drawAbility();
+									Media startSound = new Media(new File("./src/resource/wizard.wav").toURI().toString());
+									mediaPlayer = new MediaPlayer(startSound);
+									mediaPlayer.play();
 					}
 				}
 				else if(ability == Ability.ICE) {
+					//make ice on the map that can freeze ghosts
 					newPosition.setPosition(level.getPro().getPosition().getX()-level.getPro().getSize().getX()/2, level.getPro().getPosition().getY()-level.getPro().getSize().getY()/2);
 					ice = new Object(newPosition.getPosition(), new Position(50,50), new Image("/resource/ice.png"));
 					objects.add(ice);
@@ -2334,6 +2393,7 @@ public class GameModelHandler {
 					drawAbility();
 				}
 				else if(ability == Ability.NINJA) {
+					//protagonist is being untouchable
 					level.getPro().setUntouchable(true);
 					switch(level.getPro().getDirection()) {
 					case UP:
@@ -2366,7 +2426,7 @@ public class GameModelHandler {
 								break;
 							case LEFT:
 								level.getPro().setIterator(3);
-								break;
+							break;
 							}
 							level.getPro().setUntouchable(false);
 							cancel();
@@ -2379,11 +2439,10 @@ public class GameModelHandler {
 					mediaPlayer = new MediaPlayer(startSound);
 					mediaPlayer.play();
 				}
-				
 			}
-			
 		}
 		
+		//ability has timer
 		private void abilityTimer() {
 			Text abilityTime = new Text(new Position(1200,650), 80, 3, 24, Color.BLACK);
 			addText(abilityTime);
@@ -2402,77 +2461,107 @@ public class GameModelHandler {
 			}, 1000l, 1000l);
 		}
 		
+		//protagonist moving up
 		private void moveUp() {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() - speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideTop(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() + level.getWalls().get(i).getSize().getY() + 1);
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(7);
-				else level.getPro().setIterator(1);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(7);
+				//if protagnost is moving up, it face top
+				else 
+					level.getPro().setIterator(1);
 			}
 		}
-		
+		//protagonist moving down
 		private void moveDown() {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX(), level.getPro().getPosition().getY() + speed);
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideBottom(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getPro().getPosition().getX(), level.getWalls().get(i).getPosition().getY() - level.getPro().getSize().getY() - 1);
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(6);
-				else level.getPro().setIterator(0);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(6);
+				//if protagnost is moving down, it face bottom
+				else 
+					level.getPro().setIterator(0);
 			}
 		}
-		
+		//protagonist moving right
 		private void moveRight() {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX() + speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideRight(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() - level.getPro().getSize().getX() - 1, level.getPro().getPosition().getY());
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(8);
-				else level.getPro().setIterator(2);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(8);
+				//if protagnost is moving right, it face right
+				else 
+					level.getPro().setIterator(2);
 			}
 		}
-		
+		//protagonist moving left
 		private void moveLeft() {
 			boolean moving = true;
 			level.getPro().setPosition(level.getPro().getPosition().getX() - speed, level.getPro().getPosition().getY());
 			for(int i = 0; i < level.getWalls().size(); i++ )
+				//if wall is located on top side of protagonist
 				if(level.getWalls().get(i).isCollideLeft(level.getPro())) {
+					//protagonist cannot move go through the wall
 					level.getPro().setPosition(level.getWalls().get(i).getPosition().getX() +  level.getWalls().get(i).getSize().getX() + 1, level.getPro().getPosition().getY());
 					moving = false;
 				}
 			if (moving) {
-				if (level.getPro().untouchable) level.getPro().setIterator(9);
-				else level.getPro().setIterator(3);
+				//if protagonist is untouchable, image of protagonist is change
+				if (level.getPro().untouchable) 
+					level.getPro().setIterator(9);
+				//if protagnost is moving right, it face right
+				else 
+					level.getPro().setIterator(3);
 			}
 		}
 		
+		//if protagonist collide to pellets or item
 		private void checkPelletsAndItems() {
 			for(int i = 0; i < level.getPellets().size(); i++ ) {
 				if(level.getPro().isCollideLeft(level.getPellets().get(i))) {
+					//collide pellets
 					eatPellet(level.getPellets().get(i));
 				}
 			}
 
 			for(int i = 0; i < level.getItem().size(); i++ ) {
 				if(level.getPro().isCollideLeft(level.getItem().get(i))) {
+					//collide item
 					eatItem(level.getItem().get(i));
 				}
 			}
 		}
 		
+		//if protagonist collide item
 		private void eatItem(Item item) {
+			//remove item on map
 			removeObject(item);
 			if (!level.getPro().item) {
 				itemTime.setString(5);
@@ -2480,6 +2569,7 @@ public class GameModelHandler {
 				Timer textTimer = new Timer();
 				textTimer.scheduleAtFixedRate(new TimerTask() {
 					@Override
+					//after timer is finished delcare that protagonist's item is gone
 					public void run() {
 						if (itemTime.getString().equals("0")) {
 							level.getPro().item = false;
@@ -2491,11 +2581,14 @@ public class GameModelHandler {
 						}
 					}
 				}, 1000l, 1000l);
-			} else {
+			} 
+			else {
 				itemTime.setString(5);
 			}
+			//tell that protagonist had item
 			level.getPro().item = true;
 			info.addScore(item);
+			//score is increased
 			playerScore.setString(info.getScore());
 			level.removeItems(item);
 			Media startSound = new Media(new File("./src/resource/item_ground.wav").toURI().toString());
@@ -2503,8 +2596,11 @@ public class GameModelHandler {
 			mediaPlayer.play();
 		}
 		
+		//if protagonist collide pellets
 		private void eatPellet(Pellet pellet) {
+			//remove pellest on map
 			removeObject(pellet);
+			//score is increased
 			info.addScore(pellet);
 			playerScore.setString(info.getScore());
 			level.removePellets(pellet);
@@ -2512,13 +2608,15 @@ public class GameModelHandler {
 			mediaPlayer = new MediaPlayer(startSound);
 			mediaPlayer.play();
 		}
-		
+
+		//initiate class of move pressed
 		public class MovePressed {
+			//declare flags
 			boolean up = false;
 			boolean down = false;
 			boolean left = false;
 			boolean right = false;
-			
+			//get move pressed
 			public boolean getMovePressed(Direction d) {
 				switch(d) {
 				case UP:
@@ -2533,7 +2631,7 @@ public class GameModelHandler {
 					return false;
 				}
 			}
-			
+			//change protagonist direction
 			public void setMovePressed(Direction d, boolean b) {
 				switch(d) {
 				case UP: 
