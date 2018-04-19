@@ -7,7 +7,6 @@ import javafx.scene.image.Image;
 //ghosts are extends of charcter
 public class Ghost extends Character{
 	
-	Level level;
 	//initialise freeze flag
 	boolean freeze;
 
